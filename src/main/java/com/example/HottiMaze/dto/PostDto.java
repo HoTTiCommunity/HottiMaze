@@ -19,8 +19,4 @@ public class PostDto {
     private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public PostDto() {
-        return PostDto;
-    }
 }
