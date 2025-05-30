@@ -12,4 +12,6 @@ public class Board {
     private String title;
     @Column(name = "content")
     private String content;
+    @Column(name = "img_dir")
+    private String imgDir;
 }
