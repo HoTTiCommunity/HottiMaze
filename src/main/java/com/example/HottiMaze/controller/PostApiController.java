@@ -2,6 +2,7 @@ package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.dto.PostDto;
 import com.example.HottiMaze.entity.Category;
+import com.example.HottiMaze.entity.Post;
 import com.example.HottiMaze.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,18 +45,7 @@ public class PostApiController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/summary")
-    public ResponseEntity<List<Map<String, Object>>> getCategorySummary() {
-        List<Category> categories = postService.getAllCategories();
-        List<Map<String, Object>> summary = categories.stream()
-                .map(category -> {
-                    Map<String, Object> categoryInfo = new HashMap<>();
-                    categoryInfo.put("categoryId", category.getId());
-                    categoryInfo.put("categoryName", category.getName());
-                    categoryInfo.put("postCount", postService.getPostCountByCategory(category.getId()));
-                    return categoryInfo;
-                })
-                .toList();
-        return ResponseEntity.ok(summary);
+    @PostMapping("/{categoryId}/posts")
+    public ResponseEntity<> createPost(@PathVariable Long categoryId, @RequestBody PostDto postDto) {
     }
 }

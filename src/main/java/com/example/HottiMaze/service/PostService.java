@@ -58,4 +58,13 @@ public class PostService {
         dto.setUpdatedAt(post.getUpdatedAt());
         return dto;
     }
+
+    public PostDto create(Long categoryId, PostDto postDto) {
+        Post createdPost = postDto.toEntity(categoryId, postDto);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다: " + categoryId));
+        createdPost.setCategory(category);
+        postRepository.save(createdPost);
+        return PostDto.fromEntity(createdPost);
+    }
 }
