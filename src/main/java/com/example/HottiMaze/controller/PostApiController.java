@@ -1,10 +1,12 @@
 package com.example.HottiMaze.controller;
 
+import com.example.HottiMaze.dto.PostCreateDto;
 import com.example.HottiMaze.dto.PostDto;
 import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
 import com.example.HottiMaze.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +47,13 @@ public class PostApiController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{categoryId}/posts")
-    public ResponseEntity<> createPost(@PathVariable Long categoryId, @RequestBody PostDto postDto) {
+    @PostMapping("/posts")
+    public ResponseEntity<Map<String, Object>> createPost(@RequestBody PostCreateDto createDto) {
+            PostDto createdPost = postService.createPost(createDto);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "게시글이 성공적으로 생성되었습니다.");
+            response.put("data", createdPost);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
