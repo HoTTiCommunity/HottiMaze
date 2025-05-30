@@ -48,12 +48,8 @@ public class PostApiController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<Map<String, Object>> createPost(@RequestBody PostCreateDto createDto) {
+    public ResponseEntity<PostDto> createPost(@RequestBody PostCreateDto createDto) {
             PostDto createdPost = postService.createPost(createDto);
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "게시글이 성공적으로 생성되었습니다.");
-            response.put("data", createdPost);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 }
