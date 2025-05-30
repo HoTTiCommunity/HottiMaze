@@ -2,6 +2,7 @@ package com.example.HottiMaze.service;
 
 import com.example.HottiMaze.dto.PostCreateDto;
 import com.example.HottiMaze.dto.PostDto;
+import com.example.HottiMaze.dto.PostUpdateDto;
 import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
 import com.example.HottiMaze.repository.CategoryRepository;
@@ -76,5 +77,24 @@ public class PostService {
         post.setViewCount(0);
         Post savedPost = postRepository.save(post);
         return convertToDto(savedPost);
+    }
+    @Transactional
+    public PostDto updatePost(Long postId, PostUpdateDto updateDto) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        Category category = categoryRepository.findById(updateDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다: " + updateDto.getCategoryId()));
+        post.setTitle(updateDto.getTitle());
+        post.setContent(updateDto.getContent());
+        post.setCategory(category);
+        post.setUpdatedAt(LocalDateTime.now());
+        Post updatedPost = postRepository.save(post);
+        return convertToDto(updatedPost);
+    }
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        postRepository.delete(post);
     }
 }

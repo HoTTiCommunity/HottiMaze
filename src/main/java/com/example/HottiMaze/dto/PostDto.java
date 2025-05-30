@@ -21,18 +21,4 @@ public class PostDto {
     private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public Post toEntity(Long categoryId, PostDto postDto) {
-        Post post = new Post();
-        post.setId(postDto.getId());
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setCreatedAt(LocalDateTime.now());
-        post.setUpdatedAt(LocalDateTime.now());
-        return post;
-    }
-    public static PostDto fromEntity(Post post) {
-        PostDto dto = new PostDto(post.getId(), post.getTitle(), post.getContent(), post.getAuthor(), post.getCreatedAt(), post.getUpdatedAt());
-        return dto;
-    }
 }

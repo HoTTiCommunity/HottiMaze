@@ -2,6 +2,7 @@ package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.dto.PostCreateDto;
 import com.example.HottiMaze.dto.PostDto;
+import com.example.HottiMaze.dto.PostUpdateDto;
 import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
 import com.example.HottiMaze.service.PostService;
@@ -24,6 +25,12 @@ public class PostApiController {
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = postService.getAllCategories();
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<List<PostDto>> getAllPosts() {
+        List<PostDto> posts = postService.getAllPosts();
+        return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/{categoryId}/posts")
@@ -51,5 +58,16 @@ public class PostApiController {
     public ResponseEntity<PostDto> createPost(@RequestBody PostCreateDto createDto) {
             PostDto createdPost = postService.createPost(createDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+    }
+    @PutMapping("/posts/{postId}")
+    public ResponseEntity<PostDto> updatePost(@PathVariable Long postId,
+                                              @RequestBody PostUpdateDto updateDto) {
+            PostDto updatedPost = postService.updatePost(postId, updateDto);
+            return ResponseEntity.ok(updatedPost);
+    }
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+            postService.deletePost(postId);
+            return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
