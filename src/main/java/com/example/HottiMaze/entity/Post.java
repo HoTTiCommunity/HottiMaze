@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class Board {
+public class Post {
     @Id
     private Long id;
     @Column(name = "title")
