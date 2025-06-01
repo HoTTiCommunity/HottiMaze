@@ -1,6 +1,8 @@
 package com.example.HottiMaze.dto;
 
+import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
+import com.example.HottiMaze.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +12,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostDto {
     private Long id;
     private String title;
@@ -19,4 +21,5 @@ public class PostDto {
     private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer viewCount;
 }
