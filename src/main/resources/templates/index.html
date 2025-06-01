@@ -203,11 +203,15 @@
 
         <!-- 자유게시판 -->
         <div class="board-section free-board">
+            <!-- 헤더 전체를 클릭 가능하도록 a 태그로 감싸거나, 텍스트만 링크로 설정할 수 있습니다 -->
             <div class="board-header">
-                💬 자유게시판
+                <a th:href="@{/post}"
+                   style="color: inherit; text-decoration: none; display: block;">
+                    💬 자유게시판
+                </a>
             </div>
             <div class="post-list">
-                <!-- Thymeleaf로 자유게시판 목록 출력 -->
+                <!-- 기존에 작성한 자유게시판 목록 출력 로직 -->
                 <div th:if="${freePosts != null and !freePosts.isEmpty()}">
                     <div th:each="post : ${freePosts}"
                          class="post-item"

@@ -52,6 +52,12 @@ public class PostService {
                 .count();
     }
 
+    public PostDto getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
+        return convertToDto(post);
+    }
+
     private PostDto convertToDto(Post post) {
         PostDto dto = new PostDto();
         dto.setId(post.getId());
@@ -60,6 +66,7 @@ public class PostService {
         dto.setNickname(post.getAuthor());
         dto.setCreatedAt(post.getCreatedAt());
         dto.setUpdatedAt(post.getUpdatedAt());
+        dto.setViewCount(post.getViewCount());
         return dto;
     }
 
@@ -97,4 +104,11 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
         postRepository.delete(post);
     }
+
+    @Transactional(readOnly = true)
+    public Post getPostEntityById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
+    }
+
 }
