@@ -37,6 +37,10 @@ public class MazeService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+    public MazeDto getMaze(Long id) {
+        Maze maze = mazeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No id : " + id));
+        return convertToDto(maze);
+    }
 
     private MazeDto convertToDto(Maze maze) {
         MazeDto dto = new MazeDto();

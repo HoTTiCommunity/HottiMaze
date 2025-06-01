@@ -535,13 +535,6 @@
     </header>
 
     <div class="content-wrapper">
-        <!-- 디버깅 정보 -->
-        <div class="debug-info">
-            <strong>🔧 디버깅 정보:</strong>
-            <a href="/test-images" target="_blank">이미지 테스트 페이지 열기</a> |
-            <span>이미지 경로: /imgs/maze1.jpg ~ /imgs/maze12.jpg</span>
-        </div>
-
         <!-- 게시판 섹션 -->
         <div class="board-container">
             <!-- 공지사항 게시판 -->
@@ -610,7 +603,7 @@
                 <div th:if="${latestMazes != null and !latestMazes.isEmpty()}">
                     <div th:each="maze : ${latestMazes}"
                          class="maze-card"
-                         th:onclick="'location.href=\'/maze/' + ${maze.id} + '\''">
+                         th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
                         <div class="maze-thumbnail">
                             <img th:src="${maze.mazeDir}"
                                  th:alt="${maze.mazeTitle}"
@@ -678,7 +671,7 @@
                 <div th:if="${popularMazes != null and !popularMazes.isEmpty()}">
                     <div th:each="maze : ${popularMazes}"
                          class="maze-card"
-                         th:onclick="'location.href=\'/maze/' + ${maze.id} + '\''">
+                         th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
                         <div class="maze-thumbnail">
                             <img th:src="${maze.mazeDir}"
                                  th:alt="${maze.mazeTitle}"
