@@ -34,6 +34,4 @@ public class Maze {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    // Getter, Setter 메서드들이 Lombok으로 자동 생성됩니다
 }
