@@ -1,24 +1,39 @@
 package com.example.HottiMaze.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class Maze {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "MazeDir", nullable = false)
-    private String MazeDir;
-    @Column(name = "MazeTitle", nullable = false)
-    private String MazeTitle;
+
+    @Column(name = "maze_dir", nullable = false)
+    private String mazeDir;
+
+    @Column(name = "maze_title", nullable = false)
+    private String mazeTitle;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
     @Column(name = "view_count")
     private Integer viewCount = 0;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    // Getter, Setter 메서드들이 Lombok으로 자동 생성됩니다
 }
