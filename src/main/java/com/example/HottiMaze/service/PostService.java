@@ -1,13 +1,17 @@
 package com.example.HottiMaze.service;
 
+import com.example.HottiMaze.dto.PostCreateDto;
 import com.example.HottiMaze.dto.PostDto;
+import com.example.HottiMaze.dto.PostUpdateDto;
 import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
 import com.example.HottiMaze.repository.CategoryRepository;
 import com.example.HottiMaze.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,5 +61,46 @@ public class PostService {
         dto.setCreatedAt(post.getCreatedAt());
         dto.setUpdatedAt(post.getUpdatedAt());
         return dto;
+    }
+
+    public PostDto getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        return convertToDto(post);
+    }
+
+    @Transactional
+    public PostDto createPost(PostCreateDto createDto) {
+        Category category = categoryRepository.findById(createDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다: " + createDto.getCategoryId()));
+        Post post = new Post();
+        post.setTitle(createDto.getTitle());
+        post.setContent(createDto.getContent());
+        post.setAuthor(createDto.getAuthor());
+        post.setCategory(category);
+        post.setCreatedAt(LocalDateTime.now());
+        post.setUpdatedAt(LocalDateTime.now());
+        post.setViewCount(0);
+        Post savedPost = postRepository.save(post);
+        return convertToDto(savedPost);
+    }
+    @Transactional
+    public PostDto updatePost(Long postId, PostUpdateDto updateDto) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        Category category = categoryRepository.findById(updateDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다: " + updateDto.getCategoryId()));
+        post.setTitle(updateDto.getTitle());
+        post.setContent(updateDto.getContent());
+        post.setCategory(category);
+        post.setUpdatedAt(LocalDateTime.now());
+        Post updatedPost = postRepository.save(post);
+        return convertToDto(updatedPost);
+    }
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        postRepository.delete(post);
     }
 }
