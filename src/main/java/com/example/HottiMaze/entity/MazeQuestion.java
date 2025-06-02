@@ -11,28 +11,19 @@ import java.time.LocalDateTime;
 @Entity
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class Maze {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "maze_id")
+public class MazeQuestion {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "maze_dir", nullable = false)
-    private String mazeDir;
-
-    @Column(name = "maze_title", nullable = false)
-    private String mazeTitle;
-
+    @ManyToOne @JoinColumn(name = "maze_id")
+    private Maze maze;
+    @Column(name = "title")
+    private String title;
+    @Column(name = "content")
+    private String content;
+    @Column(name = "author")
+    private String author;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @Column(name = "view_count")
-    private Integer viewCount = 0;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 }
