@@ -60,6 +60,8 @@ public class PostService {
         dto.setNickname(post.getAuthor());
         dto.setCreatedAt(post.getCreatedAt());
         dto.setUpdatedAt(post.getUpdatedAt());
+        dto.setGaechu(post.getGaechu());
+        dto.setBechu(post.getBechu());
         return dto;
     }
 
@@ -102,5 +104,16 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
         postRepository.delete(post);
+    }
+    public void gaechuPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        post.setGaechu(post.getGaechu() + 1);
+        postRepository.save(post);
+    }
+
+    public void bechuPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        post.setBechu(post.getBechu() + 1);
+        postRepository.save(post);
     }
 }

@@ -11,7 +11,30 @@
 <hr>
 <div th:text="${post.content}">내용</div>
 
+<!-- 개추/비추 수 표시 -->
+<p>개추 수: <span th:text="${post.gaechu}">0</span></p>
+<p>비추 수: <span th:text="${post.bechu}">0</span></p>
+
+<!-- 개추/비추 버튼 -->
+<button onclick="vote('like')">개추</button>
+<button onclick="vote('dislike')">비추</button>
+
+<script th:inline="javascript">
+  const postId = [[${post.id}]];
+
+  function vote(type) {
+    fetch(`/api/categories/posts/${postId}/${type}`, {
+      method: 'POST'
+    }).then(response => {
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert("오류가 발생했습니다.");
+      }
+    });
+  }
+</script>
 <br>
-<a href="/">← 메인으로</a>
+<a href="/">메인으로</a>
 </body>
 </html>
