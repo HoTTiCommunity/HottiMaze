@@ -33,8 +33,18 @@ public class FileUploadService {
 
         // 디렉토리 생성
         Path uploadPath = Paths.get(uploadDir, mazeFolder);
+
+        // 디버깅 로그 추가
+        System.out.println("=== 파일 업로드 디버깅 ===");
+        System.out.println("uploadDir: " + uploadDir);
+        System.out.println("mazeFolder: " + mazeFolder);
+        System.out.println("uploadPath: " + uploadPath.toAbsolutePath());
+        System.out.println("fileName: " + fileName);
+        System.out.println("originalFilename: " + originalFilename);
+
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
+            System.out.println("디렉토리 생성됨: " + uploadPath.toAbsolutePath());
         }
 
         // 파일명 생성
@@ -45,8 +55,47 @@ public class FileUploadService {
         Path filePath = uploadPath.resolve(savedFileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+        System.out.println("파일 저장됨: " + filePath.toAbsolutePath());
+
         // 웹 경로 반환
-        return "/static/imgs/mazes/" + mazeFolder + "/" + savedFileName;
+        String webPath = "/static/imgs/mazes/" + mazeFolder + "/" + savedFileName;
+        System.out.println("반환된 웹 경로: " + webPath);
+        System.out.println("========================");
+
+        return webPath;
+    }
+
+    // renameFile 메서드 추가
+    public String renameFile(String oldFilePath, Long oldMazeId, Long newMazeId) throws IOException {
+        // 기존 파일 경로 파싱
+        String fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1);
+        String oldMazeFolder = "maze" + oldMazeId;
+        String newMazeFolder = "maze" + newMazeId;
+
+        // 기존 폴더와 새 폴더 경로
+        Path oldFolderPath = Paths.get(uploadDir, oldMazeFolder);
+        Path newFolderPath = Paths.get(uploadDir, newMazeFolder);
+
+        // 새 폴더 생성
+        if (!Files.exists(newFolderPath)) {
+            Files.createDirectories(newFolderPath);
+        }
+
+        // 파일 이동
+        Path oldFile = oldFolderPath.resolve(fileName);
+        Path newFile = newFolderPath.resolve(fileName);
+
+        if (Files.exists(oldFile)) {
+            Files.move(oldFile, newFile, StandardCopyOption.REPLACE_EXISTING);
+
+            // 기존 폴더가 비어있으면 삭제
+            if (Files.exists(oldFolderPath) && Files.list(oldFolderPath).count() == 0) {
+                Files.delete(oldFolderPath);
+            }
+        }
+
+        // 새 웹 경로 반환
+        return "/static/imgs/mazes/" + newMazeFolder + "/" + fileName;
     }
 
     public String getMazeFolderName(Long mazeId) {

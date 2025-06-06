@@ -17,7 +17,7 @@ public class Maze {
     @Column(name = "maze_id")
     private Long id;
 
-    @Column(name = "maze_dir", nullable = false)
+    @Column(name = "maze_dir", nullable = true) // nullable = false에서 true로 변경
     private String mazeDir;
 
     @Column(name = "maze_title", nullable = false)

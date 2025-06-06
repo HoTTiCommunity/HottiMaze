@@ -14,11 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 public class MazeCreateDto {
     private String mazeTitle;           // 미로 제목
-    private String creatorName;         // 제작자 이름
-    private MultipartFile mainImage;    // 메인 이미지
-    private List<String> questionTitles;      // 문제 제목들
-    private List<String> questionDescriptions; // 문제 설명들
-    private List<MultipartFile> questionImages; // 문제 이미지들
-    private List<String> correctAnswers;      // 정답들
-    private List<Integer> pointsList;        // 점수 목록
+    private String creatorName;         // 제작자 이름 (User 참조용)
+    private MultipartFile mainImage;    // 메인 이미지 (mazeDir에 저장)
+
+    private List<String> questionTitles;      // 문제 제목들 (title)
+    private List<MultipartFile> questionImages; // 문제 이미지들 (questionImage)
+    private List<String> correctAnswers;      // 정답들 (correctAnswer)
+    private List<Integer> pointsList;        // 점수 목록 (points - 기본값 10)
 }

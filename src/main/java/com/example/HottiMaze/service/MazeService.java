@@ -55,7 +55,7 @@ public class MazeService {
         return convertToDto(maze);
     }
 
-    // 새로운 미궁 생성 메서드
+    // 새로운 미궁 생성 메서드 - mazeDir null 오류 해결
     @Transactional
     public MazeDto createMaze(MazeCreateDto createDto) {
         try {
@@ -63,29 +63,37 @@ public class MazeService {
             User creator = userRepository.findById(1L)
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-            // 먼저 미로 엔티티를 저장하여 ID를 얻기
+            // 임시 ID를 생성하여 파일 저장 경로 만들기
+            Long tempMazeId = System.currentTimeMillis(); // 임시 ID로 현재 시간 사용
+
+            // 메인 이미지 먼저 저장
+            String mainImagePath = null;
+            if (createDto.getMainImage() != null && !createDto.getMainImage().isEmpty()) {
+                mainImagePath = fileUploadService.saveFile(
+                        createDto.getMainImage(),
+                        tempMazeId,
+                        "main"
+                );
+            } else {
+                throw new IllegalArgumentException("메인 이미지는 필수입니다.");
+            }
+
+            // 미로 엔티티 생성 및 저장 (이제 mazeDir이 null이 아님)
             Maze maze = new Maze();
             maze.setMazeTitle(createDto.getMazeTitle());
-            maze.setMazeDir(null); // 임시로 null 설정
+            maze.setMazeDir(mainImagePath); // null이 아닌 값으로 설정
             maze.setUser(creator);
             maze.setCreatedAt(LocalDateTime.now());
             maze.setUpdatedAt(LocalDateTime.now());
             maze.setViewCount(0);
 
-            // 미로 저장하여 ID 얻기
+            // 미로 저장
             Maze savedMaze = mazeRepository.save(maze);
 
-            // 이제 미로 ID를 사용하여 파일 저장
-            String mainImagePath = null;
-            if (createDto.getMainImage() != null && !createDto.getMainImage().isEmpty()) {
-                mainImagePath = fileUploadService.saveFile(
-                        createDto.getMainImage(),
-                        savedMaze.getId(),
-                        "main"
-                );
-
-                // 메인 이미지 경로 업데이트
-                savedMaze.setMazeDir(mainImagePath);
+            // 실제 ID와 임시 ID가 다르면 파일명 변경
+            if (!savedMaze.getId().equals(tempMazeId)) {
+                String newImagePath = fileUploadService.renameFile(mainImagePath, tempMazeId, savedMaze.getId());
+                savedMaze.setMazeDir(newImagePath);
                 savedMaze = mazeRepository.save(savedMaze);
             }
 
@@ -129,6 +137,7 @@ public class MazeService {
                     setQuestionField(question::setTitle, createDto.getQuestionTitles(), i, "문제 " + (i + 1));
                     setQuestionField(question::setCorrectAnswer, createDto.getCorrectAnswers(), i, "test");
                     setQuestionNumberField(question::setPoints, createDto.getPointsList(), i, 10);
+
                     mazeQuestionRepository.save(question);
 
                 } catch (Exception e) {
