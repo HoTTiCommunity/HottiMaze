@@ -8,16 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.example.HottiMaze.dto.MazeCreateDto;
-import com.example.HottiMaze.dto.MazeDto;
-import com.example.HottiMaze.entity.Maze;
 import com.example.HottiMaze.entity.MazeQuestion;
 import com.example.HottiMaze.entity.User;
 import com.example.HottiMaze.repository.MazeQuestionRepository;
-import com.example.HottiMaze.repository.MazeRepository;
 import com.example.HottiMaze.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,12 +49,7 @@ public class MazeService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
-
-    public MazeDto getMaze(Long id) {
-        Maze maze = mazeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No id : " + id));
-        return convertToDto(maze);
-    }
-
+    
     public MazeDto getMaze(Long id) {
         Maze maze = mazeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + id));

@@ -6,13 +6,21 @@ INSERT INTO category (name) VALUES ('감옥 Confirm게시판');
 INSERT INTO category (name) VALUES ('감옥게시판');
 
 -- 사용자 더미 데이터 (한 줄씩)
-INSERT INTO users (username, password, point) VALUES ('admin', 'password123', 1000);
-INSERT INTO users (username, password, point) VALUES ('user001', 'user123', 500);
-INSERT INTO users (username, password, point) VALUES ('student01', 'student123', 300);
-INSERT INTO users (username, password, point) VALUES ('developer', 'dev123', 800);
-INSERT INTO users (username, password, point) VALUES ('designer', 'design123', 400);
-INSERT INTO users (username, password, point) VALUES ('manager', 'manager123', 600);
-INSERT INTO users (username, password, point) VALUES ('tester', 'test123', 200);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('admin',     'password123', 1000, 0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('user001',   'user123',     500,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('student01', 'student123',  300,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('developer','dev123',       800,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('designer',  'design123',   400,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('manager',   'manager123',  600,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('tester',    'test123',     200,  0, 1);
+
 
 -- 공지사항 카테고리 게시글 (category_id = 1)
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('사이트 이용 안내', '사이트 이용에 관한 전반적인 안내사항입니다. 회원가입 후 다양한 게시판을 이용하실 수 있습니다.', 'admin', '2024-01-15 09:00:00', '2024-01-15 09:00:00', 150, 1, 0, 0);
@@ -44,3 +52,52 @@ INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user
 INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('도전! 중급 미로 탈출', '/imgs/maze2.png', '2024-01-15 14:30:00', '2024-01-15 14:30:00', 189, 2);
 INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('극한의 어려움 - 고급 미로', '/imgs/maze3.png', '2024-01-20 16:45:00', '2024-01-20 16:45:00', 156, 3);
 INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('숲속의 미스터리 미로', '/imgs/maze4.png', '2024-01-25 11:20:00', '2024-01-25 11:20:00', 298, 4);
+
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id) VALUES ('웹 포트폴리오 사이트 제작', '개인 포트폴리오 웹사이트 제작 프로젝트입니다. React와 Spring Boot를 사용할 예정입니다.', 'developer', '2024-02-01 14:20:00', '2024-02-01 14:20:00', 156, 5);
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id) VALUES ('모바일 앱 개발 프로젝트', 'Flutter를 이용한 간단한 일정 관리 앱을 만들고 있습니다. 협업하실 분 환영합니다.', 'designer', '2024-02-10 11:45:00', '2024-02-10 11:45:00', 98, 5);
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id) VALUES ('미로 게임 개발 진행상황', 'HottiMaze 프로젝트의 현재 진행상황을 공유합니다. 피드백 환영합니다!', 'manager', '2024-02-18 16:10:00', '2024-02-18 16:10:00', 142, 5);
+
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('초보자를 위한 간단한 미로', '/static/imgs/mazes/maze1/main.png', '2024-01-10 10:00:00', '2024-01-10 10:00:00', 245, 1);
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('도전! 중급 미로 탈출', '/static/imgs/mazes/maze2/main.png', '2024-01-15 14:30:00', '2024-01-15 14:30:00', 189, 2);
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('극한의 어려움 - 고급 미로', '/static/imgs/mazes/maze3/main.png', '2024-01-20 16:45:00', '2024-01-20 16:45:00', 156, 3);
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('숲속의 미스터리 미로', '/static/imgs/mazes/maze4/main.png', '2024-01-25 11:20:00', '2024-01-25 11:20:00', 298, 4);
+
+-- 미로 1번 문제들
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question1.png', 'test', 1, '첫 번째 문제', '2024-01-10 10:00:00', '2024-01-10 10:00:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question2.png', 'test', 2, '두 번째 문제', '2024-01-10 10:05:00', '2024-01-10 10:05:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question3.png', 'test', 3, '세 번째 문제', '2024-01-10 10:10:00', '2024-01-10 10:10:00');
+
+-- 미로 2번 문제들
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (2, '/static/imgs/mazes/maze2/question1.png', 'test', 1, '중급 문제 1', '2024-01-15 14:30:00', '2024-01-15 14:30:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (2, '/static/imgs/mazes/maze2/question2.png', 'test', 2, '중급 문제 2', '2024-01-15 14:35:00', '2024-01-15 14:35:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (2, '/static/imgs/mazes/maze2/question3.png', 'test', 3, '중급 문제 3', '2024-01-15 14:40:00', '2024-01-15 14:40:00');
+
+-- 미로 3번 문제들
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (3, '/static/imgs/mazes/maze3/question1.png', 'test', 1, '고급 문제 1', '2024-01-20 16:45:00', '2024-01-20 16:45:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (3, '/static/imgs/mazes/maze3/question2.png', 'test', 2, '고급 문제 2', '2024-01-20 16:50:00', '2024-01-20 16:50:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (3, '/static/imgs/mazes/maze3/question3.png', 'test', 3, '고급 문제 3', '2024-01-20 16:55:00', '2024-01-20 16:55:00');
+
+-- 미로 4번 문제들
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (4, '/static/imgs/mazes/maze4/question1.png', 'test', 1, '숲속 문제 1', '2024-01-25 11:20:00', '2024-01-25 11:20:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (4, '/static/imgs/mazes/maze4/question2.png', 'test', 2, '숲속 문제 2', '2024-01-25 11:25:00', '2024-01-25 11:25:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
+VALUES (4, '/static/imgs/mazes/maze4/question3.png', 'test', 3, '숲속 문제 3', '2024-01-25 11:30:00', '2024-01-25 11:30:00');

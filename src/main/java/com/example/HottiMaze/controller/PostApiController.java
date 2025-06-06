@@ -70,9 +70,6 @@ public class PostApiController {
             postService.deletePost(postId);
             return ResponseEntity.status(HttpStatus.OK).build();
     }
-
-
-
     @PostMapping("/posts/{id}/like")
     public ResponseEntity<Void> likePost(@PathVariable Long id) {
         postService.gaechuPost(id);
@@ -83,20 +80,5 @@ public class PostApiController {
     public ResponseEntity<Void> dislikePost(@PathVariable Long id) {
         postService.bechuPost(id);
         return ResponseEntity.ok().build();
-        PostDto createdPost = postService.createPost(createDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
-    }
-
-    @PutMapping("/posts/{postId}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable Long postId,
-                                              @RequestBody PostUpdateDto updateDto) {
-        PostDto updatedPost = postService.updatePost(postId, updateDto);
-        return ResponseEntity.ok(updatedPost);
-    }
-
-    @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

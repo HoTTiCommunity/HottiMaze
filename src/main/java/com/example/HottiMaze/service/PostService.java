@@ -1,4 +1,3 @@
-// src/main/java/com/example/HottiMaze/service/PostService.java
 package com.example.HottiMaze.service;
 
 import com.example.HottiMaze.dto.PostCreateDto;
@@ -24,6 +23,7 @@ public class PostService {
     private final CategoryRepository categoryRepository;
 
     /** 전체 게시글 조회 */
+    @Transactional(readOnly = true)
     public List<PostDto> getAllPosts() {
         return postRepository.findAll().stream()
                 .map(this::convertToDto)
@@ -31,6 +31,7 @@ public class PostService {
     }
 
     /** 카테고리 ID로 게시글 조회 */
+    @Transactional(readOnly = true)
     public List<PostDto> getPostsByCategory(Long categoryId) {
         return postRepository.findAllByCategory_Id(categoryId)
                 .stream()
@@ -53,47 +54,30 @@ public class PostService {
     }
 
     /** 전체 카테고리 목록 조회 */
+    @Transactional(readOnly = true)
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
     /** 카테고리별 게시글 개수 조회 */
+    @Transactional(readOnly = true)
     public long getPostCountByCategory(Long categoryId) {
-        return postRepository.findAllByCategory_Id(categoryId).size();
+        return postRepository.countByCategory_Id(categoryId); // 효율적인 count 메소드 사용
     }
 
     /** 단일 게시글 조회 (DTO) */
-    public PostDto getPostById(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
-        return convertToDto(post);
-    }
-
     @Transactional(readOnly = true)
-    public Post getPostEntityById(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
-    private PostDto convertToDto(Post post) {
-        PostDto dto = new PostDto();
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setContent(post.getContent());
-        dto.setNickname(post.getAuthor());
-        dto.setCreatedAt(post.getCreatedAt());
-        dto.setUpdatedAt(post.getUpdatedAt());
-        dto.setGaechu(post.getGaechu());
-        dto.setBechu(post.getBechu());
-        return dto;
-    }
-
     public PostDto getPostById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
         return convertToDto(post);
     }
 
-        dto.setViewCount(post.getViewCount());
-        return dto;
+    /** 단일 게시글 조회 (Entity) */
+    @Transactional(readOnly = true)
+    public Post getPostEntityById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
     }
 
     /** 게시글 생성 */
@@ -110,11 +94,14 @@ public class PostService {
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
         post.setViewCount(0);
+        post.setGaechu(0); // 개추 초기화
+        post.setBechu(0); // 비추 초기화
 
         Post savedPost = postRepository.save(post);
         return convertToDto(savedPost);
     }
 
+    /** 게시글 수정 */
     @Transactional
     public PostDto updatePost(Long postId, PostUpdateDto updateDto) {
         Post post = postRepository.findById(postId)
@@ -127,7 +114,6 @@ public class PostService {
         post.setContent(updateDto.getContent());
         post.setCategory(category);
         post.setUpdatedAt(LocalDateTime.now());
-        // 필요 시: post.setAuthor(updateDto.getUpdatedBy());
 
         Post updatedPost = postRepository.save(post);
         return convertToDto(updatedPost);
@@ -135,11 +121,28 @@ public class PostService {
 
     /** 게시글 삭제 */
     @Transactional
-
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
         postRepository.delete(post);
+    }
+
+    /** 개추 (추천) 증가 */
+    @Transactional
+    public void gaechuPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        post.setGaechu(post.getGaechu() + 1);
+        postRepository.save(post);
+    }
+
+    /** 비추 (비추천) 증가 */
+    @Transactional
+    public void bechuPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        post.setBechu(post.getBechu() + 1);
+        postRepository.save(post);
     }
 
     /** 내부: 엔티티 → DTO 변환 */
@@ -148,31 +151,12 @@ public class PostService {
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setContent(post.getContent());
-        dto.setNickname(post.getAuthor());
+        dto.setNickname(post.getAuthor()); // 'author'가 DTO의 'nickname'에 매핑된다고 가정
         dto.setCreatedAt(post.getCreatedAt());
         dto.setUpdatedAt(post.getUpdatedAt());
         dto.setViewCount(post.getViewCount());
+        dto.setGaechu(post.getGaechu());
+        dto.setBechu(post.getBechu());
         return dto;
     }
 }
-
-    public void gaechuPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow();
-        post.setGaechu(post.getGaechu() + 1);
-        postRepository.save(post);
-    }
-
-    public void bechuPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow();
-        post.setBechu(post.getBechu() + 1);
-        postRepository.save(post);
-    }
-
-
-    @Transactional(readOnly = true)
-    public Post getPostEntityById(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
-    }
-}
-
