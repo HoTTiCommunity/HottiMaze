@@ -6,13 +6,21 @@ INSERT INTO category (name) VALUES ('감옥 Confirm게시판');
 INSERT INTO category (name) VALUES ('감옥게시판');
 
 -- 사용자 더미 데이터 (한 줄씩)
-INSERT INTO users (username, password, point) VALUES ('admin', 'password123', 1000);
-INSERT INTO users (username, password, point) VALUES ('user001', 'user123', 500);
-INSERT INTO users (username, password, point) VALUES ('student01', 'student123', 300);
-INSERT INTO users (username, password, point) VALUES ('developer', 'dev123', 800);
-INSERT INTO users (username, password, point) VALUES ('designer', 'design123', 400);
-INSERT INTO users (username, password, point) VALUES ('manager', 'manager123', 600);
-INSERT INTO users (username, password, point) VALUES ('tester', 'test123', 200);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('admin',     'password123', 1000, 0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('user001',   'user123',     500,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('student01', 'student123',  300,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('developer','dev123',       800,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('designer',  'design123',   400,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('manager',   'manager123',  600,  0, 1);
+INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK)
+VALUES ('tester',    'test123',     200,  0, 1);
+
 
 -- 공지사항 카테고리 게시글 (category_id = 1)
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id) VALUES ('사이트 이용 안내', '사이트 이용에 관한 전반적인 안내사항입니다. 회원가입 후 다양한 게시판을 이용하실 수 있습니다.', 'admin', '2024-01-15 09:00:00', '2024-01-15 09:00:00', 150, 1);

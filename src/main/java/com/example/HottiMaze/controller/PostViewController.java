@@ -19,7 +19,7 @@ import java.util.List;
 public class PostViewController {
     private final PostService postService;
 
-
+    // 게시글 생성
     @GetMapping("/create")
     public String createPost(Model model) {
         List<Category> categories = postService.getAllCategories();
@@ -28,18 +28,21 @@ public class PostViewController {
         return "post-create";
     }
 
+    //게시글 삭제
     @GetMapping("/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
         return "redirect:/post";
     }
 
+    //게시글 생성 리디렉션
     @PostMapping("/create")
     public String createPost(@ModelAttribute PostCreateDto postCreateDto) {
         PostDto createdPost = postService.createPost(postCreateDto);
         return "redirect:/";
     }
 
+    //게시글 수정
     @GetMapping("/edit/{postId}")
     public String editPost(@PathVariable Long postId, Model model) {
         Post postEntity = postService.getPostEntityById(postId);
@@ -58,7 +61,7 @@ public class PostViewController {
 
         return "post-edit";
     }
-
+    //게시글 수정 리디렉션
     @PostMapping("/edit/{postId}")
     public String updatePost(@PathVariable Long postId,
                              @ModelAttribute PostUpdateDto postUpdateDto) {
@@ -66,17 +69,27 @@ public class PostViewController {
         return "redirect:/post/" + postId;
     }
 
+    //게시글 리스트
     @GetMapping
     public String boardList(Model model) {
         List<PostDto> allPosts = postService.getAllPosts();
         model.addAttribute("posts", allPosts);
+        model.addAttribute("categoryName", null);
         return "post-list";
     }
-
+    //게시글 상세
     @GetMapping("/{postId}")
     public String postDetail(@PathVariable Long postId, Model model) {
         PostDto postDto = postService.getPostById(postId);
         model.addAttribute("post", postDto);
         return "post-detail";
+    }
+    //카테고리 게시물 리스트
+    @GetMapping("/name/{categoryName}")
+    public String boardListByCategoryName(@PathVariable String categoryName, Model model) {
+        List<PostDto> posts = postService.getPostsByCategoryName(categoryName);
+        model.addAttribute("posts", posts);
+        model.addAttribute("categoryName", categoryName);
+        return "post-list";
     }
 }
