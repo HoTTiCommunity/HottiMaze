@@ -21,16 +21,16 @@ public class MazeQuestionController {
     @GetMapping("/mazes/{mazeId}/quiz")
     public String startQuiz(@PathVariable Long mazeId, Model model) {
         try {
-            System.out.println("퀴즈 요청 - 미로 ID: " + mazeId); // 디버깅용
+            System.out.println("퀴즈 요청 - 미로 ID: " + mazeId);
 
             MazeDto maze = mazeService.getMaze(mazeId);
             List<MazeQuestionDto> questions = mazeQuestionService.getMazeQuestions(mazeId);
 
-            System.out.println("미로 정보: " + maze.getMazeTitle()); // 디버깅용
-            System.out.println("문제 개수: " + questions.size()); // 디버깅용
+            System.out.println("미로 정보: " + maze.getMazeTitle());
+            System.out.println("문제 개수: " + questions.size());
 
             for (MazeQuestionDto q : questions) {
-                System.out.println("문제: " + q.getTitle() + ", 순서: " + q.getQuestionOrder());
+                System.out.println("순서: " + q.getQuestionOrder());
             }
 
             model.addAttribute("maze", maze);
@@ -38,7 +38,7 @@ public class MazeQuestionController {
 
             return "maze-quiz";
         } catch (Exception e) {
-            e.printStackTrace(); // 에러 출력
+            e.printStackTrace();
             model.addAttribute("error", "미로 정보를 불러올 수 없습니다: " + e.getMessage());
             return "redirect:/mazes/" + mazeId;
         }

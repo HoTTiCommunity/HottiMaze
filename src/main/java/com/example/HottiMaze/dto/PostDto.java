@@ -1,8 +1,5 @@
 package com.example.HottiMaze.dto;
 
-import com.example.HottiMaze.entity.Category;
-import com.example.HottiMaze.entity.Post;
-import com.example.HottiMaze.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

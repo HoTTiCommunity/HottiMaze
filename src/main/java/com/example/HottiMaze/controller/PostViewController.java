@@ -37,9 +37,10 @@ public class PostViewController {
 
     @PostMapping("/create")
     public String createPost(@ModelAttribute PostCreateDto postCreateDto) {
-            PostDto createdPost = postService.createPost(postCreateDto);
-            return "redirect:/";
+        PostDto createdPost = postService.createPost(postCreateDto);
+        return "redirect:/";
     }
+
     @GetMapping("/edit/{postId}")
     public String editPost(@PathVariable Long postId) {
         return "";

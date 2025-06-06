@@ -18,19 +18,21 @@ public class MazeQuestion {
     @ManyToOne @JoinColumn(name = "maze_id")
     private Maze maze;
 
-    // 필수 필드들
     @Column(name = "question_image", nullable = false)
     private String questionImage; // 이미지 경로
 
     @Column(name = "correct_answer", nullable = false)
-    private String correctAnswer; // 정답 (예: "test")
+    private String correctAnswer; // 정답 (복수 정답은 "|"로 구분: "test|테스트|정답")
 
     @Column(name = "question_order")
     private Integer questionOrder; // 문제 순서
 
     // 선택적 필드들
     @Column(name = "title")
-    private String title; // 문제 제목 (선택사항)
+    private String title; // 문제 제목
+
+    @Column(name = "points")
+    private Integer points = 10; // 획득 포인트 (기본값 10점)
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

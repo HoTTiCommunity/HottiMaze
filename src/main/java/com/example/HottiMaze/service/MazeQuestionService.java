@@ -22,6 +22,13 @@ public class MazeQuestionService {
                 .collect(Collectors.toList());
     }
 
+    public List<MazeQuestionDto> getAllMazeQuestions(Long mazeId) {
+        return mazeQuestionRepository.findByMazeIdOrderByCreatedAtDesc(mazeId)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     private MazeQuestionDto convertToDto(MazeQuestion mazeQuestion) {
         MazeQuestionDto dto = new MazeQuestionDto();
         dto.setId(mazeQuestion.getId());
@@ -29,7 +36,6 @@ public class MazeQuestionService {
         dto.setQuestionImage(mazeQuestion.getQuestionImage());
         dto.setCorrectAnswer(mazeQuestion.getCorrectAnswer());
         dto.setQuestionOrder(mazeQuestion.getQuestionOrder());
-        dto.setTitle(mazeQuestion.getTitle());
         dto.setCreatedAt(mazeQuestion.getCreatedAt());
         dto.setUpdatedAt(mazeQuestion.getUpdatedAt());
 
