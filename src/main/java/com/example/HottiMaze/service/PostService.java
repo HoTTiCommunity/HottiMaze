@@ -52,6 +52,12 @@ public class PostService {
                 .count();
     }
 
+    public PostDto getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
+        return convertToDto(post);
+    }
+
     private PostDto convertToDto(Post post) {
         PostDto dto = new PostDto();
         dto.setId(post.getId());
@@ -71,6 +77,10 @@ public class PostService {
         return convertToDto(post);
     }
 
+        dto.setViewCount(post.getViewCount());
+        return dto;
+    }
+
     @Transactional
     public PostDto createPost(PostCreateDto createDto) {
         Category category = categoryRepository.findById(createDto.getCategoryId())
@@ -86,6 +96,7 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         return convertToDto(savedPost);
     }
+
     @Transactional
     public PostDto updatePost(Long postId, PostUpdateDto updateDto) {
         Post post = postRepository.findById(postId)
@@ -99,12 +110,13 @@ public class PostService {
         Post updatedPost = postRepository.save(post);
         return convertToDto(updatedPost);
     }
-    @Transactional
+
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
         postRepository.delete(post);
     }
+
     public void gaechuPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow();
         post.setGaechu(post.getGaechu() + 1);
@@ -115,5 +127,12 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow();
         post.setBechu(post.getBechu() + 1);
         postRepository.save(post);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Post getPostEntityById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
     }
 }

@@ -23,4 +23,5 @@ public class PostDto {
     private LocalDateTime updatedAt;
     private Integer gaechu;
     private Integer bechu;
+    private Integer viewCount;
 }
