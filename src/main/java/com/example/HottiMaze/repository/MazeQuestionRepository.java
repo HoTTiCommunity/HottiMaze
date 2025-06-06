@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MazeQuestionRepository extends JpaRepository<MazeQuestion, Integer> {
-    List<MazeQuestion> findByMazeIdOrderByCreatedAtDesc(Long categoryId);
+public interface MazeQuestionRepository extends JpaRepository<MazeQuestion, Long> {
+    List<MazeQuestion> findByMazeIdOrderByCreatedAtDesc(Long mazeId);
+    List<MazeQuestion> findByMazeIdOrderByQuestionOrderAsc(Long mazeId);
 }

@@ -40,7 +40,48 @@ INSERT INTO post (title, content, author, created_at, updated_at, view_count, ca
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id) VALUES ('모바일 앱 개발 프로젝트', 'Flutter를 이용한 간단한 일정 관리 앱을 만들고 있습니다. 협업하실 분 환영합니다.', 'designer', '2024-02-10 11:45:00', '2024-02-10 11:45:00', 98, 5);
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id) VALUES ('미로 게임 개발 진행상황', 'HottiMaze 프로젝트의 현재 진행상황을 공유합니다. 피드백 환영합니다!', 'manager', '2024-02-18 16:10:00', '2024-02-18 16:10:00', 142, 5);
 
-INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('초보자를 위한 간단한 미로', '/imgs/maze1.png', '2024-01-10 10:00:00', '2024-01-10 10:00:00', 245, 1);
-INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('도전! 중급 미로 탈출', '/imgs/maze2.png', '2024-01-15 14:30:00', '2024-01-15 14:30:00', 189, 2);
-INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('극한의 어려움 - 고급 미로', '/imgs/maze3.png', '2024-01-20 16:45:00', '2024-01-20 16:45:00', 156, 3);
-INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('숲속의 미스터리 미로', '/imgs/maze4.png', '2024-01-25 11:20:00', '2024-01-25 11:20:00', 298, 4);
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('초보자를 위한 간단한 미로', '/static/imgs/mazes/maze1/main.png', '2024-01-10 10:00:00', '2024-01-10 10:00:00', 245, 1);
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('도전! 중급 미로 탈출', '/static/imgs/mazes/maze2/main.png', '2024-01-15 14:30:00', '2024-01-15 14:30:00', 189, 2);
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('극한의 어려움 - 고급 미로', '/static/imgs/mazes/maze3/main.png', '2024-01-20 16:45:00', '2024-01-20 16:45:00', 156, 3);
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id) VALUES ('숲속의 미스터리 미로', '/static/imgs/mazes/maze4/main.png', '2024-01-25 11:20:00', '2024-01-25 11:20:00', 298, 4);
+
+-- MazeQuestion 샘플 데이터 추가 (미로 1번용)
+-- MazeQuestion 샘플 데이터 추가 (미로 1번용)
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (1, '시작점 찾기', '이 미로에서 시작점은 어디인가요?', 'admin', '2024-01-10 10:00:00', '2024-01-10 10:00:00', '/static/imgs/mazes/maze1/main.png', '좌상단', '우상단', '좌하단', '우하단', 1, 1);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (1, '경로 방향', '출구로 향하는 첫 번째 방향은?', 'admin', '2024-01-10 10:05:00', '2024-01-10 10:05:00', '/static/imgs/main.png', '북쪽', '남쪽', '동쪽', '서쪽', 3, 2);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (1, '난이도 판단', '이 미로의 예상 난이도는?', 'admin', '2024-01-10 10:10:00', '2024-01-10 10:10:00', '/static/imgs/main.png', '초급', '중급', '고급', '최고급', 1, 3);
+
+-- MazeQuestion 샘플 데이터 추가 (미로 2번용)
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (2, '미로 구조', '이 미로에서 가장 긴 직선 구간은?', 'admin', '2024-01-15 14:30:00', '2024-01-15 14:30:00', '/static/imgs/main.png', '가로', '세로', '대각선', '곡선', 2, 1);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (2, '출구 위치', '출구는 어느 방향에 있나요?', 'admin', '2024-01-15 14:35:00', '2024-01-15 14:35:00', '/static/imgs/main.png', '북서쪽', '북동쪽', '남서쪽', '남동쪽', 4, 2);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (2, '예상 시간', '이 미로를 완주하는데 걸리는 시간은?', 'admin', '2024-01-15 14:40:00', '2024-01-15 14:40:00', '/static/imgs/main.png', '1-3분', '3-5분', '5-8분', '8분 이상', 3, 3);
+
+-- MazeQuestion 샘플 데이터 추가 (미로 3번용)
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (3, '복잡도 분석', '이 미로의 주요 특징은?', 'admin', '2024-01-20 16:45:00', '2024-01-20 16:45:00', '/static/imgs/main.png', '단순함', '중간 복잡', '매우 복잡', '극도로 복잡', 4, 1);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (3, '전략 분석', '이 미로를 푸는 최적의 전략은?', 'admin', '2024-01-20 16:50:00', '2024-01-20 16:50:00', '/static/imgs/main.png', '무작정 시도', '벽 따라가기', '시행착오', '체계적 탐색', 4, 2);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (3, '막다른 길', '이 미로에서 막다른 길의 개수는?', 'admin', '2024-01-20 16:55:00', '2024-01-20 16:55:00', '/static/imgs/main.png', '3-5개', '6-8개', '9-12개', '13개 이상', 3, 3);
+
+-- MazeQuestion 샘플 데이터 추가 (미로 4번용)
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (4, '테마 분석', '숲속 미스터리 미로의 주요 테마는?', 'admin', '2024-01-25 11:20:00', '2024-01-25 11:20:00', '/static/imgs/main.png', '도시', '바다', '숲', '사막', 3, 1);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (4, '숨겨진 요소', '이 미로에서 발견할 수 있는 특별한 요소는?', 'admin', '2024-01-25 11:25:00', '2024-01-25 11:25:00', '/static/imgs/main.png', '보물상자', '마법의 문', '비밀통로', '모든 것', 4, 2);
+
+INSERT INTO maze_question (maze_id, title, content, author, created_at, updated_at, question_image, option1, option2, option3, option4, correct_answer, question_order)
+VALUES (4, '추천 연령', '이 미로의 추천 연령대는?', 'admin', '2024-01-25 11:30:00', '2024-01-25 11:30:00', '/static/imgs/main.png', '5-10세', '10-15세', '15-20세', '전 연령', 4, 3);

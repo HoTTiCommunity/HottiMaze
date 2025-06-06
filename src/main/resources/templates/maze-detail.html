@@ -116,6 +116,7 @@
             display: flex;
             gap: 15px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -158,6 +159,21 @@
             text-decoration: none;
         }
 
+        .btn-quiz {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+        }
+
+        .btn-quiz:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
         .maze-preview {
             flex: 0 0 400px;
             background: white;
@@ -167,8 +183,8 @@
         }
 
         .maze-image {
-            width: 380px;
-            height: 110px;
+            width: 100%;
+            height: 300px;
             object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -185,7 +201,7 @@
             font-weight: bold;
         }
 
-        .maze-game-area {
+        .maze-info-section {
             background: white;
             border-radius: 15px;
             padding: 30px;
@@ -193,46 +209,12 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .game-section-title {
+        .section-title {
             font-size: 1.5rem;
             color: #2c3e50;
             margin-bottom: 20px;
             text-align: center;
             font-weight: bold;
-        }
-
-        .game-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .control-btn {
-            padding: 10px 20px;
-            border: 2px solid #4ecdc4;
-            background: white;
-            color: #4ecdc4;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .control-btn:hover, .control-btn.active {
-            background: #4ecdc4;
-            color: white;
-        }
-
-        .maze-canvas {
-            width: 100%;
-            max-width: 800px;
-            height: 600px;
-            border: 3px solid #e9ecef;
-            border-radius: 10px;
-            margin: 0 auto;
-            display: block;
-            background: white;
         }
 
         .creator-section {
@@ -343,6 +325,7 @@
 
             .maze-stats {
                 justify-content: center;
+                flex-wrap: wrap;
             }
 
             .maze-actions {
@@ -358,10 +341,6 @@
                 position: static;
                 margin: 10px;
                 width: fit-content;
-            }
-
-            .maze-canvas {
-                height: 400px;
             }
         }
     </style>
@@ -418,6 +397,9 @@
                 </div>
 
                 <div class="maze-actions">
+                    <a th:href="@{'/mazes/' + ${maze.id} + '/quiz'}" class="btn btn-quiz">
+                        🧩 미궁 시작
+                    </a>
                     <a href="/" class="btn btn-primary">
                         🏠 메인으로 돌아가기
                     </a>
@@ -439,10 +421,8 @@
         </div>
 
         <!-- 미로 정보 -->
-        <div class="maze-game-area">
-            <h2 class="game-section-title">📋 미로 정보</h2>
-
-            <!-- 미로 정보 디버깅 -->
+        <div class="maze-info-section">
+            <h2 class="section-title">📋 미로 정보</h2>
             <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; color: #495057;">
                 <h4 style="margin-bottom: 10px; color: #2c3e50;">상세 정보</h4>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
@@ -469,192 +449,13 @@
             <p style="color: #6c757d; line-height: 1.6;">
                 이 미로는 중급 난이도로 설계되었으며, 평균 5-8분 정도의 시간이 소요됩니다.
                 전략적 사고와 인내심이 필요한 도전적인 미로입니다.
-                막힐 때는 힌트 기능을 활용해보세요!
+                <strong>미궁 시작</strong> 버튼을 눌러 문제를 풀어보세요!
             </p>
         </div>
     </div>
 </div>
 
 <script>
-    // 게임 관련 변수
-    let canvas, ctx;
-    let playerPos = {x: 1, y: 1};
-    let mazeData = [];
-    let gameStarted = false;
-    let controlMode = 'arrow';
-
-    // 페이지 로드 시 초기화
-    document.addEventListener('DOMContentLoaded', function() {
-        canvas = document.getElementById('mazeCanvas');
-        ctx = canvas.getContext('2d');
-        initializeMaze();
-        drawMaze();
-    });
-
-    // 미로 초기화 (간단한 예제 미로)
-    function initializeMaze() {
-        // 간단한 미로 데이터 (0: 길, 1: 벽, 2: 시작점, 3: 끝점)
-        mazeData = [
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,2,0,0,1,0,0,0,0,1,0,0,0,0,0,1],
-            [1,1,1,0,1,0,1,1,0,1,0,1,1,1,0,1],
-            [1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1],
-            [1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1],
-            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-            [1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1],
-            [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
-            [1,0,1,1,1,0,1,1,1,1,1,0,1,1,0,1],
-            [1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
-            [1,1,1,1,0,1,1,1,1,0,1,0,1,1,1,1],
-            [1,0,0,0,0,0,0,0,0,0,1,0,0,0,3,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-        ];
-
-        // 시작 위치 찾기
-        for(let y = 0; y < mazeData.length; y++) {
-            for(let x = 0; x < mazeData[y].length; x++) {
-                if(mazeData[y][x] === 2) {
-                    playerPos = {x: x, y: y};
-                    break;
-                }
-            }
-        }
-    }
-
-    // 미로 그리기
-    function drawMaze() {
-        const cellSize = Math.min(canvas.width / mazeData[0].length, canvas.height / mazeData.length);
-        const offsetX = (canvas.width - cellSize * mazeData[0].length) / 2;
-        const offsetY = (canvas.height - cellSize * mazeData.length) / 2;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        for(let y = 0; y < mazeData.length; y++) {
-            for(let x = 0; x < mazeData[y].length; x++) {
-                const cellX = offsetX + x * cellSize;
-                const cellY = offsetY + y * cellSize;
-
-                switch(mazeData[y][x]) {
-                    case 1: // 벽
-                        ctx.fillStyle = '#2c3e50';
-                        ctx.fillRect(cellX, cellY, cellSize, cellSize);
-                        break;
-                    case 0: // 길
-                        ctx.fillStyle = '#ecf0f1';
-                        ctx.fillRect(cellX, cellY, cellSize, cellSize);
-                        break;
-                    case 2: // 시작점
-                        ctx.fillStyle = '#ecf0f1';
-                        ctx.fillRect(cellX, cellY, cellSize, cellSize);
-                        break;
-                    case 3: // 끝점
-                        ctx.fillStyle = '#2ecc71';
-                        ctx.fillRect(cellX, cellY, cellSize, cellSize);
-                        break;
-                }
-
-                // 테두리 그리기
-                ctx.strokeStyle = '#bdc3c7';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(cellX, cellY, cellSize, cellSize);
-            }
-        }
-
-        // 플레이어 그리기
-        const playerX = offsetX + playerPos.x * cellSize + cellSize/4;
-        const playerY = offsetY + playerPos.y * cellSize + cellSize/4;
-        const playerSize = cellSize/2;
-
-        ctx.fillStyle = '#e74c3c';
-        ctx.beginPath();
-        ctx.arc(playerX + playerSize/2, playerY + playerSize/2, playerSize/2, 0, 2 * Math.PI);
-        ctx.fill();
-    }
-
-    // 게임 시작
-    function startGame() {
-        gameStarted = true;
-        document.addEventListener('keydown', handleKeyPress);
-        alert('게임이 시작되었습니다! 방향키로 이동하세요.');
-    }
-
-    // 게임 리셋
-    function resetGame() {
-        initializeMaze();
-        drawMaze();
-        gameStarted = false;
-        document.removeEventListener('keydown', handleKeyPress);
-    }
-
-    // 힌트 보기
-    function showHint() {
-        const mazeTitle = document.querySelector('[th\\:text="${maze.mazeTitle}"]');
-        const title = mazeTitle ? mazeTitle.textContent : '이 미로';
-        alert(`${title} 힌트: 오른쪽 아래 모서리가 목표점입니다. 막다른 길을 피하고 우회로를 찾아보세요!`);
-    }
-
-    // 조작 모드 설정
-    function setControlMode(mode) {
-        controlMode = mode;
-        document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-    }
-
-    // 키 입력 처리
-    function handleKeyPress(event) {
-        if(!gameStarted) return;
-
-        let newX = playerPos.x;
-        let newY = playerPos.y;
-
-        // 방향키 또는 WASD 처리
-        switch(event.key) {
-            case 'ArrowUp':
-            case 'w':
-            case 'W':
-                newY--;
-                break;
-            case 'ArrowDown':
-            case 's':
-            case 'S':
-                newY++;
-                break;
-            case 'ArrowLeft':
-            case 'a':
-            case 'A':
-                newX--;
-                break;
-            case 'ArrowRight':
-            case 'd':
-            case 'D':
-                newX++;
-                break;
-            default:
-                return;
-        }
-
-        // 이동 가능한지 확인
-        if(newX >= 0 && newX < mazeData[0].length &&
-            newY >= 0 && newY < mazeData.length &&
-            mazeData[newY][newX] !== 1) {
-
-            playerPos.x = newX;
-            playerPos.y = newY;
-            drawMaze();
-
-            // 도착점 확인
-            if(mazeData[newY][newX] === 3) {
-                setTimeout(() => {
-                    alert('🎉 축하합니다! 미로를 성공적으로 탈출했습니다!');
-                    gameStarted = false;
-                    document.removeEventListener('keydown', handleKeyPress);
-                }, 100);
-            }
-        }
-
-        event.preventDefault();
-    }
-
     // 이미지 로딩 오류 처리
     function handleImageError(img) {
         console.log('이미지 로딩 실패:', img.src);

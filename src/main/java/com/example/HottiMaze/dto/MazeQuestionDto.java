@@ -20,4 +20,13 @@ public class MazeQuestionDto {
     private String author;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // 퀴즈를 위한 추가 필드들
+    private String questionImage;
+    private String option1;
+    private String option2;
+    private String option3;
+    private String option4;
+    private Integer correctAnswer;
+    private Integer questionOrder;
 }
