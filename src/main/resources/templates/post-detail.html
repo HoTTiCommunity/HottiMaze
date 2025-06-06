@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>게시글 상세</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>게시글 상세</h1>
+
+<div>
+    <strong>ID:</strong> <span th:text="${post.id}">1</span>
+</div>
+<div>
+    <strong>제목:</strong> <span th:text="${post.title}">게시글 제목</span>
+</div>
+<div>
+    <strong>작성자:</strong> <span th:text="${post.nickname}">홍길동</span>
+</div>
+<div>
+    <strong>작성일:</strong>
+    <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">
+            2025-06-01 14:00
+        </span>
+</div>
+<div>
+    <strong>수정일:</strong>
+    <span th:text="${post.updatedAt != null ? #temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm') : '없음'}">
+            없음
+        </span>
+</div>
+<div>
+    <strong>본문:</strong>
+    <div th:utext="${post.content}">게시글 본문 내용</div>
+</div>
+<div>
+    <strong>조회수:</strong> <span th:text="${post.viewCount}">0</span>
+</div>
+
+<p>
+    <a th:href="@{/post}">목록으로 돌아가기</a>
+    &nbsp;|&nbsp;
+    <a th:href="@{/post/edit/{id}(id=${post.id})}">수정하기</a>
+    &nbsp;|&nbsp;
+    <a th:href="@{/post/delete/{id}(id=${post.id})}"
+       onclick="return confirm('정말 이 게시글을 삭제하시겠습니까?');">
+        삭제하기
+    </a>
+</p>
+</body>
+</html>

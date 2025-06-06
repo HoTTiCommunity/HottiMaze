@@ -1,0 +1,54 @@
+<!-- src/main/resources/templates/post-edit.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>게시글 수정</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>게시글 수정</h1>
+
+<!-- th:object="${postUpdateDto}" 바인딩 -->
+<form th:action="@{/post/edit/{id}(id=${postId})}"
+      th:object="${postUpdateDto}"
+      method="post">
+    <div>
+        <label for="title">제목:</label>
+        <input type="text"
+               id="title"
+               th:field="*{title}"
+               placeholder="제목을 입력하세요"
+               required />
+    </div>
+    <div>
+        <label for="content">내용:</label>
+        <textarea id="content"
+                  th:field="*{content}"
+                  rows="8"
+                  cols="50"
+                  placeholder="내용을 입력하세요"
+                  required></textarea>
+    </div>
+    <div>
+        <label for="categoryId">카테고리:</label>
+        <select id="categoryId"
+                th:field="*{categoryId}">
+            <option th:each="cat : ${categories}"
+                    th:value="${cat.id}"
+                    th:text="${cat.name}"
+                    th:selected="${cat.id == postUpdateDto.categoryId}">
+                카테고리 이름
+            </option>
+        </select>
+    </div>
+    <div>
+        <input type="hidden" th:field="*{updatedBy}" />
+    </div>
+    <div>
+        <button type="submit">수정 완료</button>
+        <a th:href="@{/post/{id}(id=${postId})}">취소</a>
+    </div>
+</form>
+</body>
+</html>

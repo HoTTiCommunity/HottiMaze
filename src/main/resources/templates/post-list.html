@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${categoryName != null} ? ${categoryName} + ' 게시글 목록' : '전체 게시글 목록'">
+        게시글 목록
+    </title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1 th:text="${categoryName != null} ? ${categoryName} + ' 게시글' : '전체 게시글'">
+    게시글
+</h1>
+
+<table border="1" cellpadding="6" style="width: 100%; margin-top: 20px;">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>작성일</th>
+        <th>조회수</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${posts}">
+        <td th:text="${post.id}">1</td>
+        <td>
+            <a th:href="@{/post/{id}(id=${post.id})}"
+               th:text="${post.title}">게시글 제목</a>
+        </td>
+        <td th:text="${post.nickname}">작성자</td>
+        <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">
+            2025-06-01 14:00
+        </td>
+        <td th:text="${post.viewCount}">0</td>
+    </tr>
+    <tr th:if="${posts == null or #lists.isEmpty(posts)}">
+        <td colspan="5" style="text-align: center; padding: 20px;">
+            <span>해당 카테고리의 게시글이 없습니다.</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p style="margin-top: 20px;">
+    <a th:href="@{/post/create}">✏️ 새 글 작성</a>
+</p>
+</body>
+</html>
