@@ -1,11 +1,14 @@
 package com.example.HottiMaze.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "Users")
 @Getter @Setter
@@ -20,5 +23,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "point", nullable = true)
-    private int point;
+    private int point = 0;
+    @Column(name = "Chulcheck", nullable = false)
+    private int chulcheck = 0;
+    @Column(nullable = true)
+    private Integer IsAvailableChulcheck = 1;
 }
