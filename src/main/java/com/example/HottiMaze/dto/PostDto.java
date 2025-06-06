@@ -21,5 +21,7 @@ public class PostDto {
     private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer gaechu;
+    private Integer bechu;
     private Integer viewCount;
 }

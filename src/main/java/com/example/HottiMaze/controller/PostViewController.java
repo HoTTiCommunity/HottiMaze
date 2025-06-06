@@ -2,6 +2,7 @@ package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.dto.PostCreateDto;
 import com.example.HottiMaze.dto.PostDto;
+import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.dto.PostUpdateDto;
 import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
@@ -18,8 +19,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostViewController {
     private final PostService postService;
-
     // 게시글 생성
+    @GetMapping
+    public String boardList() {
+        return "";
+    }
+
+    @GetMapping("/{postId}")
+    public String postDetail(@PathVariable Long postId, Model model) {
+        PostDto post = postService.getPostById(postId);
+        model.addAttribute("post", post);
+        return "geul";
+    }
+
     @GetMapping("/create")
     public String createPost(Model model) {
         List<Category> categories = postService.getAllCategories();
@@ -28,7 +40,15 @@ public class PostViewController {
         return "post-create";
     }
 
-    //게시글 삭제
+    @PostMapping("/create")
+    public String createPost(@ModelAttribute PostCreateDto postCreateDto) {
+            PostDto createdPost = postService.createPost(postCreateDto);
+            return "redirect:/";
+    }
+    @GetMapping("/edit/{postId}")
+    public String editPost(@PathVariable Long postId) {
+        return "";
+      
     @GetMapping("/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);

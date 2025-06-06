@@ -2,7 +2,9 @@
 package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.entity.User;
+import com.example.HottiMaze.dto.MazeDto;
 import com.example.HottiMaze.dto.PostDto;
+import com.example.HottiMaze.service.MazeService;
 import com.example.HottiMaze.service.PostService;
 import com.example.HottiMaze.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,13 @@ public class MainController {
         List<PostDto> jailPosts    = postService.getPostsByCategoryName("감옥게시판");
 
         // (옵션) 각 목록에서 최대 5개까지만 잘라서 보여주기
+    private final MazeService mazeService;
+
+    @GetMapping("/")
+    public String index(Model model) {
+        List<PostDto> noticePosts = postService.getPostsByCategoryName("공지사항");
+        List<PostDto> freePosts = postService.getPostsByCategoryName("자유게시판");
+      
         if (noticePosts.size() > 5) {
             noticePosts = noticePosts.subList(0, 5);
         }
@@ -62,5 +71,15 @@ public class MainController {
         // ──────────────────────────────────────────────────────────────────────
 
         return "index";  // → templates/index.html
+
+        List<MazeDto> latestMazes = mazeService.getLatestMazes();
+        List<MazeDto> popularMazes = mazeService.getPopularMazes();
+
+        model.addAttribute("noticePosts", noticePosts);
+        model.addAttribute("freePosts", freePosts);
+        model.addAttribute("latestMazes", latestMazes);
+        model.addAttribute("popularMazes", popularMazes);
+
+        return "index";
     }
 }

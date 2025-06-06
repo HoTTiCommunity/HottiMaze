@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -108,11 +108,16 @@
             opacity: 0.9;
         }
 
+        .content-wrapper {
+            padding: 30px;
+        }
+
+        /* 게시판 섹션 */
         .board-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            padding: 30px;
+            margin-bottom: 40px;
         }
 
         .board-section {
@@ -180,11 +185,248 @@
             color: #6c757d;
         }
 
-        .view-count {
-            background: #e3f2fd;
-            padding: 2px 8px;
+        /* 미로 섹션 */
+        .maze-section {
+            margin-top: 40px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: block;
+            margin: 10px auto;
+            border-radius: 2px;
+        }
+
+        .maze-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .tab-button {
+            padding: 12px 30px;
+            border: none;
+            background: #f8f9fa;
+            color: #6c757d;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .maze-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 25px;
+            margin-bottom: 30px;
+            min-width: 0;
+        }
+
+        .maze-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-width: 0; /* 카드가 줄어들 수 있도록 */
+        }
+
+        .maze-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .maze-thumbnail {
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .maze-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .maze-card:hover .maze-image {
+            transform: scale(1.05);
+        }
+
+        .maze-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .maze-card:hover .maze-overlay {
+            opacity: 1;
+        }
+
+        .maze-fallback {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .maze-fallback::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10 10h80v80h-80z" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/><path d="M20 20h60v60h-60z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/></svg>');
+            opacity: 0.6;
+        }
+
+        .maze-content {
+            padding: 20px;
+        }
+
+        .maze-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .maze-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 1.1rem;
+        }
+
+        .rating-score {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .rating-count {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .maze-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .maze-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 10px;
             border-radius: 12px;
-            color: #1976d2;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .tag.difficulty-easy { background: #d4edda; color: #155724; }
+        .tag.difficulty-medium { background: #fff3cd; color: #856404; }
+        .tag.difficulty-hard { background: #f8d7da; color: #721c24; }
+
+        .maze-creator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .creator-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .creator-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .creator-name {
+            font-size: 0.9rem;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .maze-date {
+            font-size: 0.85rem;
+            color: #6c757d;
         }
 
         .create-button {
@@ -202,6 +444,7 @@
             box-shadow: 0 10px 30px rgba(238, 90, 36, 0.3);
             transition: all 0.3s ease;
             text-decoration: none;
+            z-index: 1000;
         }
 
         .create-button:hover {
@@ -214,19 +457,135 @@
         .empty-message {
             text-align: center;
             color: #6c757d;
-            padding: 40px 20px;
+            padding: 60px 20px;
             font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            margin: 40px 0;
+            border-radius: 2px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 디버깅용 스타일 */
+        .debug-info {
+            background: #fff3cd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #856404;
         }
 
         @media (max-width: 768px) {
             .board-container {
                 grid-template-columns: 1fr;
                 gap: 20px;
-                padding: 20px;
+            }
+
+            .maze-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 10px !important;
+            }
+
+            .content-wrapper {
+                padding: 10px;
             }
 
             header h1 {
                 font-size: 2rem;
+            }
+
+            .maze-tabs {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .tab-button {
+                width: 200px;
+            }
+
+            .maze-card {
+                min-height: auto;
+            }
+
+            .maze-thumbnail {
+                height: 80px !important;
+            }
+
+            .maze-content {
+                padding: 8px !important;
+            }
+
+            .maze-title {
+                font-size: 0.8rem !important;
+                line-height: 1.2;
+            }
+
+            .maze-rating {
+                margin-bottom: 5px;
+            }
+
+            .stars {
+                font-size: 0.8rem;
+            }
+
+            .rating-score, .rating-count {
+                font-size: 0.7rem;
+            }
+
+            .maze-stats {
+                margin-bottom: 8px;
+            }
+
+            .stat-item {
+                font-size: 0.7rem;
+            }
+
+            .maze-tags {
+                margin-bottom: 8px;
+            }
+
+            .tag {
+                font-size: 0.6rem;
+                padding: 2px 6px;
+            }
+
+            .maze-creator {
+                padding-top: 8px;
+            }
+
+            .creator-avatar {
+                width: 16px;
+                height: 16px;
+                font-size: 0.6rem;
+            }
+
+            .creator-name {
+                font-size: 0.7rem;
+            }
+
+            .maze-date {
+                font-size: 0.6rem;
+            }
+
+            .debug-info {
+                font-size: 0.5rem !important;
+                padding: 2px !important;
+            }
+        }
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .maze-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 15px;
             }
         }
     </style>
@@ -295,11 +654,58 @@
                         <div class="post-meta">
                             <span th:text="${post.nickname}">작성자</span>
                             <span th:text="${#temporals.format(post.createdAt, 'MM-dd')}">날짜</span>
+
+    <div class="content-wrapper">
+        <!-- 게시판 섹션 -->
+        <div class="board-container">
+            <!-- 공지사항 게시판 -->
+            <div class="board-section notice-board">
+                <div class="board-header">
+                    📢 공지사항
+                </div>
+                <div class="post-list">
+                    <div th:if="${noticePosts != null and !noticePosts.isEmpty()}">
+                        <div th:each="post : ${noticePosts}"
+                             class="post-item"
+                             th:data-post-id="${post.id}"
+                             onclick="goToPost(this)">
+                            <div class="post-title" th:text="${post.title}">제목</div>
+                            <div class="post-meta">
+                                <span th:text="${post.nickname}">작성자</span>
+                                <span th:text="${#temporals.format(post.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
+
                         </div>
                     </div>
+                    <div th:if="${noticePosts == null or noticePosts.isEmpty()}" class="empty-message">
+                        등록된 공지사항이 없습니다.
+                    </div>
                 </div>
-                <div th:if="${noticePosts == null or noticePosts.isEmpty()}" class="empty-message">
-                    등록된 공지사항이 없습니다.
+            </div>
+
+            <!-- 자유게시판 (Dev-0.1의 링크 기능 포함) -->
+            <div class="board-section free-board">
+                <div class="board-header">
+                    <a th:href="@{/post}"
+                       style="color: inherit; text-decoration: none; display: block;">
+                        💬 자유게시판
+
+                </div>
+                <div class="post-list">
+                    <div th:if="${freePosts != null and !freePosts.isEmpty()}">
+                        <div th:each="post : ${freePosts}"
+                             class="post-item"
+                             th:onclick="'location.href=\'/post/' + ${post.id} + '\''">
+                            <div class="post-title" th:text="${post.title}">제목</div>
+                            <div class="post-meta">
+                                <span th:text="${post.nickname}">작성자</span>
+                                <span th:text="${#temporals.format(post.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${freePosts == null or freePosts.isEmpty()}" class="empty-message">
+                        등록된 게시글이 없습니다.
+                    </div>
                 </div>
             </div>
         </div>
@@ -322,11 +728,152 @@
                         <div class="post-meta">
                             <span th:text="${post.nickname}">작성자</span>
                             <span th:text="${#temporals.format(post.createdAt, 'MM-dd')}">날짜</span>
+        <!-- 구분선 -->
+        <div class="section-divider"></div>
+
+        <!-- 미로 섹션 -->
+        <div class="maze-section">
+            <h2 class="section-title">🎯 미로 탐험</h2>
+
+            <!-- 탭 버튼 -->
+            <div class="maze-tabs">
+                <button class="tab-button active" onclick="showMazeTab('latest')">🆕 최신 미로</button>
+                <button class="tab-button" onclick="showMazeTab('popular')">🔥 인기 미로</button>
+            </div>
+
+            <!-- 최신 미로 -->
+            <div id="latest-mazes" class="maze-grid">
+                <div th:if="${latestMazes != null and !latestMazes.isEmpty()}">
+                    <div th:each="maze : ${latestMazes}"
+                         class="maze-card"
+                         th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
+                        <div class="maze-thumbnail">
+                            <img th:src="${maze.mazeDir}"
+                                 th:alt="${maze.mazeTitle}"
+                                 class="maze-image"
+                                 onerror="handleImageError(this)">
+                            <div class="maze-fallback" style="display: none;">
+                                🧩
+                            </div>
+                            <div class="maze-overlay">
+                                ▶️ PLAY
+                            </div>
+                        </div>
+                        <div class="maze-content">
+                            <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
+
+                            <!-- 디버깅 정보 -->
+                            <div class="debug-info" style="font-size: 0.7rem; padding: 5px;">
+                                경로: <span th:text="${maze.mazeDir}">/imgs/maze1.jpg</span>
+                            </div>
+
+                            <div class="maze-rating">
+                                <div class="stars">★★★★☆</div>
+                                <span class="rating-score">4.2</span>
+                                <span class="rating-count">(15)</span>
+                            </div>
+
+                            <div class="maze-stats">
+                                <div class="stat-item">
+                                    <span>👁</span>
+                                    <span th:text="${maze.viewCount}">조회수</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⏱</span>
+                                    <span>5분</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>🏆</span>
+                                    <span>23</span>
+                                </div>
+                            </div>
+
+                            <div class="maze-tags">
+                                <span class="tag difficulty-easy">쉬움</span>
+                                <span class="tag">모험</span>
+                                <span class="tag">퍼즐</span>
+                            </div>
+
+                            <div class="maze-creator">
+                                <div class="creator-info">
+                                    <div class="creator-avatar" th:text="${#strings.substring(maze.creatorName, 0, 1)}">A</div>
+                                    <span class="creator-name" th:text="${maze.creatorName}">제작자</span>
+                                </div>
+                                <span class="maze-date" th:text="${#temporals.format(maze.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div th:if="${freePosts == null or freePosts.isEmpty()}" class="empty-message">
-                    등록된 게시글이 없습니다.
+                <div th:if="${latestMazes == null or latestMazes.isEmpty()}" class="empty-message">
+                    등록된 미로가 없습니다.
+                </div>
+            </div>
+
+            <!-- 인기 미로 -->
+            <div id="popular-mazes" class="maze-grid hidden">
+                <div th:if="${popularMazes != null and !popularMazes.isEmpty()}">
+                    <div th:each="maze : ${popularMazes}"
+                         class="maze-card"
+                         th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
+                        <div class="maze-thumbnail">
+                            <img th:src="${maze.mazeDir}"
+                                 th:alt="${maze.mazeTitle}"
+                                 class="maze-image"
+                                 onerror="handleImageError(this)">
+                            <div class="maze-fallback" style="display: none;">
+                                🔥
+                            </div>
+                            <div class="maze-overlay">
+                                ▶️ PLAY
+                            </div>
+                        </div>
+                        <div class="maze-content">
+                            <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
+
+                            <!-- 디버깅 정보 -->
+                            <div class="debug-info" style="font-size: 0.7rem; padding: 5px;">
+                                경로: <span th:text="${maze.mazeDir}">/imgs/maze1.jpg</span>
+                            </div>
+
+                            <div class="maze-rating">
+                                <div class="stars">★★★★★</div>
+                                <span class="rating-score">4.8</span>
+                                <span class="rating-count">(42)</span>
+                            </div>
+
+                            <div class="maze-stats">
+                                <div class="stat-item">
+                                    <span>👁</span>
+                                    <span th:text="${maze.viewCount}">조회수</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⏱</span>
+                                    <span>8분</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>🏆</span>
+                                    <span>56</span>
+                                </div>
+                            </div>
+
+                            <div class="maze-tags">
+                                <span class="tag difficulty-hard">어려움</span>
+                                <span class="tag">전략</span>
+                                <span class="tag">도전</span>
+                            </div>
+
+                            <div class="maze-creator">
+                                <div class="creator-info">
+                                    <div class="creator-avatar" th:text="${#strings.substring(maze.creatorName, 0, 1)}">A</div>
+                                    <span class="creator-name" th:text="${maze.creatorName}">제작자</span>
+                                </div>
+                                <span class="maze-date" th:text="${#temporals.format(maze.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${popularMazes == null or popularMazes.isEmpty()}" class="empty-message">
+                    등록된 미로가 없습니다.
                 </div>
             </div>
         </div>
@@ -457,6 +1004,35 @@
             }
         });
     /*]]>*/
+<script>
+    // 게시글 클릭 시 상세 페이지로 이동
+    function goToPost(element) {
+        const postId = element.getAttribute('data-post-id');
+        location.href = '/post/' + postId;
+    }
+
+    // 미로 탭 전환
+    function showMazeTab(tabName) {
+        // 모든 탭 버튼 비활성화
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // 모든 미로 그리드 숨기기
+        document.getElementById('latest-mazes').classList.add('hidden');
+        document.getElementById('popular-mazes').classList.add('hidden');
+
+        // 선택된 탭 활성화
+        event.target.classList.add('active');
+        document.getElementById(tabName + '-mazes').classList.remove('hidden');
+    }
+
+    // 이미지 로딩 오류 처리
+    function handleImageError(img) {
+        console.log('이미지 로딩 실패:', img.src);
+        img.style.display = 'none';
+        img.nextElementSibling.style.display = 'flex';
+    }
 </script>
 </body>
 </html>

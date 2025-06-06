@@ -2,12 +2,18 @@ package com.example.HottiMaze.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "Users")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +28,4 @@ public class User {
     private int chulcheck = 0;
     @Column(nullable = true)
     private Integer IsAvailableChulcheck = 1;
-
 }

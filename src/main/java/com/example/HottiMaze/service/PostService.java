@@ -69,11 +69,31 @@ public class PostService {
         return convertToDto(post);
     }
 
-    /** 엔티티 그대로 조회 (수정 폼에서 사용) */
     @Transactional(readOnly = true)
     public Post getPostEntityById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
+    private PostDto convertToDto(Post post) {
+        PostDto dto = new PostDto();
+        dto.setId(post.getId());
+        dto.setTitle(post.getTitle());
+        dto.setContent(post.getContent());
+        dto.setNickname(post.getAuthor());
+        dto.setCreatedAt(post.getCreatedAt());
+        dto.setUpdatedAt(post.getUpdatedAt());
+        dto.setGaechu(post.getGaechu());
+        dto.setBechu(post.getBechu());
+        return dto;
+    }
+
+    public PostDto getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        return convertToDto(post);
+    }
+
+        dto.setViewCount(post.getViewCount());
+        return dto;
     }
 
     /** 게시글 생성 */
@@ -95,7 +115,6 @@ public class PostService {
         return convertToDto(savedPost);
     }
 
-    /** 게시글 수정 */
     @Transactional
     public PostDto updatePost(Long postId, PostUpdateDto updateDto) {
         Post post = postRepository.findById(postId)
@@ -116,6 +135,7 @@ public class PostService {
 
     /** 게시글 삭제 */
     @Transactional
+
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
@@ -135,3 +155,24 @@ public class PostService {
         return dto;
     }
 }
+
+    public void gaechuPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        post.setGaechu(post.getGaechu() + 1);
+        postRepository.save(post);
+    }
+
+    public void bechuPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        post.setBechu(post.getBechu() + 1);
+        postRepository.save(post);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Post getPostEntityById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
+    }
+}
+
