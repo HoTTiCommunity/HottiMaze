@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -18,25 +19,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostViewController {
     private final PostService postService;
-    // 게시글 생성
+
+    // 게시글 목록 (전체)
     @GetMapping
-    public String boardList() {
-        return "";
+    public String boardList(Model model) {
+        List<PostDto> allPosts = postService.getAllPosts();
+        model.addAttribute("posts", allPosts);
+        model.addAttribute("categoryName", null);
+        return "post-list";
     }
 
+    // 게시글 상세보기
     @GetMapping("/{postId}")
     public String postDetail(@PathVariable Long postId, Model model) {
         PostDto post = postService.getPostById(postId);
         model.addAttribute("post", post);
         return "geul";
     }
-    //게시글 상세 이거 확인
-//    @GetMapping("/{postId}")
-//    public String postDetail(@PathVariable Long postId, Model model) {
-//        PostDto postDto = postService.getPostById(postId);
-//        model.addAttribute("post", postDto);
-//        return "post-detail";
-//    }
+
+    // 게시글 생성 폼 표시
     @GetMapping("/create")
     public String createPost(Model model) {
         List<Category> categories = postService.getAllCategories();
@@ -45,24 +46,21 @@ public class PostViewController {
         return "post-create";
     }
 
-    //게시글 생성 리디렉션
+    // 게시글 생성 처리
     @PostMapping("/create")
-    public String createPost(@ModelAttribute PostCreateDto postCreateDto) {
+    public String createPost(@ModelAttribute PostCreateDto postCreateDto,
+                             RedirectAttributes redirectAttributes) {
+        try {
             PostDto createdPost = postService.createPost(postCreateDto);
-            return "redirect:/";
+            redirectAttributes.addFlashAttribute("success", "게시글이 성공적으로 작성되었습니다.");
+            return "redirect:/post/" + createdPost.getId();
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "게시글 작성 중 오류가 발생했습니다: " + e.getMessage());
+            return "redirect:/post/create";
+        }
     }
 
-    @GetMapping("/edit/{postId}")
-    public String editPost(@PathVariable Long postId) {
-        return "";
-    }
-    @GetMapping("/delete/{postId}")
-    public String deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
-        return "redirect:/post";
-    }
-
-    //게시글 수정
+    // 게시글 수정 폼 표시
     @GetMapping("/edit/{postId}")
     public String editPost(@PathVariable Long postId, Model model) {
         Post postEntity = postService.getPostEntityById(postId);
@@ -81,28 +79,46 @@ public class PostViewController {
 
         return "post-edit";
     }
-    //게시글 수정 리디렉션
+
+    // 게시글 수정 처리
     @PostMapping("/edit/{postId}")
     public String updatePost(@PathVariable Long postId,
-                             @ModelAttribute PostUpdateDto postUpdateDto) {
-        postService.updatePost(postId, postUpdateDto);
-        return "redirect:/post/" + postId;
+                             @ModelAttribute PostUpdateDto postUpdateDto,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            postService.updatePost(postId, postUpdateDto);
+            redirectAttributes.addFlashAttribute("success", "게시글이 성공적으로 수정되었습니다.");
+            return "redirect:/post/" + postId;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "게시글 수정 중 오류가 발생했습니다: " + e.getMessage());
+            return "redirect:/post/edit/" + postId;
+        }
     }
 
-    //게시글 리스트
-    @GetMapping
-    public String boardList(Model model) {
-        List<PostDto> allPosts = postService.getAllPosts();
-        model.addAttribute("posts", allPosts);
-        model.addAttribute("categoryName", null);
-        return "post-list";
+    // 게시글 삭제
+    @GetMapping("/delete/{postId}")
+    public String deletePost(@PathVariable Long postId, RedirectAttributes redirectAttributes) {
+        try {
+            postService.deletePost(postId);
+            redirectAttributes.addFlashAttribute("success", "게시글이 성공적으로 삭제되었습니다.");
+            return "redirect:/post";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "게시글 삭제 중 오류가 발생했습니다: " + e.getMessage());
+            return "redirect:/post/" + postId;
+        }
     }
-    //카테고리 게시물 리스트
+
+    // 카테고리별 게시글 목록
     @GetMapping("/name/{categoryName}")
     public String boardListByCategoryName(@PathVariable String categoryName, Model model) {
-        List<PostDto> posts = postService.getPostsByCategoryName(categoryName);
-        model.addAttribute("posts", posts);
-        model.addAttribute("categoryName", categoryName);
-        return "post-list";
+        try {
+            List<PostDto> posts = postService.getPostsByCategoryName(categoryName);
+            model.addAttribute("posts", posts);
+            model.addAttribute("categoryName", categoryName);
+            return "post-list";
+        } catch (Exception e) {
+            model.addAttribute("error", "카테고리를 찾을 수 없습니다: " + categoryName);
+            return "redirect:/post";
+        }
     }
 }
