@@ -14,10 +14,15 @@ import java.time.LocalDateTime;
 public class Maze {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "maze_dir", nullable = false)
+
     @Column(name = "maze_id")
     private Long id;
 
     @Column(name = "maze_dir", nullable = true) // nullable = false에서 true로 변경
+
     private String mazeDir;
 
     @Column(name = "maze_title", nullable = false)

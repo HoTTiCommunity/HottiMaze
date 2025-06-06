@@ -23,6 +23,7 @@ public class MazeController {
     @GetMapping("/{mazeId}")
     public String getMaze(@PathVariable Long mazeId, Model model) {
         MazeDto mazeDto = mazeService.getMaze(mazeId);
+        model.addAttribute("maze", mazeDto);
         List<MazeQuestionDto> mazeQuestionDto = mazeQuestionService.getMazeQuestions(mazeId);
         model.addAttribute("maze", mazeDto);
         model.addAttribute("mazeQuestions", mazeQuestionDto);

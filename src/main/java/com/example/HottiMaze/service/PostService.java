@@ -66,6 +66,17 @@ public class PostService {
         dto.setNickname(post.getAuthor());
         dto.setCreatedAt(post.getCreatedAt());
         dto.setUpdatedAt(post.getUpdatedAt());
+        dto.setGaechu(post.getGaechu());
+        dto.setBechu(post.getBechu());
+        return dto;
+    }
+
+    public PostDto getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+        return convertToDto(post);
+    }
+
         dto.setViewCount(post.getViewCount());
         return dto;
     }
@@ -100,17 +111,28 @@ public class PostService {
         return convertToDto(updatedPost);
     }
 
-    @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
         postRepository.delete(post);
     }
 
+    public void gaechuPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        post.setGaechu(post.getGaechu() + 1);
+        postRepository.save(post);
+    }
+
+    public void bechuPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        post.setBechu(post.getBechu() + 1);
+        postRepository.save(post);
+    }
+
+
     @Transactional(readOnly = true)
     public Post getPostEntityById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. ID: " + postId));
     }
-
 }

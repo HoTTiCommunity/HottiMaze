@@ -2,6 +2,7 @@ package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.dto.PostCreateDto;
 import com.example.HottiMaze.dto.PostDto;
+import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.dto.PostUpdateDto;
 import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
@@ -19,6 +20,17 @@ import java.util.List;
 public class PostViewController {
     private final PostService postService;
 
+    @GetMapping
+    public String boardList() {
+        return "";
+    }
+
+    @GetMapping("/{postId}")
+    public String postDetail(@PathVariable Long postId, Model model) {
+        PostDto post = postService.getPostById(postId);
+        model.addAttribute("post", post);
+        return "geul";
+    }
 
     @GetMapping("/create")
     public String createPost(Model model) {
@@ -28,6 +40,15 @@ public class PostViewController {
         return "post-create";
     }
 
+    @PostMapping("/create")
+    public String createPost(@ModelAttribute PostCreateDto postCreateDto) {
+            PostDto createdPost = postService.createPost(postCreateDto);
+            return "redirect:/";
+    }
+    @GetMapping("/edit/{postId}")
+    public String editPost(@PathVariable Long postId) {
+        return "";
+      
     @GetMapping("/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);

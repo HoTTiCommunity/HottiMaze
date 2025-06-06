@@ -1,5 +1,12 @@
 package com.example.HottiMaze.service;
 
+
+import com.example.HottiMaze.dto.MazeDto;
+import com.example.HottiMaze.entity.Maze;
+import com.example.HottiMaze.repository.MazeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 import com.example.HottiMaze.dto.MazeCreateDto;
 import com.example.HottiMaze.dto.MazeDto;
 import com.example.HottiMaze.entity.Maze;
@@ -47,6 +54,11 @@ public class MazeService {
         return mazeRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    public MazeDto getMaze(Long id) {
+        Maze maze = mazeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No id : " + id));
+        return convertToDto(maze);
     }
 
     public MazeDto getMaze(Long id) {
