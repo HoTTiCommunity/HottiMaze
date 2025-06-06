@@ -56,18 +56,20 @@ public class PostApiController {
 
     @PostMapping("/posts")
     public ResponseEntity<PostDto> createPost(@RequestBody PostCreateDto createDto) {
-            PostDto createdPost = postService.createPost(createDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+        PostDto createdPost = postService.createPost(createDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
+
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostDto> updatePost(@PathVariable Long postId,
                                               @RequestBody PostUpdateDto updateDto) {
-            PostDto updatedPost = postService.updatePost(postId, updateDto);
-            return ResponseEntity.ok(updatedPost);
+        PostDto updatedPost = postService.updatePost(postId, updateDto);
+        return ResponseEntity.ok(updatedPost);
     }
+
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-            postService.deletePost(postId);
-            return ResponseEntity.status(HttpStatus.OK).build();
+        postService.deletePost(postId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostDto {
+public class MazeDto {
     private Long id;
-    private String title;
-    private String content;
-    private String nickname;
+    private String mazeTitle;
+    private String mazeDir;
+    private String creatorName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer viewCount;

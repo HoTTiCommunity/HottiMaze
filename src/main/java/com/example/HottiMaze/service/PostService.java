@@ -85,6 +85,7 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         return convertToDto(savedPost);
     }
+
     @Transactional
     public PostDto updatePost(Long postId, PostUpdateDto updateDto) {
         Post post = postRepository.findById(postId)
@@ -98,6 +99,7 @@ public class PostService {
         Post updatedPost = postRepository.save(post);
         return convertToDto(updatedPost);
     }
+
     @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
