@@ -21,12 +21,13 @@ import java.util.List;
 public class MainController {
 
     private final PostService postService;
-    private final UserService userService; // User 정보를 가져오기 위해 추가
+    private final UserService userService;
     private final MazeService mazeService;
 
     @GetMapping("/")
     public String index(Model model,
-            @AuthenticationPrincipal UserDetails principal) {
+                        @AuthenticationPrincipal UserDetails principal) {
+
         // ─── 1) 로그인된 사용자가 있으면 User 엔티티 조회해서 모델에 담기 ───
         if (principal != null) {
             String username = principal.getUsername();
@@ -44,23 +45,37 @@ public class MainController {
         List<PostDto> qnaPosts = postService.getPostsByCategoryName("질문과답변");
         List<PostDto> confirmPosts = postService.getPostsByCategoryName("감옥 Confirm게시판");
         List<PostDto> jailPosts = postService.getPostsByCategoryName("감옥게시판");
-        List<MazeDto> latestMazes = mazeService.getLatestMazes();
-        List<MazeDto> popularMazes = mazeService.getPopularMazes();
 
+        // 최대 5개까지만 표시
         if (noticePosts.size() > 5) {
             noticePosts = noticePosts.subList(0, 5);
         }
         if (freePosts.size() > 5) {
             freePosts = freePosts.subList(0, 5);
         }
+        if (qnaPosts.size() > 5) {
+            qnaPosts = qnaPosts.subList(0, 5);
+        }
+        if (confirmPosts.size() > 5) {
+            confirmPosts = confirmPosts.subList(0, 5);
+        }
+        if (jailPosts.size() > 5) {
+            jailPosts = jailPosts.subList(0, 5);
+        }
+
+        // ─── 3) 미로 목록 조회 ───
+        List<MazeDto> latestMazes = mazeService.getLatestMazes();
+        List<MazeDto> popularMazes = mazeService.getPopularMazes();
+
+        // ─── 4) 모델에 데이터 추가 (중복 제거) ───
+        // 게시글 데이터
         model.addAttribute("noticePosts", noticePosts);
         model.addAttribute("freePosts", freePosts);
         model.addAttribute("qnaPosts", qnaPosts);
         model.addAttribute("confirmPosts", confirmPosts);
         model.addAttribute("jailPosts", jailPosts);
 
-        model.addAttribute("noticePosts", noticePosts);
-        model.addAttribute("freePosts", freePosts);
+        // 미로 데이터 (한 번만 추가)
         model.addAttribute("latestMazes", latestMazes);
         model.addAttribute("popularMazes", popularMazes);
 
