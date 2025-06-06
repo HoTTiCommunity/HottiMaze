@@ -18,40 +18,23 @@ public class MazeQuestion {
     @ManyToOne @JoinColumn(name = "maze_id")
     private Maze maze;
 
+    // 필수 필드들
+    @Column(name = "question_image", nullable = false)
+    private String questionImage; // 이미지 경로
+
+    @Column(name = "correct_answer", nullable = false)
+    private String correctAnswer; // 정답 (예: "test")
+
+    @Column(name = "question_order")
+    private Integer questionOrder; // 문제 순서
+
+    // 선택적 필드들
     @Column(name = "title")
-    private String title;
-
-    @Column(name = "content")
-    private String content;
-
-    @Column(name = "author")
-    private String author;
+    private String title; // 문제 제목 (선택사항)
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // 퀴즈를 위한 추가 필드들
-    @Column(name = "question_image")
-    private String questionImage;
-
-    @Column(name = "option1")
-    private String option1;
-
-    @Column(name = "option2")
-    private String option2;
-
-    @Column(name = "option3")
-    private String option3;
-
-    @Column(name = "option4")
-    private String option4;
-
-    @Column(name = "correct_answer")
-    private Integer correctAnswer; // 1-4 중 정답 번호
-
-    @Column(name = "question_order")
-    private Integer questionOrder; // 문제 순서
 }

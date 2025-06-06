@@ -19,7 +19,7 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
@@ -44,47 +44,6 @@
       padding: 30px;
     }
 
-    .quiz-header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #e9ecef;
-    }
-
-    .quiz-title {
-      font-size: 1.8rem;
-      color: #2c3e50;
-      margin-bottom: 10px;
-    }
-
-    .quiz-progress {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .progress-bar {
-      flex: 1;
-      max-width: 300px;
-      height: 8px;
-      background: #e9ecef;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(45deg, #4ecdc4, #44a08d);
-      transition: width 0.3s ease;
-    }
-
-    .progress-text {
-      color: #6c757d;
-      font-weight: bold;
-    }
-
     .quiz-question {
       background: white;
       border-radius: 15px;
@@ -92,6 +51,7 @@
       margin-bottom: 30px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       display: none;
+      text-align: center;
     }
 
     .quiz-question.active {
@@ -101,80 +61,73 @@
 
     .question-number {
       color: #6c757d;
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 20px;
     }
 
     .question-title {
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       color: #2c3e50;
-      margin-bottom: 15px;
+      margin-bottom: 25px;
       font-weight: 600;
-      text-align: center;
     }
 
-    .question-content {
-      font-size: 1.1rem;
-      color: #495057;
-      margin-bottom: 20px;
-      text-align: center;
-      line-height: 1.6;
+    .question-image-container {
+      margin: 25px 0 30px;
+      position: relative;
     }
 
     .question-image {
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+      border: 3px solid #e9ecef;
+      cursor: pointer;
+    }
+
+    .question-image:hover {
+      transform: scale(1.02);
+    }
+
+    .answer-input-container {
+      margin: 30px 0;
+    }
+
+    .answer-input {
       width: 100%;
       max-width: 400px;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 15px;
-      margin: 0 auto 20px;
-      display: block;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .quiz-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-
-    .option-button {
       padding: 15px 20px;
+      font-size: 1.2rem;
       border: 2px solid #e9ecef;
-      background: white;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      border-radius: 25px;
       text-align: center;
-      font-size: 1rem;
-      font-weight: 500;
-      color: #495057;
+      transition: all 0.3s ease;
+      background: white;
     }
 
-    .option-button:hover {
+    .answer-input:focus {
+      outline: none;
       border-color: #4ecdc4;
-      background: #f8f9fa;
-      transform: translateY(-2px);
+      box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
     }
 
-    .option-button.selected {
-      border-color: #4ecdc4;
-      background: linear-gradient(45deg, #4ecdc4, #44a08d);
-      color: white;
-    }
-
-    .option-button.correct {
+    .answer-input.correct {
       border-color: #28a745;
-      background: linear-gradient(45deg, #28a745, #20c997);
-      color: white;
+      background: #d4edda;
     }
 
-    .option-button.incorrect {
+    .answer-input.incorrect {
       border-color: #dc3545;
-      background: linear-gradient(45deg, #dc3545, #e83e8c);
-      color: white;
+      background: #f8d7da;
+    }
+
+    .hint {
+      margin-top: 15px;
+      color: #6c757d;
+      font-style: italic;
     }
 
     .quiz-controls {
@@ -184,15 +137,16 @@
       background: #f8f9fa;
       padding: 20px;
       border-radius: 15px;
+      margin-top: 30px;
     }
 
     .quiz-timer {
       background: linear-gradient(45deg, #ff9a9e, #fecfef);
       color: white;
-      padding: 10px 20px;
-      border-radius: 20px;
+      padding: 12px 25px;
+      border-radius: 25px;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
 
     .quiz-nav {
@@ -225,21 +179,24 @@
       box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
     }
 
-    .btn-secondary {
-      background: linear-gradient(45deg, #95a5a6, #7f8c8d);
-      color: white;
-      box-shadow: 0 5px 20px rgba(149, 165, 166, 0.3);
-    }
-
-    .btn-secondary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(149, 165, 166, 0.4);
-    }
-
     .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      transform: none !important;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      transition: width 0.3s ease;
     }
 
     .quiz-result {
@@ -256,34 +213,6 @@
     .result-icon {
       font-size: 4rem;
       margin-bottom: 20px;
-    }
-
-    .result-title {
-      font-size: 2rem;
-      margin-bottom: 15px;
-      font-weight: bold;
-    }
-
-    .result-score {
-      font-size: 1.3rem;
-      color: #6c757d;
-      margin-bottom: 30px;
-    }
-
-    .result-details {
-      background: #f8f9fa;
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px 0;
-      text-align: left;
-    }
-
-    .success {
-      color: #28a745;
-    }
-
-    .fail {
-      color: #dc3545;
     }
 
     .back-button {
@@ -323,28 +252,17 @@
     }
 
     @media (max-width: 768px) {
-      .quiz-options {
-        grid-template-columns: 1fr;
-      }
-
       .quiz-content {
         padding: 20px;
+      }
+
+      .question-image {
+        max-height: 250px;
       }
 
       .quiz-controls {
         flex-direction: column;
         gap: 15px;
-      }
-
-      .quiz-nav {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .back-button {
-        position: static;
-        margin: 10px;
-        width: fit-content;
       }
     }
   </style>
@@ -361,140 +279,79 @@
   </header>
 
   <div class="quiz-content">
-    <!-- 퀴즈 시작 화면 -->
-    <div id="quizStart" class="quiz-header">
-      <h2 class="quiz-title" th:text="${maze.mazeTitle} + ' 퀴즈'">미로 퀴즈</h2>
-      <p style="color: #6c757d; margin-bottom: 20px;">
-        총 <span th:text="${#lists.size(questions)}">3</span>개의 문제가 있습니다.<br>
-        각 문제당 30초의 시간이 주어집니다.
-      </p>
-
-      <!-- 디버깅 정보 추가 -->
-      <div style="background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 0.8rem;">
-        <strong>디버깅 정보:</strong><br>
-        미로 ID: <span th:text="${maze.id}">1</span><br>
-        미로 제목: <span th:text="${maze.mazeTitle}">제목</span><br>
-        문제 개수: <span th:text="${#lists.size(questions)}">0</span><br>
-        <div th:each="q, iterStat : ${questions}">
-          문제 <span th:text="${iterStat.index + 1}">1</span>: <span th:text="${q.title}">제목없음</span>
-        </div>
-      </div>
-
-      <div th:if="${questions.isEmpty()}" class="alert" style="background: #fff3cd; color: #856404; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-        이 미로에는 아직 문제가 등록되지 않았습니다.
-      </div>
-      <button class="btn btn-primary" onclick="startQuiz()" th:disabled="${questions.isEmpty()}">
-        🚀 퀴즈 시작하기
-      </button>
+    <!-- 진행률 -->
+    <div class="progress-bar">
+      <div id="progressFill" class="progress-fill" style="width: 0%"></div>
     </div>
-
-    <!-- 진행률 표시 -->
-    <div id="quizProgress" class="quiz-progress" style="display: none;">
-      <span class="progress-text" id="currentQuestion">1</span>
-      <div class="progress-bar">
-        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
-      </div>
-      <span class="progress-text" id="totalQuestions" th:text="${#lists.size(questions)}">3</span>
+    <div style="text-align: center; margin-bottom: 30px; color: #6c757d;">
+      문제 <span id="currentQuestion">1</span> / <span th:text="${#lists.size(questions)}">3</span>
     </div>
 
     <!-- 문제들 -->
     <div id="quizQuestions">
       <div th:each="question, iterStat : ${questions}"
            class="quiz-question"
-           th:data-question-id="${question.id}"
            th:data-correct-answer="${question.correctAnswer}">
 
-        <div class="question-number" th:text="'문제 ' + ${iterStat.index + 1} + '/' + ${#lists.size(questions)}">문제 1/3</div>
-        <h3 class="question-title" th:text="${question.title ?: '제목 없음'}">문제 제목</h3>
-        <p class="question-content" th:text="${question.content ?: '내용 없음'}">문제 내용</p>
+        <div class="question-number" th:text="'문제 ' + ${iterStat.index + 1}">문제 1</div>
+        <h3 class="question-title" th:text="${question.title ?: '이미지를 보고 답을 입력하세요'}">문제 제목</h3>
 
-        <!-- 디버깅 정보 -->
-        <div style="background: #e9ecef; padding: 5px; margin: 10px 0; font-size: 0.7rem; border-radius: 3px;">
-          ID: <span th:text="${question.id}">-</span> |
-          순서: <span th:text="${question.questionOrder}">-</span> |
-          정답: <span th:text="${question.correctAnswer}">-</span>
+        <div class="question-image-container">
+          <img th:src="${question.questionImage}"
+               th:alt="${question.title}"
+               class="question-image"
+               onclick="openImageModal(this.src)">
         </div>
 
-        <img th:if="${question.questionImage and question.questionImage != ''}"
-             th:src="${question.questionImage}"
-             th:alt="${question.title}"
-             class="question-image"
-             onerror="this.style.display='none'">
-
-        <div class="quiz-options">
-          <button class="option-button" th:text="${question.option1 ?: '선택지 1'}" onclick="selectAnswer(1, this)">선택지 1</button>
-          <button class="option-button" th:text="${question.option2 ?: '선택지 2'}" onclick="selectAnswer(2, this)">선택지 2</button>
-          <button class="option-button" th:text="${question.option3 ?: '선택지 3'}" onclick="selectAnswer(3, this)">선택지 3</button>
-          <button class="option-button" th:text="${question.option4 ?: '선택지 4'}" onclick="selectAnswer(4, this)">선택지 4</button>
+        <div class="answer-input-container">
+          <input type="text" class="answer-input" placeholder="답을 입력하세요"
+                 onkeyup="handleAnswerInput(this, event)">
         </div>
+
+        <div class="hint">💡 이미지를 클릭하면 확대해서 볼 수 있습니다</div>
       </div>
     </div>
 
-    <!-- 컨트롤 버튼 -->
-    <div id="quizControls" class="quiz-controls" style="display: none;">
-      <div class="quiz-timer" id="quizTimer">⏰ 30초</div>
+    <!-- 컨트롤 -->
+    <div class="quiz-controls">
+      <div class="quiz-timer" id="quizTimer">⏰ 60초</div>
       <div class="quiz-nav">
-        <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" style="display: none;">이전</button>
-        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
       </div>
     </div>
 
     <!-- 결과 화면 -->
     <div id="quizResult" class="quiz-result">
       <div class="result-icon" id="resultIcon">🎉</div>
-      <div class="result-title" id="resultTitle">축하합니다!</div>
-      <div class="result-score" id="resultScore">3문제 중 2문제를 맞추셨습니다!</div>
-
-      <div class="result-details">
-        <h4 style="margin-bottom: 15px; color: #2c3e50;">상세 결과</h4>
-        <div id="resultDetails"></div>
-      </div>
-
-      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-        <button class="btn btn-primary" onclick="restartQuiz()">다시 도전</button>
-        <a th:href="@{'/mazes/' + ${maze.id}}" class="btn btn-secondary">미로로 돌아가기</a>
-        <a href="/" class="btn btn-secondary">메인으로</a>
+      <h2 id="resultTitle">완료!</h2>
+      <p id="resultScore"></p>
+      <div style="margin-top: 30px;">
+        <button class="btn btn-primary" onclick="restartQuiz()">🔄 다시 시작</button>
+        <a th:href="@{'/mazes/' + ${maze.id}}" class="btn btn-primary">🏠 미로로 돌아가기</a>
       </div>
     </div>
   </div>
 </div>
 
 <script th:inline="javascript">
-  // 서버에서 전달받은 데이터
   const questions = /*[[${questions}]]*/ [];
   const mazeId = /*[[${maze.id}]]*/ 1;
 
-  // 퀴즈 관련 변수
   let currentQuestionIndex = 0;
   let userAnswers = [];
-  let timeLeft = 30;
+  let timeLeft = 60;
   let quizTimer = null;
-  let selectedAnswer = null;
 
-  // 퀴즈 시작
-  function startQuiz() {
-    if (questions.length === 0) {
-      alert('문제가 없어서 퀴즈를 시작할 수 없습니다.');
-      return;
-    }
-
-    document.getElementById('quizStart').style.display = 'none';
-    document.getElementById('quizProgress').style.display = 'flex';
-    document.getElementById('quizControls').style.display = 'flex';
-
-    currentQuestionIndex = 0;
-    userAnswers = [];
+  // 페이지 로드 시 첫 번째 문제 표시
+  document.addEventListener('DOMContentLoaded', function() {
     showQuestion();
     startTimer();
-  }
+  });
 
-  // 문제 표시
   function showQuestion() {
-    // 모든 문제 숨기기
     const allQuestions = document.querySelectorAll('.quiz-question');
     allQuestions.forEach(q => q.classList.remove('active'));
 
-    // 현재 문제 표시
     if (currentQuestionIndex < allQuestions.length) {
       allQuestions[currentQuestionIndex].classList.add('active');
     }
@@ -504,60 +361,54 @@
     document.getElementById('progressFill').style.width = progress + '%';
     document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
 
-    // 버튼 상태 업데이트
-    selectedAnswer = null;
+    // 입력 필드 초기화
+    const currentInput = allQuestions[currentQuestionIndex].querySelector('.answer-input');
+    currentInput.value = '';
+    currentInput.classList.remove('correct', 'incorrect');
     document.getElementById('nextBtn').disabled = true;
-    document.getElementById('prevBtn').style.display = currentQuestionIndex > 0 ? 'block' : 'none';
-
-    // 선택 초기화
-    const options = allQuestions[currentQuestionIndex].querySelectorAll('.option-button');
-    options.forEach(option => {
-      option.classList.remove('selected', 'correct', 'incorrect');
-    });
 
     // 타이머 리셋
-    timeLeft = 30;
+    timeLeft = 60;
     updateTimer();
   }
 
-  // 답변 선택
-  function selectAnswer(answerIndex, button) {
-    const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
-    const options = currentQuestion.querySelectorAll('.option-button');
+  function handleAnswerInput(input, event) {
+    const answer = input.value.trim();
+    const nextBtn = document.getElementById('nextBtn');
 
-    // 기존 선택 해제
-    options.forEach(opt => opt.classList.remove('selected'));
+    if (answer.length > 0) {
+      nextBtn.disabled = false;
+    } else {
+      nextBtn.disabled = true;
+    }
 
-    // 새로운 선택
-    button.classList.add('selected');
-    selectedAnswer = answerIndex;
-    document.getElementById('nextBtn').disabled = false;
+    // Enter 키로 다음 문제
+    if (event.key === 'Enter' && answer.length > 0) {
+      nextQuestion();
+    }
   }
 
-  // 다음 문제
   function nextQuestion() {
-    if (selectedAnswer === null) return;
+    const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
+    const input = currentQuestion.querySelector('.answer-input');
+    const userAnswer = input.value.trim();
+    const correctAnswer = currentQuestion.dataset.correctAnswer;
 
     // 답변 저장
-    userAnswers[currentQuestionIndex] = selectedAnswer;
+    userAnswers[currentQuestionIndex] = userAnswer;
 
     // 정답 표시
-    const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
-    const correctAnswer = parseInt(currentQuestion.dataset.correctAnswer);
-    const options = currentQuestion.querySelectorAll('.option-button');
+    if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+      input.classList.add('correct');
+    } else {
+      input.classList.add('incorrect');
+    }
 
-    options.forEach((option, index) => {
-      if (index + 1 === correctAnswer) {
-        option.classList.add('correct');
-      } else if (index + 1 === selectedAnswer && index + 1 !== correctAnswer) {
-        option.classList.add('incorrect');
-      }
-    });
+    // 입력 비활성화
+    input.disabled = true;
 
-    // 잠시 결과 보여주기
     setTimeout(() => {
       currentQuestionIndex++;
-
       if (currentQuestionIndex >= questions.length) {
         showResult();
       } else {
@@ -566,145 +417,57 @@
     }, 1500);
   }
 
-  // 이전 문제
-  function prevQuestion() {
-    if (currentQuestionIndex > 0) {
-      currentQuestionIndex--;
-      showQuestion();
-
-      // 이전 답변 복원
-      if (userAnswers[currentQuestionIndex]) {
-        const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
-        const options = currentQuestion.querySelectorAll('.option-button');
-        const previousAnswer = userAnswers[currentQuestionIndex];
-
-        if (previousAnswer) {
-          options[previousAnswer - 1].classList.add('selected');
-          selectedAnswer = previousAnswer;
-          document.getElementById('nextBtn').disabled = false;
-        }
-      }
-    }
-  }
-
-  // 결과 표시
   function showResult() {
-    document.getElementById('quizProgress').style.display = 'none';
-    document.getElementById('quizControls').style.display = 'none';
+    stopTimer();
     document.querySelector('.quiz-question.active').classList.remove('active');
 
     const score = calculateScore();
     const percentage = Math.round((score / questions.length) * 100);
 
-    let resultIcon, resultTitle, resultClass;
-
-    if (percentage >= 80) {
-      resultIcon = '🎉';
-      resultTitle = '완벽합니다!';
-      resultClass = 'success';
-    } else if (percentage >= 60) {
-      resultIcon = '👏';
-      resultTitle = '잘했어요!';
-      resultClass = 'success';
-    } else {
-      resultIcon = '😅';
-      resultTitle = '다시 도전해보세요!';
-      resultClass = 'fail';
-    }
-
-    document.getElementById('resultIcon').textContent = resultIcon;
-    document.getElementById('resultTitle').textContent = resultTitle;
-    document.getElementById('resultTitle').className = `result-title ${resultClass}`;
+    document.getElementById('resultIcon').textContent = percentage >= 70 ? '🎉' : '😅';
+    document.getElementById('resultTitle').textContent = percentage >= 70 ? '잘했어요!' : '다시 도전해보세요!';
     document.getElementById('resultScore').textContent =
             `${questions.length}문제 중 ${score}문제를 맞추셨습니다! (${percentage}%)`;
 
-    // 상세 결과 표시
-    showDetailedResults();
-
     document.getElementById('quizResult').classList.add('show');
-    stopTimer();
   }
 
-  // 상세 결과 표시
-  function showDetailedResults() {
-    const detailsContainer = document.getElementById('resultDetails');
-    let detailsHTML = '';
-
-    questions.forEach((question, index) => {
-      const userAnswer = userAnswers[index] || 0;
-      const isCorrect = userAnswer === question.correctAnswer;
-      const icon = isCorrect ? '✅' : '❌';
-
-      detailsHTML += `
-                <div style="margin-bottom: 10px; padding: 10px; background: ${isCorrect ? '#d4edda' : '#f8d7da'}; border-radius: 8px;">
-                    ${icon} <strong>문제 ${index + 1}:</strong> ${question.title}<br>
-                    <small style="color: #6c757d;">
-                        정답: ${getOptionText(question, question.correctAnswer)} |
-                        선택: ${userAnswer ? getOptionText(question, userAnswer) : '선택하지 않음'}
-                    </small>
-                </div>
-            `;
-    });
-
-    detailsContainer.innerHTML = detailsHTML;
-  }
-
-  // 선택지 텍스트 가져오기
-  function getOptionText(question, optionNumber) {
-    switch(optionNumber) {
-      case 1: return question.option1;
-      case 2: return question.option2;
-      case 3: return question.option3;
-      case 4: return question.option4;
-      default: return '없음';
-    }
-  }
-
-  // 점수 계산
   function calculateScore() {
     let score = 0;
     questions.forEach((question, index) => {
-      if (userAnswers[index] === question.correctAnswer) {
+      if (userAnswers[index] && userAnswers[index].toLowerCase() === question.correctAnswer.toLowerCase()) {
         score++;
       }
     });
     return score;
   }
 
-  // 퀴즈 재시작
   function restartQuiz() {
-    document.getElementById('quizResult').classList.remove('show');
-    document.getElementById('quizStart').style.display = 'block';
     currentQuestionIndex = 0;
     userAnswers = [];
-    selectedAnswer = null;
+    document.getElementById('quizResult').classList.remove('show');
+
+    // 모든 입력 필드 초기화
+    document.querySelectorAll('.answer-input').forEach(input => {
+      input.disabled = false;
+      input.classList.remove('correct', 'incorrect');
+    });
+
+    showQuestion();
+    startTimer();
   }
 
-  // 타이머 시작
   function startTimer() {
     quizTimer = setInterval(() => {
       timeLeft--;
       updateTimer();
 
       if (timeLeft <= 0) {
-        // 시간 초과 시 자동으로 다음 문제로
-        if (selectedAnswer !== null) {
-          nextQuestion();
-        } else {
-          // 선택하지 않은 경우 0으로 저장하고 다음 문제로
-          userAnswers[currentQuestionIndex] = 0;
-          currentQuestionIndex++;
-          if (currentQuestionIndex >= questions.length) {
-            showResult();
-          } else {
-            showQuestion();
-          }
-        }
+        nextQuestion();
       }
     }, 1000);
   }
 
-  // 타이머 정지
   function stopTimer() {
     if (quizTimer) {
       clearInterval(quizTimer);
@@ -712,30 +475,16 @@
     }
   }
 
-  // 타이머 업데이트
   function updateTimer() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
-    const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    document.getElementById('quizTimer').textContent = `⏰ ${timeString}`;
-
-    // 시간이 10초 미만일 때 색상 변경
-    const timerElement = document.getElementById('quizTimer');
-    if (timeLeft <= 10) {
-      timerElement.style.background = 'linear-gradient(45deg, #dc3545, #e83e8c)';
-    } else {
-      timerElement.style.background = 'linear-gradient(45deg, #ff9a9e, #fecfef)';
-    }
+    document.getElementById('quizTimer').textContent =
+            `⏰ ${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  // ESC 키로 퀴즈 종료
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-      if (confirm('퀴즈를 종료하시겠습니까?')) {
-        window.location.href = '/mazes/' + mazeId;
-      }
-    }
-  });
+  function openImageModal(src) {
+    window.open(src, '_blank');
+  }
 </script>
 </body>
 </html>
