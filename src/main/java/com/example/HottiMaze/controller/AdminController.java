@@ -21,7 +21,10 @@ public class AdminController {
 
     @GetMapping
     public String adminDashboard(Model model) {
-        // 관리자 대시보드 로직
+        // 관리자 대시보드에 미로 승인 대기 통계 추가
+        long pendingMazeCount = mazeService.getMazeCountByStatus(com.example.HottiMaze.enums.MazeStatus.PENDING);
+        model.addAttribute("pendingMazeCount", pendingMazeCount);
+
         return "admin/dashboard";
     }
 
