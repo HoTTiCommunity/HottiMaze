@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -522,6 +522,11 @@
         <span class="info-item" th:if="${loginIsAvailableChulcheck != 1}">
             오늘 출석 완료 또는 불가
         </span>
+        <span class="info-item" sec:authorize="hasRole('ADMIN')">
+        <a href="/admin/mazes/approval" style="color: #ff6b6b; font-weight: bold;">
+            🛠️ 미로 승인 관리
+        </a>
+    </span>
         <a class="logout-link" th:href="@{/logout}">로그아웃</a>
     </div>
 

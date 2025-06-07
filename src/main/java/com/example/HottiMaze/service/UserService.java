@@ -1,6 +1,7 @@
 package com.example.HottiMaze.service;
 
 import com.example.HottiMaze.entity.User;
+import com.example.HottiMaze.enums.UserRole;
 import com.example.HottiMaze.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,6 +53,19 @@ public class UserService {
 
         userRepository.save(user);
     }
+    @Transactional(readOnly = true)
+    public User getUserEntityByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다: " + username));
+    }
+    @Transactional
+    public void changeUserRole(Long userId, UserRole role) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        user.setRole(role);
+        userRepository.save(user);
+    }
 
     @Transactional
     public void registerUser(String username, String rawPassword) {
@@ -65,13 +79,20 @@ public class UserService {
         user.setPoint(0);
         user.setChulcheck(0);
         user.setIsAvailableChulcheck(1);
+        user.setRole(UserRole.USER); // 기본값은 일반 사용자
 
         userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public User getUserEntityByUsername(String username) {
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isAdmin(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다: " + username));
+                .map(user -> user.getRole() == UserRole.ADMIN)
+                .orElse(false);
     }
 }

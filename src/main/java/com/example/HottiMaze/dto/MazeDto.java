@@ -1,5 +1,6 @@
 package com.example.HottiMaze.dto;
 
+import com.example.HottiMaze.enums.MazeStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,8 @@ public class MazeDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer viewCount;
+    private MazeStatus status;
+    private LocalDateTime approvedAt;
+    private String approvedByUsername;
+    private String rejectionReason;
 }
