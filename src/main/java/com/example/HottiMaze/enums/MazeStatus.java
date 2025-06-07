@@ -1,5 +1,7 @@
 package com.example.HottiMaze.enums;
+import lombok.Getter;
 
+@Getter
 public enum MazeStatus {
     PENDING("PENDING", "승인 대기"),
     APPROVED("APPROVED", "승인됨"),
@@ -13,11 +15,4 @@ public enum MazeStatus {
         this.description = description;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }

@@ -1,6 +1,7 @@
 package com.example.HottiMaze.enums;
+import lombok.Getter;
 
-// 2. 권한 열거형 정의
+@Getter
 public enum UserRole {
     ADMIN("ROLE_ADMIN", "관리자"),
     USER("ROLE_USER", "일반사용자");
@@ -13,11 +14,4 @@ public enum UserRole {
         this.description = description;
     }
 
-    public String getAuthority() {
-        return authority;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }
