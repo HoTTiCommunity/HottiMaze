@@ -64,12 +64,13 @@ public class AdminMazeController {
         }
     }
 
-    // 미로 거부 API
+    // 미로 거부 API - autoDelete 파라미터 추가
     @PostMapping("/{mazeId}/reject")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> rejectMaze(
             @PathVariable Long mazeId,
             @RequestParam String rejectionReason,
+            @RequestParam(defaultValue = "false") boolean autoDelete,
             @AuthenticationPrincipal UserDetails principal) {
 
         Map<String, Object> response = new HashMap<>();
@@ -81,9 +82,15 @@ public class AdminMazeController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            mazeService.rejectMaze(mazeId, rejectionReason, principal.getUsername());
+            // autoDelete 파라미터를 서비스 메서드에 전달
+            mazeService.rejectMaze(mazeId, rejectionReason, principal.getUsername(), autoDelete);
+
+            String successMessage = autoDelete
+                    ? "미로가 거부되고 관련 파일이 삭제되었습니다."
+                    : "미로가 거부되었습니다.";
+
             response.put("success", true);
-            response.put("message", "미로가 거부되었습니다.");
+            response.put("message", successMessage);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("success", false);
@@ -92,7 +99,40 @@ public class AdminMazeController {
         }
     }
 
-    // 일괄 처리 API
+    // 거부된 미로 삭제 API (기존 거부된 미로를 나중에 삭제하는 용도)
+    @DeleteMapping("/{mazeId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> deleteRejectedMaze(
+            @PathVariable Long mazeId,
+            @AuthenticationPrincipal UserDetails principal) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 미로 정보 먼저 확인
+            MazeDto maze = mazeService.getMaze(mazeId);
+
+            if (maze.getStatus() != MazeStatus.REJECTED) {
+                response.put("success", false);
+                response.put("message", "거부된 미로만 삭제할 수 있습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 미로와 관련 파일 완전 삭제
+            mazeService.deleteMaze(mazeId);
+
+            response.put("success", true);
+            response.put("message", "거부된 미로가 완전히 삭제되었습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "미로 삭제 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    // 일괄 처리 API - autoDelete 지원
     @PostMapping("/batch-process")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> batchProcessMazes(
@@ -105,7 +145,18 @@ public class AdminMazeController {
 
         for (MazeApprovalDto approval : approvals) {
             try {
-                mazeService.processMazeApproval(approval, principal.getUsername());
+                if (approval.getStatus() == MazeStatus.REJECTED) {
+                    // 일괄 거부 시에는 기본적으로 파일을 삭제하지 않음
+                    // (개별 처리에서만 autoDelete 옵션 제공)
+                    mazeService.rejectMaze(
+                            approval.getMazeId(),
+                            approval.getRejectionReason(),
+                            principal.getUsername(),
+                            false // 일괄 처리 시에는 자동 삭제 안 함
+                    );
+                } else {
+                    mazeService.processMazeApproval(approval, principal.getUsername());
+                }
                 successCount++;
             } catch (Exception e) {
                 failCount++;
