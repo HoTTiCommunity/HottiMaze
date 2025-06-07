@@ -56,12 +56,8 @@ INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user
 VALUES ('도전! 중급 미로 탈출', '/static/imgs/mazes/maze2/main.png', '2024-01-15 14:30:00', '2024-01-15 14:30:00', 189, 2, 'APPROVED', '2024-01-15 15:30:00', 1);
 
 -- 승인 대기 중인 미로
-INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id, status)
-VALUES ('극한의 어려움 - 고급 미로', '/static/imgs/mazes/maze3/main.png', '2024-01-20 16:45:00', '2024-01-20 16:45:00', 0, 3, 'PENDING');
-
--- 거부된 미로
-INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id, status, approved_at, approved_by, rejection_reason)
-VALUES ('부적절한 내용의 미로', '/static/imgs/mazes/maze5/main.png', '2024-01-25 11:20:00', '2024-01-25 11:20:00', 0, 4, 'REJECTED', '2024-01-25 12:20:00', 1, '부적절한 내용이 포함되어 있습니다.');
+INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id, status, approved_at, approved_by)
+VALUES ('극한의 어려움 - 고급 미로', '/static/imgs/mazes/maze3/main.png', '2024-01-20 16:45:00', '2024-01-20 16:45:00', 0, 3, 'APPROVED', '2024-01-15 15:30:00', 1);
 
 -- 승인된 미로에 더 많은 예시 추가
 INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id, status, approved_at, approved_by)
