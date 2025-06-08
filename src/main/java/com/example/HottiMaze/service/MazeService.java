@@ -1,8 +1,9 @@
 package com.example.HottiMaze.service;
 
-
+import com.example.HottiMaze.dto.MazeApprovalDto;
 import com.example.HottiMaze.dto.MazeDto;
 import com.example.HottiMaze.entity.Maze;
+import com.example.HottiMaze.enums.MazeStatus;
 import com.example.HottiMaze.repository.MazeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import com.example.HottiMaze.entity.MazeQuestion;
 import com.example.HottiMaze.entity.User;
 import com.example.HottiMaze.repository.MazeQuestionRepository;
 import com.example.HottiMaze.repository.UserRepository;
+import com.example.HottiMaze.repository.MazeVoteRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,8 +29,8 @@ public class MazeService {
     private final MazeQuestionRepository mazeQuestionRepository;
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
+    private final MazeVoteRepository mazeVoteRepository; // 투표 리포지토리 추가
 
-    // 최신 미로 목록 조회 (최대 5개)
     public List<MazeDto> getLatestMazes() {
         return mazeRepository.findLatestMazes(PageRequest.of(0, 5))
                 .stream()
@@ -36,7 +38,6 @@ public class MazeService {
                 .collect(Collectors.toList());
     }
 
-    // 인기 미로 목록 조회 (최대 5개)
     public List<MazeDto> getPopularMazes() {
         return mazeRepository.findPopularMazes(PageRequest.of(0, 5))
                 .stream()
@@ -44,30 +45,47 @@ public class MazeService {
                 .collect(Collectors.toList());
     }
 
-    public List<MazeDto> getAllMazes() {
+    public List<MazeDto> getAllApprovedMazes() {
+        return mazeRepository.findByStatusOrderByCreatedAtDesc(MazeStatus.APPROVED)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<MazeDto> getPendingMazes() {
+        return mazeRepository.findByStatusOrderByCreatedAtAsc(MazeStatus.PENDING)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<MazeDto> getAllMazesForAdmin() {
         return mazeRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
-    
+
+    public List<MazeDto> getUserMazes(Long userId) {
+        return mazeRepository.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     public MazeDto getMaze(Long id) {
         Maze maze = mazeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + id));
         return convertToDto(maze);
     }
 
-    // 새로운 미궁 생성 메서드 - mazeDir null 오류 해결
     @Transactional
     public MazeDto createMaze(MazeCreateDto createDto) {
         try {
-            // 사용자 조회 (임시로 첫 번째 사용자 사용, 실제로는 로그인된 사용자)
             User creator = userRepository.findById(1L)
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-            // 임시 ID를 생성하여 파일 저장 경로 만들기
-            Long tempMazeId = System.currentTimeMillis(); // 임시 ID로 현재 시간 사용
+            Long tempMazeId = System.currentTimeMillis();
 
-            // 메인 이미지 먼저 저장
             String mainImagePath = null;
             if (createDto.getMainImage() != null && !createDto.getMainImage().isEmpty()) {
                 mainImagePath = fileUploadService.saveFile(
@@ -79,26 +97,23 @@ public class MazeService {
                 throw new IllegalArgumentException("메인 이미지는 필수입니다.");
             }
 
-            // 미로 엔티티 생성 및 저장 (이제 mazeDir이 null이 아님)
             Maze maze = new Maze();
             maze.setMazeTitle(createDto.getMazeTitle());
-            maze.setMazeDir(mainImagePath); // null이 아닌 값으로 설정
+            maze.setMazeDir(mainImagePath);
             maze.setUser(creator);
             maze.setCreatedAt(LocalDateTime.now());
             maze.setUpdatedAt(LocalDateTime.now());
             maze.setViewCount(0);
+            maze.setStatus(MazeStatus.PENDING); // 승인 대기 상태로 설정
 
-            // 미로 저장
             Maze savedMaze = mazeRepository.save(maze);
 
-            // 실제 ID와 임시 ID가 다르면 파일명 변경
             if (!savedMaze.getId().equals(tempMazeId)) {
                 String newImagePath = fileUploadService.renameFile(mainImagePath, tempMazeId, savedMaze.getId());
                 savedMaze.setMazeDir(newImagePath);
                 savedMaze = mazeRepository.save(savedMaze);
             }
 
-            // 문제들 생성 및 저장
             if (createDto.getQuestionImages() != null && !createDto.getQuestionImages().isEmpty()) {
                 createMazeQuestions(savedMaze, createDto);
             }
@@ -111,6 +126,97 @@ public class MazeService {
     }
 
     @Transactional
+    public void approveMaze(Long mazeId, String adminUsername) {
+        Maze maze = mazeRepository.findById(mazeId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + mazeId));
+
+        User admin = userRepository.findByUsername(adminUsername)
+                .orElseThrow(() -> new IllegalArgumentException("관리자를 찾을 수 없습니다: " + adminUsername));
+
+        maze.setStatus(MazeStatus.APPROVED);
+        maze.setApprovedAt(LocalDateTime.now());
+        maze.setApprovedBy(admin);
+        maze.setRejectionReason(null);
+
+        mazeRepository.save(maze);
+    }
+
+    @Transactional
+    public void rejectMaze(Long mazeId, String rejectionReason, String adminUsername, boolean autoDelete) {
+        Maze maze = mazeRepository.findById(mazeId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + mazeId));
+
+        if (autoDelete) {
+            System.out.println("미로 ID " + mazeId + " 거부 및 자동 삭제 시작: " + rejectionReason);
+
+            try {
+                deleteAllMazeFiles(mazeId);
+
+                mazeQuestionRepository.deleteAll(
+                        mazeQuestionRepository.findByMazeIdOrderByQuestionOrderAsc(mazeId)
+                );
+
+                // 투표 데이터 삭제 추가
+                mazeVoteRepository.deleteByMazeId(mazeId);
+                System.out.println("미로 ID " + mazeId + "의 투표 데이터가 삭제되었습니다.");
+
+                // 미로 엔티티 삭제
+                mazeRepository.delete(maze);
+
+                System.out.println("미로 ID " + mazeId + " 거부 후 자동 삭제 완료");
+
+            } catch (Exception e) {
+                System.err.println("미로 ID " + mazeId + " 자동 삭제 중 오류 발생: " + e.getMessage());
+                updateMazeToRejected(maze, rejectionReason, adminUsername);
+                throw new RuntimeException("미로 파일 삭제 중 오류가 발생했습니다: " + e.getMessage(), e);
+            }
+        } else {
+            updateMazeToRejected(maze, rejectionReason, adminUsername);
+            System.out.println("미로 ID " + mazeId + " 거부됨 (파일 유지): " + rejectionReason);
+        }
+    }
+
+    private void updateMazeToRejected(Maze maze, String rejectionReason, String adminUsername) {
+        User admin = userRepository.findByUsername(adminUsername)
+                .orElseThrow(() -> new IllegalArgumentException("관리자를 찾을 수 없습니다: " + adminUsername));
+
+        maze.setStatus(MazeStatus.REJECTED);
+        maze.setRejectionReason(rejectionReason);
+        maze.setApprovedBy(admin);
+        maze.setApprovedAt(LocalDateTime.now()); // 처리 일시
+
+        mazeRepository.save(maze);
+    }
+
+    // 미로 관련 모든 파일 삭제하는 헬퍼 메서드
+    private void deleteAllMazeFiles(Long mazeId) {
+        try {
+            fileUploadService.deleteMazeFolder(mazeId);
+            System.out.println("미로 ID " + mazeId + "의 모든 파일이 삭제되었습니다.");
+        } catch (Exception e) {
+            System.err.println("미로 ID " + mazeId + " 파일 삭제 실패: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void rejectMaze(Long mazeId, String rejectionReason, String adminUsername) {
+        rejectMaze(mazeId, rejectionReason, adminUsername, false);
+    }
+
+    @Transactional
+    public void processMazeApproval(MazeApprovalDto approvalDto, String adminUsername) {
+        if (approvalDto.getStatus() == MazeStatus.APPROVED) {
+            approveMaze(approvalDto.getMazeId(), adminUsername);
+        } else if (approvalDto.getStatus() == MazeStatus.REJECTED) {
+            rejectMaze(approvalDto.getMazeId(), approvalDto.getRejectionReason(), adminUsername, false);
+        }
+    }
+
+    public long getMazeCountByStatus(MazeStatus status) {
+        return mazeRepository.countByStatus(status);
+    }
+
+    @Transactional
     protected void createMazeQuestions(Maze maze, MazeCreateDto createDto) {
         List<MultipartFile> questionImages = createDto.getQuestionImages();
 
@@ -119,14 +225,12 @@ public class MazeService {
 
             if (questionImage != null && !questionImage.isEmpty()) {
                 try {
-                    // 문제 이미지 저장 (maze{id} 폴더 사용)
                     String questionImagePath = fileUploadService.saveFile(
                             questionImage,
                             maze.getId(),
                             "question" + (i + 1)
                     );
 
-                    // 문제 엔티티 생성
                     MazeQuestion question = new MazeQuestion();
                     question.setMaze(maze);
                     question.setQuestionImage(questionImagePath);
@@ -134,7 +238,6 @@ public class MazeService {
                     question.setCreatedAt(LocalDateTime.now());
                     question.setUpdatedAt(LocalDateTime.now());
 
-                    // 선택적 필드들 설정
                     setQuestionField(question::setTitle, createDto.getQuestionTitles(), i, "문제 " + (i + 1));
                     setQuestionField(question::setCorrectAnswer, createDto.getCorrectAnswers(), i, "test");
                     setQuestionNumberField(question::setPoints, createDto.getPointsList(), i, 10);
@@ -169,11 +272,29 @@ public class MazeService {
         Maze maze = mazeRepository.findById(mazeId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + mazeId));
 
-        // 미로 폴더 전체 삭제 (maze{id} 폴더와 그 안의 모든 파일들)
-        fileUploadService.deleteMazeFolder(mazeId);
+        try {
+            // 파일 삭제
+            deleteAllMazeFiles(mazeId);
 
-        // 데이터베이스에서 삭제 (연관 문제들도 함께 삭제됨)
-        mazeRepository.delete(maze);
+            // 관련 질문 삭제
+            List<MazeQuestion> questions = mazeQuestionRepository.findByMazeIdOrderByQuestionOrderAsc(mazeId);
+            if (!questions.isEmpty()) {
+                mazeQuestionRepository.deleteAll(questions);
+                System.out.println("미로 ID " + mazeId + "의 " + questions.size() + "개 질문이 삭제되었습니다.");
+            }
+
+            // 투표 데이터 삭제
+            mazeVoteRepository.deleteByMazeId(mazeId);
+            System.out.println("미로 ID " + mazeId + "의 투표 데이터가 삭제되었습니다.");
+
+            // 미로 엔티티 삭제
+            mazeRepository.delete(maze);
+            System.out.println("미로 ID " + mazeId + " 완전 삭제 완료");
+
+        } catch (Exception e) {
+            System.err.println("미로 ID " + mazeId + " 삭제 중 오류 발생: " + e.getMessage());
+            throw new RuntimeException("미로 삭제 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
     }
 
     private MazeDto convertToDto(Maze maze) {
@@ -185,6 +306,11 @@ public class MazeService {
         dto.setCreatedAt(maze.getCreatedAt());
         dto.setUpdatedAt(maze.getUpdatedAt());
         dto.setViewCount(maze.getViewCount());
+        dto.setStatus(maze.getStatus());
+        dto.setApprovedAt(maze.getApprovedAt());
+        dto.setApprovedByUsername(maze.getApprovedBy() != null ? maze.getApprovedBy().getUsername() : null);
+        dto.setRejectionReason(maze.getRejectionReason());
+
         return dto;
     }
 }

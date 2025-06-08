@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -112,6 +112,148 @@
             opacity: 0.9;
         }
 
+        /* 투표 섹션 스타일 */
+        .vote-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .vote-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .vote-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .vote-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .vote-stat {
+            text-align: center;
+        }
+
+        .vote-count {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .vote-count.like {
+            color: #28a745;
+        }
+
+        .vote-count.dislike {
+            color: #dc3545;
+        }
+
+        .vote-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .vote-ratio-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .vote-ratio-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .like-fill {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            float: left;
+        }
+
+        .dislike-fill {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+            float: right;
+        }
+
+        .vote-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .vote-btn {
+            padding: 12px 25px;
+            border: 2px solid;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .vote-btn.like {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .vote-btn.like:hover {
+            background: #28a745;
+            color: white;
+        }
+
+        .vote-btn.like.active {
+            background: #28a745;
+            color: white;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .vote-btn.dislike {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .vote-btn.dislike:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .vote-btn.dislike.active {
+            background: #dc3545;
+            color: white;
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .vote-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-required {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
         .maze-actions {
             display: flex;
             gap: 15px;
@@ -183,12 +325,8 @@
         }
 
         .maze-image {
-            width: 380px;
-            height: 110px;
-
             width: 100%;
             height: 300px;
-
             object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -219,40 +357,6 @@
             margin-bottom: 20px;
             text-align: center;
             font-weight: bold;
-        }
-
-        .game-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .control-btn {
-            padding: 10px 20px;
-            border: 2px solid #4ecdc4;
-            background: white;
-            color: #4ecdc4;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .control-btn:hover, .control-btn.active {
-            background: #4ecdc4;
-            color: white;
-        }
-
-        .maze-canvas {
-            width: 100%;
-            max-width: 800px;
-            height: 600px;
-            border: 3px solid #e9ecef;
-            border-radius: 10px;
-            margin: 0 auto;
-            display: block;
-            background: white;
         }
 
         .creator-section {
@@ -341,6 +445,25 @@
             color: #721c24;
         }
 
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         @media (max-width: 768px) {
             .maze-header {
                 flex-direction: column;
@@ -380,8 +503,14 @@
                 margin: 10px;
                 width: fit-content;
             }
-            .maze-canvas {
-                height: 400px;
+
+            .vote-stats {
+                gap: 20px;
+            }
+
+            .vote-buttons {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
@@ -398,6 +527,9 @@
     </header>
 
     <div class="content-wrapper">
+        <!-- 알림 메시지 -->
+        <div id="alertMessage" class="alert" style="display: none;"></div>
+
         <!-- 미로 헤더 정보 -->
         <div class="maze-header">
             <div class="maze-info">
@@ -424,16 +556,12 @@
                         <span class="stat-label">조회수</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number">4.2</span>
-                        <span class="stat-label">평점</span>
+                        <span class="stat-number" id="totalVotes">0</span>
+                        <span class="stat-label">총 투표</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number">23</span>
-                        <span class="stat-label">완주</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">5:30</span>
-                        <span class="stat-label">평균시간</span>
+                        <span class="stat-number" id="likePercentage">0%</span>
+                        <span class="stat-label">좋아요율</span>
                     </div>
                 </div>
 
@@ -461,9 +589,56 @@
             </div>
         </div>
 
-        <div class="maze-game-area">
-            <h2 class="game-section-title">📋 미로 정보</h2>
+        <!-- 투표 섹션 -->
+        <div class="vote-section">
+            <div class="vote-header">
+                <h2 class="vote-title">이 미로가 어떠셨나요?</h2>
+                <p style="color: #6c757d;">다른 사용자들에게 도움이 되는 평가를 남겨주세요!</p>
+            </div>
 
+            <!-- 투표 통계 -->
+            <div class="vote-stats">
+                <div class="vote-stat">
+                    <span class="vote-count like" id="likeCount">0</span>
+                    <span class="vote-label">👍 좋아요</span>
+                </div>
+                <div class="vote-stat">
+                    <span class="vote-count dislike" id="dislikeCount">0</span>
+                    <span class="vote-label">👎 싫어요</span>
+                </div>
+            </div>
+
+            <!-- 투표 비율 바 -->
+            <div class="vote-ratio-bar">
+                <div class="vote-ratio-fill like-fill" id="likeBar" style="width: 50%;"></div>
+                <div class="vote-ratio-fill dislike-fill" id="dislikeBar" style="width: 50%;"></div>
+            </div>
+
+            <!-- 투표 버튼 -->
+            <div sec:authorize="isAuthenticated()">
+                <div class="vote-buttons">
+                    <button class="vote-btn like" id="likeBtn" onclick="vote('like')">
+                        👍 좋아요
+                    </button>
+                    <button class="vote-btn dislike" id="dislikeBtn" onclick="vote('dislike')">
+                        👎 싫어요
+                    </button>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button class="btn btn-secondary" id="cancelBtn" onclick="cancelVote()" style="display: none;">
+                        투표 취소
+                    </button>
+                </div>
+            </div>
+
+            <div sec:authorize="!isAuthenticated()">
+                <div class="login-required">
+                    <p>투표하려면 <a href="/login" style="color: #4ecdc4; text-decoration: none;">로그인</a>이 필요합니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 미로 정보 섹션 -->
         <div class="maze-info-section">
             <h2 class="section-title">📋 미로 정보</h2>
             <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; color: #495057;">
@@ -499,7 +674,161 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+    const mazeId = /*[[${maze.id}]]*/ 1;
+    let currentUserVote = null; // null: 투표안함, true: 좋아요, false: 싫어요
+
+    // 페이지 로드 시 투표 통계 불러오기
+    document.addEventListener('DOMContentLoaded', function() {
+        loadVoteStats();
+    });
+
+    // 투표 통계 로드
+    function loadVoteStats() {
+        fetch(`/api/mazes/${mazeId}/vote-stats`)
+            .then(response => response.json())
+            .then(data => {
+                updateVoteDisplay(data);
+            })
+            .catch(error => {
+                console.error('투표 통계 로드 실패:', error);
+            });
+    }
+
+    // 투표 실행
+    function vote(type) {
+        const endpoint = type === 'like' ? 'like' : 'dislike';
+
+        // 버튼 비활성화
+        setVoteButtonsEnabled(false);
+
+        fetch(`/api/mazes/${mazeId}/${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateVoteDisplay(data.stats);
+                    showAlert(data.message, 'success');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('투표 실패:', error);
+                showAlert('투표 중 오류가 발생했습니다.', 'error');
+            })
+            .finally(() => {
+                setVoteButtonsEnabled(true);
+            });
+    }
+
+    // 투표 취소
+    function cancelVote() {
+        if (!confirm('투표를 취소하시겠습니까?')) return;
+
+        setVoteButtonsEnabled(false);
+
+        fetch(`/api/mazes/${mazeId}/vote`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateVoteDisplay(data.stats);
+                    showAlert(data.message, 'success');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('투표 취소 실패:', error);
+                showAlert('투표 취소 중 오류가 발생했습니다.', 'error');
+            })
+            .finally(() => {
+                setVoteButtonsEnabled(true);
+            });
+    }
+
+    // 투표 화면 업데이트
+    function updateVoteDisplay(stats) {
+        // 통계 업데이트
+        document.getElementById('likeCount').textContent = stats.likeCount;
+        document.getElementById('dislikeCount').textContent = stats.dislikeCount;
+        document.getElementById('totalVotes').textContent = stats.totalVotes;
+        document.getElementById('likePercentage').textContent = stats.likePercentage + '%';
+
+        // 비율 바 업데이트
+        const likeBar = document.getElementById('likeBar');
+        const dislikeBar = document.getElementById('dislikeBar');
+
+        if (stats.totalVotes > 0) {
+            likeBar.style.width = stats.likePercentage + '%';
+            dislikeBar.style.width = stats.dislikePercentage + '%';
+        } else {
+            likeBar.style.width = '50%';
+            dislikeBar.style.width = '50%';
+        }
+
+        // 사용자 투표 상태 업데이트
+        currentUserVote = stats.userVote;
+        updateButtonStates();
+    }
+
+    // 버튼 상태 업데이트
+    function updateButtonStates() {
+        const likeBtn = document.getElementById('likeBtn');
+        const dislikeBtn = document.getElementById('dislikeBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        if (!likeBtn || !dislikeBtn) return; // 로그인 안된 경우
+
+        // 모든 버튼 초기화
+        likeBtn.classList.remove('active');
+        dislikeBtn.classList.remove('active');
+
+        // 현재 투표 상태에 따라 버튼 활성화
+        if (currentUserVote === true) {
+            likeBtn.classList.add('active');
+            cancelBtn.style.display = 'inline-block';
+        } else if (currentUserVote === false) {
+            dislikeBtn.classList.add('active');
+            cancelBtn.style.display = 'inline-block';
+        } else {
+            cancelBtn.style.display = 'none';
+        }
+    }
+
+    // 투표 버튼 활성화/비활성화
+    function setVoteButtonsEnabled(enabled) {
+        const likeBtn = document.getElementById('likeBtn');
+        const dislikeBtn = document.getElementById('dislikeBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        if (likeBtn) likeBtn.disabled = !enabled;
+        if (dislikeBtn) dislikeBtn.disabled = !enabled;
+        if (cancelBtn) cancelBtn.disabled = !enabled;
+    }
+
+    // 알림 메시지 표시
+    function showAlert(message, type) {
+        const alertDiv = document.getElementById('alertMessage');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        alertDiv.style.display = 'block';
+
+        // 3초 후 자동 숨김
+        setTimeout(() => {
+            alertDiv.style.display = 'none';
+        }, 3000);
+    }
+
     // 이미지 로딩 오류 처리
     function handleImageError(img) {
         console.log('이미지 로딩 실패:', img.src);

@@ -2,8 +2,10 @@ package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.dto.MazeDto;
 import com.example.HottiMaze.dto.MazeQuestionDto;
+import com.example.HottiMaze.enums.MazeStatus;
 import com.example.HottiMaze.service.MazeQuestionService;
 import com.example.HottiMaze.service.MazeService;
+import com.example.HottiMaze.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +24,38 @@ public class MazeController {
 
     @GetMapping("/{mazeId}")
     public String getMaze(@PathVariable Long mazeId, Model model) {
-        MazeDto mazeDto = mazeService.getMaze(mazeId);
-        model.addAttribute("maze", mazeDto);
-        List<MazeQuestionDto> mazeQuestionDto = mazeQuestionService.getMazeQuestions(mazeId);
-        model.addAttribute("maze", mazeDto);
-        model.addAttribute("mazeQuestions", mazeQuestionDto);
-        return "maze-detail";
+        try {
+            MazeDto mazeDto = mazeService.getMaze(mazeId);
+
+            // 승인되지 않은 미로에 대한 접근 제한
+            if (mazeDto.getStatus() != MazeStatus.APPROVED) {
+                // 관리자이거나 본인이 만든 미로가 아니면 접근 불가
+                String currentUsername = SecurityUtils.getCurrentUsername();
+                boolean isAdmin = SecurityUtils.isAdmin();
+                boolean isOwner = mazeDto.getCreatorName().equals(currentUsername);
+
+                if (!isAdmin && !isOwner) {
+                    model.addAttribute("error", "승인되지 않은 미로입니다.");
+                    return "redirect:/";
+                }
+
+                // 승인 대기/거부 상태 메시지 추가
+                if (mazeDto.getStatus() == MazeStatus.PENDING) {
+                    model.addAttribute("statusMessage", "이 미로는 현재 관리자 승인을 기다리고 있습니다.");
+                } else if (mazeDto.getStatus() == MazeStatus.REJECTED) {
+                    model.addAttribute("statusMessage", "이 미로는 거부되었습니다: " + mazeDto.getRejectionReason());
+                }
+            }
+
+            List<MazeQuestionDto> mazeQuestionDto = mazeQuestionService.getMazeQuestions(mazeId);
+            model.addAttribute("maze", mazeDto);
+            model.addAttribute("mazeQuestions", mazeQuestionDto);
+
+            return "maze-detail";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "미로를 불러올 수 없습니다: " + e.getMessage());
+            return "redirect:/";
+        }
     }
 }
