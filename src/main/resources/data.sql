@@ -102,3 +102,77 @@ VALUES (4, '/static/imgs/mazes/maze4/question2.png', 'test', 2, '숲속 문제 2
 
 INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
 VALUES (4, '/static/imgs/mazes/maze4/question3.png', 'test', 3, '숲속 문제 3', '2024-01-22 11:30:00', '2024-01-22 11:30:00');
+
+-- 미로 투표 더미 데이터
+-- 미로 1번에 대한 투표 (좋아요가 많은 미로)
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (1, 2, true, '2024-01-11 10:30:00', '2024-01-11 10:30:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (1, 3, true, '2024-01-11 14:20:00', '2024-01-11 14:20:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (1, 4, true, '2024-01-12 09:15:00', '2024-01-12 09:15:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (1, 5, true, '2024-01-12 16:45:00', '2024-01-12 16:45:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (1, 6, false, '2024-01-13 11:30:00', '2024-01-13 11:30:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (1, 7, true, '2024-01-13 15:20:00', '2024-01-13 15:20:00');
+
+-- 미로 2번에 대한 투표 (중간 정도의 평가)
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (2, 1, true, '2024-01-16 10:00:00', '2024-01-16 10:00:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (2, 3, true, '2024-01-16 14:30:00', '2024-01-16 14:30:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (2, 4, false, '2024-01-17 09:20:00', '2024-01-17 09:20:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (2, 5, true, '2024-01-17 16:15:00', '2024-01-17 16:15:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (2, 7, false, '2024-01-18 11:45:00', '2024-01-18 11:45:00');
+
+-- 미로 3번에 대한 투표 (어려워서 평가가 갈리는 미로)
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (3, 1, true, '2024-01-21 10:30:00', '2024-01-21 10:30:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (3, 2, false, '2024-01-21 14:20:00', '2024-01-21 14:20:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (3, 4, false, '2024-01-22 09:15:00', '2024-01-22 09:15:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (3, 5, true, '2024-01-22 16:45:00', '2024-01-22 16:45:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (3, 6, false, '2024-01-23 11:30:00', '2024-01-23 11:30:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (3, 7, false, '2024-01-23 15:20:00', '2024-01-23 15:20:00');
+
+-- 미로 4번에 대한 투표 (인기가 높은 미로)
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (4, 1, true, '2024-01-23 12:00:00', '2024-01-23 12:00:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (4, 2, true, '2024-01-23 14:30:00', '2024-01-23 14:30:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (4, 3, true, '2024-01-24 09:15:00', '2024-01-24 09:15:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (4, 5, true, '2024-01-24 16:45:00', '2024-01-24 16:45:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (4, 6, true, '2024-01-25 11:30:00', '2024-01-25 11:30:00');
+
+INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
+VALUES (4, 7, true, '2024-01-25 15:20:00', '2024-01-25 15:20:00');

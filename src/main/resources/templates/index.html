@@ -308,6 +308,59 @@
             line-height: 1.4;
         }
 
+        /* 투표 통계 스타일 */
+        .maze-vote-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .vote-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .vote-count {
+            font-weight: 600;
+        }
+
+        .like-indicator {
+            color: #28a745;
+        }
+
+        .dislike-indicator {
+            color: #dc3545;
+        }
+
+        .vote-ratio-mini {
+            flex: 1;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .vote-ratio-mini .like-fill {
+            height: 100%;
+            background: #28a745;
+            float: left;
+            transition: width 0.3s ease;
+        }
+
+        .vote-ratio-mini .dislike-fill {
+            height: 100%;
+            background: #dc3545;
+            float: right;
+            transition: width 0.3s ease;
+        }
+
         .maze-rating {
             display: flex;
             align-items: center;
@@ -480,6 +533,12 @@
                 padding: 12px 20px;
                 font-size: 0.9rem;
             }
+
+            .maze-vote-stats {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
         }
 
         @media (max-width: 480px) {
@@ -614,6 +673,7 @@
                 <div th:if="${latestMazes != null and !latestMazes.isEmpty()}">
                     <div th:each="maze : ${latestMazes}"
                          class="maze-card"
+                         th:data-maze-id="${maze.id}"
                          th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
                         <div class="maze-thumbnail">
                             <img th:src="${maze.mazeDir}"
@@ -629,6 +689,22 @@
                         </div>
                         <div class="maze-content">
                             <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
+
+                            <!-- 투표 통계 표시 -->
+                            <div class="maze-vote-stats" th:data-maze-id="${maze.id}">
+                                <div class="vote-indicator like-indicator">
+                                    <span>👍</span>
+                                    <span class="vote-count like-count">0</span>
+                                </div>
+                                <div class="vote-ratio-mini">
+                                    <div class="like-fill" style="width: 50%;"></div>
+                                    <div class="dislike-fill" style="width: 50%;"></div>
+                                </div>
+                                <div class="vote-indicator dislike-indicator">
+                                    <span>👎</span>
+                                    <span class="vote-count dislike-count">0</span>
+                                </div>
+                            </div>
 
                             <div class="maze-rating">
                                 <div class="stars">★★★★☆</div>
@@ -677,6 +753,7 @@
                 <div th:if="${popularMazes != null and !popularMazes.isEmpty()}">
                     <div th:each="maze : ${popularMazes}"
                          class="maze-card"
+                         th:data-maze-id="${maze.id}"
                          th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
                         <div class="maze-thumbnail">
                             <img th:src="${maze.mazeDir}"
@@ -692,6 +769,22 @@
                         </div>
                         <div class="maze-content">
                             <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
+
+                            <!-- 투표 통계 표시 -->
+                            <div class="maze-vote-stats" th:data-maze-id="${maze.id}">
+                                <div class="vote-indicator like-indicator">
+                                    <span>👍</span>
+                                    <span class="vote-count like-count">0</span>
+                                </div>
+                                <div class="vote-ratio-mini">
+                                    <div class="like-fill" style="width: 50%;"></div>
+                                    <div class="dislike-fill" style="width: 50%;"></div>
+                                </div>
+                                <div class="vote-indicator dislike-indicator">
+                                    <span>👎</span>
+                                    <span class="vote-count dislike-count">0</span>
+                                </div>
+                            </div>
 
                             <div class="maze-rating">
                                 <div class="stars">★★★★★</div>
@@ -780,7 +873,61 @@
                     });
             });
         }
+
+        // 페이지 로드 시 모든 미로의 투표 통계 로드
+        loadAllMazeVoteStats();
     });
+
+    // 모든 미로의 투표 통계 로드
+    function loadAllMazeVoteStats() {
+        const mazeCards = document.querySelectorAll('.maze-card[data-maze-id]');
+
+        mazeCards.forEach(card => {
+            const mazeId = card.getAttribute('data-maze-id');
+            loadMazeVoteStats(mazeId);
+        });
+    }
+
+    // 개별 미로의 투표 통계 로드
+    function loadMazeVoteStats(mazeId) {
+        fetch(`/api/mazes/${mazeId}/vote-stats`)
+            .then(response => response.json())
+            .then(data => {
+                updateMazeCardVoteDisplay(mazeId, data);
+            })
+            .catch(error => {
+                console.error(`미로 ${mazeId} 투표 통계 로드 실패:`, error);
+                // 에러 시 기본값 유지
+            });
+    }
+
+    // 미로 카드의 투표 표시 업데이트
+    function updateMazeCardVoteDisplay(mazeId, stats) {
+        const voteStatsDiv = document.querySelector(`[data-maze-id="${mazeId}"] .maze-vote-stats`);
+        if (!voteStatsDiv) return;
+
+        // 좋아요/싫어요 수 업데이트
+        const likeCountSpan = voteStatsDiv.querySelector('.like-count');
+        const dislikeCountSpan = voteStatsDiv.querySelector('.dislike-count');
+
+        if (likeCountSpan) likeCountSpan.textContent = stats.likeCount;
+        if (dislikeCountSpan) dislikeCountSpan.textContent = stats.dislikeCount;
+
+        // 비율 바 업데이트
+        const likeBar = voteStatsDiv.querySelector('.like-fill');
+        const dislikeBar = voteStatsDiv.querySelector('.dislike-fill');
+
+        if (likeBar && dislikeBar) {
+            if (stats.totalVotes > 0) {
+                likeBar.style.width = stats.likePercentage + '%';
+                dislikeBar.style.width = stats.dislikePercentage + '%';
+            } else {
+                // 투표가 없으면 50:50으로 표시
+                likeBar.style.width = '50%';
+                dislikeBar.style.width = '50%';
+            }
+        }
+    }
 
     // 미로 탭 전환
     function showMazeTab(tabName) {
