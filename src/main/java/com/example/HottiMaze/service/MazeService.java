@@ -13,6 +13,7 @@ import com.example.HottiMaze.entity.MazeQuestion;
 import com.example.HottiMaze.entity.User;
 import com.example.HottiMaze.repository.MazeQuestionRepository;
 import com.example.HottiMaze.repository.UserRepository;
+import com.example.HottiMaze.repository.MazeVoteRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,7 @@ public class MazeService {
     private final MazeQuestionRepository mazeQuestionRepository;
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
+    private final MazeVoteRepository mazeVoteRepository; // 투표 리포지토리 추가
 
     public List<MazeDto> getLatestMazes() {
         return mazeRepository.findLatestMazes(PageRequest.of(0, 5))
@@ -154,7 +156,11 @@ public class MazeService {
                         mazeQuestionRepository.findByMazeIdOrderByQuestionOrderAsc(mazeId)
                 );
 
-                // 3. 미로 엔티티 삭제
+                // 투표 데이터 삭제 추가
+                mazeVoteRepository.deleteByMazeId(mazeId);
+                System.out.println("미로 ID " + mazeId + "의 투표 데이터가 삭제되었습니다.");
+
+                // 미로 엔티티 삭제
                 mazeRepository.delete(maze);
 
                 System.out.println("미로 ID " + mazeId + " 거부 후 자동 삭제 완료");
@@ -267,12 +273,21 @@ public class MazeService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + mazeId));
 
         try {
+            // 파일 삭제
             deleteAllMazeFiles(mazeId);
+
+            // 관련 질문 삭제
             List<MazeQuestion> questions = mazeQuestionRepository.findByMazeIdOrderByQuestionOrderAsc(mazeId);
             if (!questions.isEmpty()) {
                 mazeQuestionRepository.deleteAll(questions);
                 System.out.println("미로 ID " + mazeId + "의 " + questions.size() + "개 질문이 삭제되었습니다.");
             }
+
+            // 투표 데이터 삭제
+            mazeVoteRepository.deleteByMazeId(mazeId);
+            System.out.println("미로 ID " + mazeId + "의 투표 데이터가 삭제되었습니다.");
+
+            // 미로 엔티티 삭제
             mazeRepository.delete(maze);
             System.out.println("미로 ID " + mazeId + " 완전 삭제 완료");
 
