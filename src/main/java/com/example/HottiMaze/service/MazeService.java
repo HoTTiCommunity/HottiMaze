@@ -259,6 +259,7 @@ public class MazeService {
 
                     setQuestionField(question::setTitle, createDto.getQuestionTitles(), i, "문제 " + (i + 1));
                     setQuestionField(question::setCorrectAnswer, createDto.getCorrectAnswers(), i, "test");
+                    setQuestionField(question::setHint, createDto.getHints(), i, null);
                     setQuestionNumberField(question::setPoints, createDto.getPointsList(), i, 10);
 
                     mazeQuestionRepository.save(question);

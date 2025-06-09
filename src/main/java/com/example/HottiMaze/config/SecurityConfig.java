@@ -32,7 +32,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/mazes/upload").authenticated()
+                        .requestMatchers("/api/maze-hints/**").authenticated()
+                        .requestMatchers("/mazes/upload").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/mazes/*/delete").hasAnyRole("ADMIN", "USER")

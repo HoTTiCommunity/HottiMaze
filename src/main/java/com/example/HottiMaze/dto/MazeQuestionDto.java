@@ -21,4 +21,5 @@ public class MazeQuestionDto {
     private Integer points;         // 점수 추가
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String hint;
 }

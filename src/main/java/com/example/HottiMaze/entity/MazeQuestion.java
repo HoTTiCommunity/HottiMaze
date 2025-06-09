@@ -39,4 +39,8 @@ public class MazeQuestion {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "hint", length = 500)
+    private String hint; // 문제 힌트
+
 }
