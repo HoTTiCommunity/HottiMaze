@@ -53,11 +53,18 @@ public class UserService {
 
         userRepository.save(user);
     }
+    /**
+     * username으로 user를 가져오는 메소드 입니다.
+     * @return User 엔티티
+     */
     @Transactional(readOnly = true)
-    public User getUserEntityByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다: " + username));
     }
+    /**
+     * 혹시 몰라 User의 권환 수정 메소드 만들어 놨습니다
+     */
     @Transactional
     public void changeUserRole(Long userId, UserRole role) {
         User user = userRepository.findById(userId)
@@ -79,7 +86,7 @@ public class UserService {
         user.setPoint(0);
         user.setChulcheck(0);
         user.setIsAvailableChulcheck(1);
-        user.setRole(UserRole.USER); // 기본값은 일반 사용자
+        user.setRole(UserRole.USER);
 
         userRepository.save(user);
     }
