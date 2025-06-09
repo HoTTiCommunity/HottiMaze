@@ -33,7 +33,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/maze-hints/**").authenticated()
-                        .requestMatchers("/mazes/upload").hasRole("ADMIN")
+                        .requestMatchers("/mazes/upload").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/mazes/*/delete").hasAnyRole("ADMIN", "USER")

@@ -83,10 +83,10 @@ public class MazeService {
     }
 
     @Transactional
-    public MazeDto createMaze(MazeCreateDto createDto) {
+    public MazeDto createMaze(MazeCreateDto createDto, String username) {
         try {
-            User creator = userRepository.findById(1L)
-                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+            User creator = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
 
             Long tempMazeId = System.currentTimeMillis();
 
