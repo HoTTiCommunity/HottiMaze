@@ -25,11 +25,9 @@ public class MazeController {
     @GetMapping("/{mazeId}")
     public String getMaze(@PathVariable Long mazeId, Model model) {
         try {
-            MazeDto mazeDto = mazeService.getMaze(mazeId);
+            MazeDto mazeDto = mazeService.getMazeAndIncreaseViewCount(mazeId);
 
-            // 승인되지 않은 미로에 대한 접근 제한
             if (mazeDto.getStatus() != MazeStatus.APPROVED) {
-                // 관리자이거나 본인이 만든 미로가 아니면 접근 불가
                 String currentUsername = SecurityUtils.getCurrentUsername();
                 boolean isAdmin = SecurityUtils.isAdmin();
                 boolean isOwner = mazeDto.getCreatorName().equals(currentUsername);
@@ -38,8 +36,6 @@ public class MazeController {
                     model.addAttribute("error", "승인되지 않은 미로입니다.");
                     return "redirect:/";
                 }
-
-                // 승인 대기/거부 상태 메시지 추가
                 if (mazeDto.getStatus() == MazeStatus.PENDING) {
                     model.addAttribute("statusMessage", "이 미로는 현재 관리자 승인을 기다리고 있습니다.");
                 } else if (mazeDto.getStatus() == MazeStatus.REJECTED) {

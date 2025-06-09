@@ -29,8 +29,12 @@ public class MazeService {
     private final MazeQuestionRepository mazeQuestionRepository;
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
-    private final MazeVoteRepository mazeVoteRepository; // 투표 리포지토리 추가
+    private final MazeVoteRepository mazeVoteRepository;
 
+    /**
+     * 최근에 등록된 Maze 5개를 가져오는 메소드
+     * @return MazeDto List
+     */
     public List<MazeDto> getLatestMazes() {
         return mazeRepository.findLatestMazes(PageRequest.of(0, 5))
                 .stream()
@@ -123,6 +127,21 @@ public class MazeService {
         } catch (Exception e) {
             throw new RuntimeException("미로 생성 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * 미로 조회 및 조회수 증가
+     * @param id 미로 ID
+     * @return 미로 DTO
+     */
+    @Transactional
+    public MazeDto getMazeAndIncreaseViewCount(Long id) {
+        Maze maze = mazeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + id));
+        maze.setViewCount(maze.getViewCount() + 1);
+        mazeRepository.save(maze);
+
+        return convertToDto(maze);
     }
 
     @Transactional
