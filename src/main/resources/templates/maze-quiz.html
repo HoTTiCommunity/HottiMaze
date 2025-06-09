@@ -276,6 +276,7 @@
   <header>
     <h1>🧩 미궁 퀴즈</h1>
     <p th:text="${maze.mazeTitle} + ' 문제를 풀어보세요!'">미로 문제를 풀어보세요!</p>
+
   </header>
 
   <div class="quiz-content">
@@ -316,6 +317,11 @@
     <div class="quiz-controls">
       <div class="quiz-timer" id="quizTimer">⏰ 60초</div>
       <div class="quiz-nav">
+        <a th:href="@{/questions/maze-questionPost(mgId=${maze.id})}"
+           target="_blank"
+           class="btn btn-primary">
+          질문 게시판 보기
+        </a>
         <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
       </div>
     </div>

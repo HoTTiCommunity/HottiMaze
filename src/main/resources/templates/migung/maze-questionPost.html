@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>퀴즈 내 질문 게시판</title>
+</head>
+<body>
+<h1>미궁 #<span th:text="${mgId}">0</span> 질문 게시판</h1>
+<ul>
+  <li th:each="post : ${posts}">
+    <a th:href="@{/questions/{id}(id=${post.id})}"
+       th:text="${post.title}">질문 제목</a>
+    (<span th:text="${post.author}">작성자</span>,
+    <span th:text="${#dates.format(post.createdAt,'yyyy-MM-dd')}">날짜</span>)
+  </li>
+</ul>
+<a th:href="@{/questions?mgId=${mgId}}" class="btn">전체 게시판 보기</a>
+</body>
+</html>
