@@ -31,7 +31,7 @@ public class MainController {
         // ─── 1) 로그인된 사용자가 있으면 User 엔티티 조회해서 모델에 담기 ───
         if (principal != null) {
             String username = principal.getUsername();
-            User user = userService.getUserEntityByUsername(username);
+            User user = userService.getUserByUsername(username);
 
             model.addAttribute("loginUsername", user.getUsername());
             model.addAttribute("loginPoint", user.getPoint());
