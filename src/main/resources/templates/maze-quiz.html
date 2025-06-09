@@ -140,18 +140,10 @@
       margin-top: 30px;
     }
 
-    .quiz-timer {
-      background: linear-gradient(45deg, #ff9a9e, #fecfef);
-      color: white;
-      padding: 12px 25px;
-      border-radius: 25px;
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-
     .quiz-nav {
       display: flex;
       gap: 15px;
+      margin-left: auto;
     }
 
     .btn {
@@ -314,7 +306,7 @@
 
     <!-- 컨트롤 -->
     <div class="quiz-controls">
-      <div class="quiz-timer" id="quizTimer">⏰ 60초</div>
+      <div></div> <!-- 빈 공간 (타이머 자리) -->
       <div class="quiz-nav">
         <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
       </div>
@@ -339,13 +331,10 @@
 
   let currentQuestionIndex = 0;
   let userAnswers = [];
-  let timeLeft = 60;
-  let quizTimer = null;
 
   // 페이지 로드 시 첫 번째 문제 표시
   document.addEventListener('DOMContentLoaded', function() {
     showQuestion();
-    startTimer();
   });
 
   function showQuestion() {
@@ -366,10 +355,6 @@
     currentInput.value = '';
     currentInput.classList.remove('correct', 'incorrect');
     document.getElementById('nextBtn').disabled = true;
-
-    // 타이머 리셋
-    timeLeft = 60;
-    updateTimer();
   }
 
   function handleAnswerInput(input, event) {
@@ -418,7 +403,6 @@
   }
 
   function showResult() {
-    stopTimer();
     document.querySelector('.quiz-question.active').classList.remove('active');
 
     const score = calculateScore();
@@ -454,32 +438,6 @@
     });
 
     showQuestion();
-    startTimer();
-  }
-
-  function startTimer() {
-    quizTimer = setInterval(() => {
-      timeLeft--;
-      updateTimer();
-
-      if (timeLeft <= 0) {
-        nextQuestion();
-      }
-    }, 1000);
-  }
-
-  function stopTimer() {
-    if (quizTimer) {
-      clearInterval(quizTimer);
-      quizTimer = null;
-    }
-  }
-
-  function updateTimer() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById('quizTimer').textContent =
-            `⏰ ${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   function openImageModal(src) {

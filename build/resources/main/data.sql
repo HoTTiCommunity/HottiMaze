@@ -73,7 +73,6 @@ VALUES (1, '/static/imgs/mazes/maze1/question2.png', 'test', 2, '두 번째 문�
 INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, created_at, updated_at)
 VALUES (1, '/static/imgs/mazes/maze1/question3.png', 'test', 3, '세 번째 문제', 10, '2024-01-10 10:10:00', '2024-01-10 10:10:00');
 
--- 추가된 4번째와 5번째 문제
 INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, created_at, updated_at)
 VALUES (1, '/static/imgs/mazes/maze1/question4.png', 'test', 4, '네 번째 문제', 10, '2024-01-10 10:15:00', '2024-01-10 10:15:00');
 
