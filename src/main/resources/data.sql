@@ -63,15 +63,21 @@ VALUES ('극한의 어려움 - 고급 미로', '/static/imgs/mazes/maze3/main.pn
 INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id, status, approved_at, approved_by)
 VALUES ('숲속의 미스터리 미로', '/static/imgs/mazes/maze4/main.png', '2024-01-22 11:20:00', '2024-01-22 11:20:00', 298, 4, 'APPROVED', '2024-01-22 12:20:00', 6);
 
--- 미로 1번 문제들 (승인된 미로)
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (1, '/static/imgs/mazes/maze1/question1.png', 'test', 1, '첫 번째 문제', '2024-01-10 10:00:00', '2024-01-10 10:00:00');
+-- 미로 1번 문제들 (승인된 미로) - 5개로 수정
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question1.png', 'test', 1, '첫 번째 문제', 10, '2024-01-10 10:00:00', '2024-01-10 10:00:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (1, '/static/imgs/mazes/maze1/question2.png', 'test', 2, '두 번째 문제', '2024-01-10 10:05:00', '2024-01-10 10:05:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question2.png', 'test', 2, '두 번째 문제', 10, '2024-01-10 10:05:00', '2024-01-10 10:05:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (1, '/static/imgs/mazes/maze1/question3.png', 'test', 3, '세 번째 문제', '2024-01-10 10:10:00', '2024-01-10 10:10:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question3.png', 'test', 3, '세 번째 문제', 10, '2024-01-10 10:10:00', '2024-01-10 10:10:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question4.png', 'test', 4, '네 번째 문제', 10, '2024-01-10 10:15:00', '2024-01-10 10:15:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question5.png', 'test', 5, '다섯 번째 문제', 10, '2024-01-10 10:20:00', '2024-01-10 10:20:00');
 
 -- 미로 2번 문제들 (승인된 미로)
 INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
