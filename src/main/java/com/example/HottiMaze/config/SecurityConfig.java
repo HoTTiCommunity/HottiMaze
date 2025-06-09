@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,25 +29,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/mazes/upload").authenticated()
                         // 모든 사용자 접근 가능
                         .requestMatchers(
                                 "/login", "/sign-up", "/",
-                                "/post/**", "/mazes/**",
-                                "/api/categories/posts/**"
+                                "/post/**", "/mazes/*/quiz", "/mazes/*/",
+                                "/api/categories/posts/**",
+                                "/api/mazes/*/vote-stats" // 투표 통계는 모든 사용자가 볼 수 있음
                         ).permitAll()
 
-                        // 관리자만 접근 가능
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // 미로 업로드는 로그인한 사용자만
-                        .requestMatchers("/mazes/upload").authenticated()
                         .requestMatchers("/mazes/*/delete").hasAnyRole("ADMIN", "USER")
 
-                        // 출석체크는 로그인한 사용자만
                         .requestMatchers("/api/user/checkin").authenticated()
 
                         .anyRequest().authenticated()
@@ -65,7 +65,7 @@ public class SecurityConfig {
                 );
 
         http.headers(headers ->
-                headers.frameOptions(frame -> frame.disable())
+                headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
         );
 
         return http.build();
@@ -76,6 +76,7 @@ public class SecurityConfig {
         return (web) -> web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers("/h2-console/**")
+                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**")
                 .requestMatchers("/static/imgs/mazes/**", "/imgs/mazes/**");
     }
 }
