@@ -33,21 +33,16 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/mazes/upload").authenticated()
-                        // 모든 사용자 접근 가능
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/mazes/*/delete").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/user/checkin").authenticated()
                         .requestMatchers(
                                 "/login", "/sign-up", "/",
                                 "/post/**", "/mazes/*/quiz", "/mazes/*/",
                                 "/api/categories/posts/**",
                                 "/api/mazes/*/vote-stats" // 투표 통계는 모든 사용자가 볼 수 있음
                         ).permitAll()
-
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                        .requestMatchers("/mazes/*/delete").hasAnyRole("ADMIN", "USER")
-
-                        .requestMatchers("/api/user/checkin").authenticated()
-
                         .anyRequest().authenticated()
                 )
 
