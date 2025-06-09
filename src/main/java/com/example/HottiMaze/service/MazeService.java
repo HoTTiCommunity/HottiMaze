@@ -2,18 +2,16 @@ package com.example.HottiMaze.service;
 
 import com.example.HottiMaze.dto.MazeApprovalDto;
 import com.example.HottiMaze.dto.MazeDto;
+import com.example.HottiMaze.dto.NavigationDto;
 import com.example.HottiMaze.entity.Maze;
 import com.example.HottiMaze.enums.MazeStatus;
-import com.example.HottiMaze.repository.MazeRepository;
+import com.example.HottiMaze.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.example.HottiMaze.dto.MazeCreateDto;
 import com.example.HottiMaze.entity.MazeQuestion;
 import com.example.HottiMaze.entity.User;
-import com.example.HottiMaze.repository.MazeQuestionRepository;
-import com.example.HottiMaze.repository.UserRepository;
-import com.example.HottiMaze.repository.MazeVoteRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +28,7 @@ public class MazeService {
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
     private final MazeVoteRepository mazeVoteRepository; // 투표 리포지토리 추가
+    private final NavigationRepository navigationRepository;
 
     public List<MazeDto> getLatestMazes() {
         return mazeRepository.findLatestMazes(PageRequest.of(0, 5))
@@ -295,6 +294,13 @@ public class MazeService {
             System.err.println("미로 ID " + mazeId + " 삭제 중 오류 발생: " + e.getMessage());
             throw new RuntimeException("미로 삭제 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
+    }
+
+    public NavigationDto getProblemNavigation(Long mazeId, Long userId) {
+        List<Integer> solved = navigationRepository.findSolvedProblemNumbers(mazeId, userId);
+        Integer current = navigationRepository.findCurrentProblemNumber(mazeId, userId);
+
+        return new NavigationDto(mazeId, solved, current);
     }
 
     private MazeDto convertToDto(Maze maze) {
