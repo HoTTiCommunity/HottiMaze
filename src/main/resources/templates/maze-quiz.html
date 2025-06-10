@@ -525,7 +525,10 @@
       const item = document.createElement('div');
       item.style.marginBottom = '15px';
       item.innerHTML = `
-        <div style="font-weight: bold; margin-bottom: 5px;">문제 ${index + 1}: ${q.title ?? '제목 없음'}</div>
+        <div style="margin-bottom: 5px; cursor: pointer; color: #007bff; font-weight: bold;"
+             onclick="goToQuestion(${index})">
+          문제 ${index + 1}: ${q.title ?? '제목 없음'}
+        </div>
         <div>📝 입력한 답: <strong style="color: ${isCorrect ? '#28a745' : '#dc3545'}">${userAns}</strong></div>
         <div>✅ 정답: <strong>${correctAns}</strong></div>
         <hr style="margin-top: 10px;">
@@ -535,6 +538,12 @@
 
     document.getElementById('historyModal').style.display = 'block';
     document.getElementById('historyBackdrop').style.display = 'block';
+  }
+
+  function goToQuestion(index) {
+    quizIndex = index;
+    updateQuiz();
+    closeHistory();
   }
 
   function closeHistory() {
