@@ -39,11 +39,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/mazes/*/delete").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/api/user/checkin").authenticated()
+                        .requestMatchers("/user/**").authenticated()
                         .requestMatchers(
                                 "/login", "/sign-up", "/",
                                 "/post/**", "/mazes/*/quiz", "/mazes/*/",
                                 "/api/categories/posts/**",
-                                "/api/mazes/*/vote-stats" // 투표 통계는 모든 사용자가 볼 수 있음
+                                "/api/mazes/*/vote-stats",
+                                "/debug/**" // 디버깅용 경로 추가
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -73,7 +75,10 @@ public class SecurityConfig {
         return (web) -> web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers("/h2-console/**")
-                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**")
-                .requestMatchers("/static/imgs/mazes/**", "/imgs/mazes/**");
+                // 정적 리소스 경로 확장
+                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/imgs/**")
+                .requestMatchers("/static/imgs/mazes/**", "/imgs/mazes/**")
+                // 추가적인 정적 리소스 경로
+                .requestMatchers("/favicon.ico", "/robots.txt");
     }
 }

@@ -740,20 +740,26 @@
 </div>
 
 <script th:inline="javascript">
+  /*<![CDATA[*/
   const questions = /*[[${questions}]]*/ [];
   const mazeId = /*[[${maze.id}]]*/ 1;
 
   let currentQuestionIndex = 0;
-  let questionStates = []; // 각 문제의 상태를 저장
+  let questionStates = [];
   let userPoints = 0;
 
-  // 페이지 로드 시 첫 번째 문제 표시 및 포인트 로드
+  // 페이지 로드 시 초기화
   document.addEventListener('DOMContentLoaded', function() {
-    initializeQuestionStates();
-    showQuestion();
-    loadUserPoints();
-    updateHistoryList();
-    updateCompletionInfo();
+    // 안전한 초기화
+    try {
+      initializeQuestionStates();
+      showQuestion();
+      loadUserPoints();
+      updateHistoryList();
+      updateCompletionInfo();
+    } catch (error) {
+      console.error('초기화 오류:', error);
+    }
   });
 
   // 문제 상태 초기화
@@ -767,22 +773,27 @@
     }));
   }
 
-  // 히스토리 모달 열기
+  // 히스토리 모달 관련 함수들
   function openHistoryModal() {
     updateHistoryList();
-    document.getElementById('historyModal').style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    const modal = document.getElementById('historyModal');
+    if (modal) {
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
   }
 
-  // 히스토리 모달 닫기
   function closeHistoryModal() {
-    document.getElementById('historyModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
+    const modal = document.getElementById('historyModal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
   }
 
-  // 히스토리 리스트 업데이트
   function updateHistoryList() {
     const historyList = document.getElementById('questionHistoryList');
+    if (!historyList) return;
 
     const historyHtml = questionStates.map((state, index) => {
       let statusClass = '';
@@ -814,7 +825,6 @@
     historyList.innerHTML = historyHtml;
   }
 
-  // 특정 문제로 이동
   function goToQuestion(questionIndex) {
     if (questionIndex >= 0 && questionIndex < questions.length) {
       currentQuestionIndex = questionIndex;
@@ -826,21 +836,22 @@
     }
   }
 
-  // 완료 정보 업데이트
   function updateCompletionInfo() {
     const completedCount = questionStates.filter(state => state.completed).length;
-    document.getElementById('completedCount').textContent = completedCount;
+    const completedCountElement = document.getElementById('completedCount');
+    if (completedCountElement) {
+      completedCountElement.textContent = completedCount;
+    }
   }
 
-  // 모달 외부 클릭 시 닫기
+  // 모달 외부 클릭 및 ESC 키 처리
   window.onclick = function(event) {
     const modal = document.getElementById('historyModal');
-    if (event.target === modal) {
+    if (modal && event.target === modal) {
       closeHistoryModal();
     }
   }
 
-  // ESC 키로 모달 닫기
   document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
       closeHistoryModal();
@@ -868,15 +879,17 @@
   // 힌트 요청
   function requestHint(questionOrder) {
     const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
+    if (!currentQuestion) return;
+
     const hintButton = currentQuestion.querySelector('.hint-button');
     const hintContent = currentQuestion.querySelector('.hint-content');
 
-    // 이미 힌트를 본 경우
+    if (!hintButton || !hintContent) return;
+
     if (hintContent.classList.contains('show')) {
       return;
     }
 
-    // 포인트 확인
     if (userPoints < 50) {
       alert('포인트가 부족합니다. 힌트를 보려면 50포인트가 필요합니다.');
       return;
@@ -886,7 +899,6 @@
       return;
     }
 
-    // 버튼 비활성화
     hintButton.disabled = true;
     hintButton.textContent = '힌트 요청 중...';
 
@@ -899,22 +911,18 @@
             .then(response => response.json())
             .then(data => {
               if (data.success) {
-                // 힌트 표시
                 hintContent.innerHTML = `💡 <strong>힌트:</strong> ${data.hint}`;
                 hintContent.classList.add('show');
-
-                // 포인트 업데이트
                 userPoints = data.userPoints;
-                document.getElementById('userPoints').textContent = userPoints;
-
-                // 버튼 상태 변경
+                const pointsElement = document.getElementById('userPoints');
+                if (pointsElement) {
+                  pointsElement.textContent = userPoints;
+                }
                 hintButton.textContent = '힌트 확인됨';
                 hintButton.style.background = '#6c757d';
-
                 showAlert(data.message, 'success');
               } else {
                 showAlert(data.message, 'error');
-                // 버튼 다시 활성화
                 hintButton.disabled = false;
                 hintButton.textContent = '💡 힌트 보기 (50포인트)';
               }
@@ -922,7 +930,6 @@
             .catch(error => {
               console.error('힌트 요청 실패:', error);
               showAlert('힌트를 불러오는 중 오류가 발생했습니다.', 'error');
-              // 버튼 다시 활성화
               hintButton.disabled = false;
               hintButton.textContent = '💡 힌트 보기 (50포인트)';
             });
@@ -930,28 +937,30 @@
 
   function showQuestion() {
     const allQuestions = document.querySelectorAll('.quiz-question');
-
-    // 모든 문제 숨기기
     allQuestions.forEach(q => q.classList.remove('active'));
 
     if (currentQuestionIndex < allQuestions.length) {
       allQuestions[currentQuestionIndex].classList.add('active');
     }
 
-    // 진행률 업데이트
     const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-    document.getElementById('progressFill').style.width = progress + '%';
-    document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+    const progressFill = document.getElementById('progressFill');
+    const currentQuestionElement = document.getElementById('currentQuestion');
+
+    if (progressFill) progressFill.style.width = progress + '%';
+    if (currentQuestionElement) currentQuestionElement.textContent = currentQuestionIndex + 1;
 
     const currentQuestion = allQuestions[currentQuestionIndex];
+    if (!currentQuestion) return;
+
     const input = currentQuestion.querySelector('.answer-input');
     const feedback = currentQuestion.querySelector('.feedback-message');
 
-    // 이미 완료된 문제인지 확인
+    if (!input || !feedback) return;
+
     const isCompleted = questionStates[currentQuestionIndex].completed;
 
     if (isCompleted) {
-      // 완료된 문제: 정답을 보여주고 입력 비활성화
       const userAnswer = questionStates[currentQuestionIndex].userAnswer;
       input.value = userAnswer;
       input.classList.add('correct');
@@ -960,27 +969,35 @@
       feedback.classList.add('correct');
       feedback.style.display = 'block';
 
-      // 버튼 상태
-      document.getElementById('nextBtn').disabled = false;
-      document.getElementById('nextBtn').textContent = '다음 문제 →';
-      document.getElementById('nextBtn').onclick = nextQuestion;
-      document.getElementById('tryAgainBtn').style.display = 'none';
+      const nextBtn = document.getElementById('nextBtn');
+      const tryAgainBtn = document.getElementById('tryAgainBtn');
+      if (nextBtn) {
+        nextBtn.disabled = false;
+        nextBtn.textContent = '다음 문제 →';
+        nextBtn.onclick = nextQuestion;
+      }
+      if (tryAgainBtn) {
+        tryAgainBtn.style.display = 'none';
+      }
     } else {
-      // 미완료 문제: 초기 상태로 설정
       input.value = '';
       input.classList.remove('correct', 'incorrect');
       input.disabled = false;
       feedback.style.display = 'none';
       feedback.classList.remove('correct', 'incorrect');
 
-      // 버튼 상태 초기화
-      document.getElementById('nextBtn').disabled = true;
-      document.getElementById('nextBtn').textContent = '정답 확인';
-      document.getElementById('nextBtn').onclick = checkAnswer;
-      document.getElementById('tryAgainBtn').style.display = 'none';
+      const nextBtn = document.getElementById('nextBtn');
+      const tryAgainBtn = document.getElementById('tryAgainBtn');
+      if (nextBtn) {
+        nextBtn.disabled = true;
+        nextBtn.textContent = '정답 확인';
+        nextBtn.onclick = checkAnswer;
+      }
+      if (tryAgainBtn) {
+        tryAgainBtn.style.display = 'none';
+      }
     }
 
-    // 히스토리 및 완료 정보 업데이트
     updateHistoryList();
     updateCompletionInfo();
   }
@@ -990,20 +1007,15 @@
     const nextBtn = document.getElementById('nextBtn');
     const isCompleted = questionStates[currentQuestionIndex].completed;
 
-    // 완료된 문제가 아닌 경우에만 버튼 활성화 제어
     if (!isCompleted) {
-      if (answer.length > 0) {
-        nextBtn.disabled = false;
-      } else {
-        nextBtn.disabled = true;
+      if (nextBtn) {
+        nextBtn.disabled = answer.length === 0;
       }
 
-      // Enter 키로 정답 확인
       if (event.key === 'Enter' && answer.length > 0) {
         checkAnswer();
       }
     } else {
-      // 완료된 문제에서 Enter 키로 다음 문제
       if (event.key === 'Enter') {
         nextQuestion();
       }
@@ -1012,23 +1024,25 @@
 
   function checkAnswer() {
     const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
+    if (!currentQuestion) return;
+
     const input = currentQuestion.querySelector('.answer-input');
     const feedback = currentQuestion.querySelector('.feedback-message');
+
+    if (!input || !feedback) return;
+
     const userAnswer = input.value.trim();
     const correctAnswer = currentQuestion.dataset.correctAnswer;
 
-    // 이미 완료된 문제인지 확인
     if (questionStates[currentQuestionIndex].completed) {
       nextQuestion();
       return;
     }
 
-    // 복수 정답 처리 ("|"로 구분된 경우)
     const correctAnswers = correctAnswer.toLowerCase().split('|').map(ans => ans.trim());
     const isCorrect = correctAnswers.includes(userAnswer.toLowerCase());
 
     if (isCorrect) {
-      // 정답인 경우
       input.classList.remove('incorrect');
       input.classList.add('correct');
       feedback.textContent = '🎉 정답입니다! 다음 문제로 넘어가세요.';
@@ -1036,25 +1050,25 @@
       feedback.classList.add('correct');
       feedback.style.display = 'block';
 
-      // ⭐ 중요: 현재 문제를 완료로 표시
       questionStates[currentQuestionIndex].completed = true;
       questionStates[currentQuestionIndex].userAnswer = userAnswer;
 
-      // 버튼 변경
-      document.getElementById('nextBtn').textContent = currentQuestionIndex === questions.length - 1 ? '완료!' : '다음 →';
-      document.getElementById('nextBtn').disabled = false;
-      document.getElementById('nextBtn').onclick = nextQuestion;
-      document.getElementById('tryAgainBtn').style.display = 'none';
+      const nextBtn = document.getElementById('nextBtn');
+      const tryAgainBtn = document.getElementById('tryAgainBtn');
+      if (nextBtn) {
+        nextBtn.textContent = currentQuestionIndex === questions.length - 1 ? '완료!' : '다음 →';
+        nextBtn.disabled = false;
+        nextBtn.onclick = nextQuestion;
+      }
+      if (tryAgainBtn) {
+        tryAgainBtn.style.display = 'none';
+      }
 
-      // 입력 필드 비활성화
       input.disabled = true;
-
-      // 히스토리 및 완료 정보 업데이트
       updateHistoryList();
       updateCompletionInfo();
 
     } else {
-      // 틀린 경우
       input.classList.remove('correct');
       input.classList.add('incorrect');
       feedback.textContent = '❌ 틀렸습니다. 이미지를 다시 자세히 보고 시도해보세요.';
@@ -1062,43 +1076,51 @@
       feedback.classList.add('incorrect');
       feedback.style.display = 'block';
 
-      // 버튼 상태 변경
-      document.getElementById('nextBtn').disabled = true;
-      document.getElementById('tryAgainBtn').style.display = 'inline-flex';
-
-      // 입력 필드는 활성 상태 유지 (다시 시도 가능)
+      const nextBtn = document.getElementById('nextBtn');
+      const tryAgainBtn = document.getElementById('tryAgainBtn');
+      if (nextBtn) {
+        nextBtn.disabled = true;
+      }
+      if (tryAgainBtn) {
+        tryAgainBtn.style.display = 'inline-flex';
+      }
     }
   }
 
   function tryAgain() {
     const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
+    if (!currentQuestion) return;
+
     const input = currentQuestion.querySelector('.answer-input');
     const feedback = currentQuestion.querySelector('.feedback-message');
 
-    // 상태 초기화
+    if (!input || !feedback) return;
+
     input.value = '';
     input.classList.remove('correct', 'incorrect');
     feedback.style.display = 'none';
 
-    // 버튼 상태 초기화
-    document.getElementById('nextBtn').disabled = true;
-    document.getElementById('nextBtn').textContent = '정답 확인';
-    document.getElementById('nextBtn').onclick = checkAnswer;
-    document.getElementById('tryAgainBtn').style.display = 'none';
+    const nextBtn = document.getElementById('nextBtn');
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    if (nextBtn) {
+      nextBtn.disabled = true;
+      nextBtn.textContent = '정답 확인';
+      nextBtn.onclick = checkAnswer;
+    }
+    if (tryAgainBtn) {
+      tryAgainBtn.style.display = 'none';
+    }
 
-    // 입력 필드에 포커스
     input.focus();
   }
 
   function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex >= questions.length) {
-      // ⭐ 중요: 모든 문제가 완료되었는지 확인
       const allCompleted = questionStates.every(state => state.completed);
       if (allCompleted) {
         showResult();
       } else {
-        // 완료되지 않은 문제가 있으면 첫 번째 미완료 문제로 이동
         const nextIncompleteIndex = questionStates.findIndex(state => !state.completed);
         if (nextIncompleteIndex !== -1) {
           currentQuestionIndex = nextIncompleteIndex;
@@ -1114,14 +1136,12 @@
   }
 
   function showResult() {
-    // ⭐ 최종 검증: 모든 문제가 정말로 완료되었는지 확인
     const allCompleted = questionStates.every(state => state.completed);
 
     if (!allCompleted) {
       const incompleteCount = questionStates.filter(state => !state.completed).length;
       showAlert(`아직 ${incompleteCount}개의 문제가 완료되지 않았습니다. 모든 문제를 풀어야 미로를 완주할 수 있습니다!`, 'error');
 
-      // 첫 번째 미완료 문제로 이동
       const firstIncompleteIndex = questionStates.findIndex(state => !state.completed);
       if (firstIncompleteIndex !== -1) {
         currentQuestionIndex = firstIncompleteIndex;
@@ -1130,16 +1150,25 @@
       return;
     }
 
-    document.querySelector('.quiz-question.active').classList.remove('active');
+    const activeQuestion = document.querySelector('.quiz-question.active');
+    if (activeQuestion) {
+      activeQuestion.classList.remove('active');
+    }
 
-    document.getElementById('resultIcon').textContent = '🎉';
-    document.getElementById('resultTitle').textContent = '미궁 탈출 성공!';
-    document.getElementById('resultScore').textContent =
-            `모든 문제를 정답으로 풀어 미궁을 성공적으로 탈출했습니다! 🏆`;
+    const resultIcon = document.getElementById('resultIcon');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultScore = document.getElementById('resultScore');
+    const quizResult = document.getElementById('quizResult');
 
-    document.getElementById('quizResult').classList.add('show');
+    if (resultIcon) resultIcon.textContent = '🎉';
+    if (resultTitle) resultTitle.textContent = '미궁 탈출 성공!';
+    if (resultScore) {
+      resultScore.textContent = '모든 문제를 정답으로 풀어 미궁을 성공적으로 탈출했습니다! 🏆';
+    }
+    if (quizResult) {
+      quizResult.classList.add('show');
+    }
 
-    // ⭐ 중요: 완주 기록을 서버에 전송 (로그인한 사용자만)
     const isAuthenticated = document.getElementById('userPoints') !== null;
     if (isAuthenticated) {
       console.log('완주 기록 전송 시작...');
@@ -1159,7 +1188,6 @@
                 if (data.success) {
                   console.log('완주 기록 생성 완료!');
                   if (data.newCompletion) {
-                    // 새로운 완주 기록이 생성된 경우 알림
                     setTimeout(() => {
                       showAlert('축하합니다! 미로를 완주했습니다. 이제 리뷰를 작성할 수 있어요! 🎉', 'success');
                     }, 1000);
@@ -1178,23 +1206,27 @@
 
   function restartQuiz() {
     currentQuestionIndex = 0;
-    document.getElementById('quizResult').classList.remove('show');
+    const quizResult = document.getElementById('quizResult');
+    if (quizResult) {
+      quizResult.classList.remove('show');
+    }
 
-    // 문제 상태 초기화
     initializeQuestionStates();
 
-    // 모든 입력 필드 및 힌트 상태 초기화
     document.querySelectorAll('.quiz-question').forEach(question => {
       const input = question.querySelector('.answer-input');
       const feedback = question.querySelector('.feedback-message');
       const hintButton = question.querySelector('.hint-button');
       const hintContent = question.querySelector('.hint-content');
 
-      input.disabled = false;
-      input.classList.remove('correct', 'incorrect');
-      feedback.style.display = 'none';
+      if (input) {
+        input.disabled = false;
+        input.classList.remove('correct', 'incorrect');
+      }
+      if (feedback) {
+        feedback.style.display = 'none';
+      }
 
-      // 힌트 상태 초기화
       if (hintButton && hintContent) {
         hintButton.disabled = false;
         hintButton.textContent = '💡 힌트 보기 (50포인트)';
@@ -1204,7 +1236,6 @@
       }
     });
 
-    // 포인트 새로고침
     loadUserPoints();
     showQuestion();
   }
@@ -1213,7 +1244,6 @@
     window.open(src, '_blank');
   }
 
-  // 알림 메시지 표시 함수 개선
   function showAlert(message, type) {
     const alertDiv = document.createElement('div');
     alertDiv.style.cssText = `
@@ -1234,70 +1264,114 @@
 
     document.body.appendChild(alertDiv);
 
-    // 5초 후 자동 제거
     setTimeout(() => {
       if (alertDiv.parentNode) {
         alertDiv.parentNode.removeChild(alertDiv);
       }
     }, 5000);
   }
-  <canvas id="drawing-canvas"
-                   style="
-           position:fixed;
-           top:0; left:0;
-           width:100%; height:100%;
-           display:none;
-           pointer-events:all;
-           z-index:1000;
-         ">
-     Canvas 미지원
+  /*]]>*/
+</script>
+
+<!-- 그리기 캔버스 및 토글 버튼 -->
+<canvas id="drawing-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; display:none; pointer-events:all; z-index:1000;">
+  Canvas 미지원
 </canvas>
 
-<button id="toggle-draw"
-                   style="
-           position:fixed;
-           bottom:20px; right:20px;
-           width:50px; height:50px;
-           border:none; border-radius:50%;
-           background:#3498db; color:#fff;
-           font-size:24px; line-height:1;
-           cursor:pointer;
-           z-index:1001;
-         "
-                   title="그리기 켜기">
-     ✏️
+<button id="toggle-draw" style="position:fixed; bottom:20px; right:20px; width:50px; height:50px; border:none; border-radius:50%; background:#3498db; color:#fff; font-size:24px; line-height:1; cursor:pointer; z-index:1001;" title="그리기 켜기">
+  ✏️
 </button>
 
-<script th:src="@{/js/drawing.js}"></script>
-
+<!-- JavaScript 파일들 로드 -->
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn    = document.getElementById('toggle-draw');
+  // drawing.js 인라인 구현 (파일 로드 오류 방지)
+  window.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('drawing-canvas');
-    let enabled  = false;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
 
-    btn.addEventListener('click', () => {
-      enabled = !enabled;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-      if (enabled) {
-        // 그리기 모드 On → 이전 캔버스 내용 지우기
-        if (window.clearCanvas) {
-          window.clearCanvas();
-        }
-        // 캔버스 보이기
-        canvas.style.display = 'block';
-        // 버튼 아이콘/툴팁 변경
-        btn.textContent = '✖️';
-        btn.title       = '그리기 끄기';
-      } else {
-        // 그리기 모드 Off → 캔버스 감추기
-        canvas.style.display = 'none';
-        btn.textContent      = '✏️';
-        btn.title            = '그리기 켜기';
-      }
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+
+    canvas.addEventListener('mousedown', e => {
+      drawing = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
     });
+
+    canvas.addEventListener('mousemove', e => {
+      if (!drawing) return;
+      ctx.strokeStyle = 'red';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    ['mouseup','mouseout'].forEach(evt =>
+            canvas.addEventListener(evt, () => drawing = false)
+    );
+
+    window.clearCanvas = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
+    // 토글 버튼 기능
+    const btn = document.getElementById('toggle-draw');
+    let enabled = false;
+
+    if (btn) {
+      btn.addEventListener('click', () => {
+        enabled = !enabled;
+
+        if (enabled) {
+          if (window.clearCanvas) {
+            window.clearCanvas();
+          }
+          canvas.style.display = 'block';
+          btn.textContent = '✖️';
+          btn.title = '그리기 끄기';
+        } else {
+          canvas.style.display = 'none';
+          btn.textContent = '✏️';
+          btn.title = '그리기 켜기';
+        }
+      });
+    }
+  });
+
+  // no-screenshot.js 인라인 구현
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'PrintScreen' || e.keyCode === 44) {
+      e.preventDefault();
+      alert('화면 캡처는 허용되지 않습니다.');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      alert('페이지 저장을 차단합니다.');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+      e.preventDefault();
+      alert('페이지 인쇄를 차단합니다.');
+    }
+  });
+
+  document.addEventListener('selectstart', function(e) {
+    e.preventDefault();
   });
 </script>
-  <script th:src="@{/js/no-screenshot.js}"></script>
-</body>
-</html>
