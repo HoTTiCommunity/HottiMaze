@@ -36,8 +36,9 @@ public class MazeQuestionService {
         dto.setQuestionImage(mazeQuestion.getQuestionImage());
         dto.setCorrectAnswer(mazeQuestion.getCorrectAnswer());
         dto.setQuestionOrder(mazeQuestion.getQuestionOrder());
-        dto.setTitle(mazeQuestion.getTitle()); // title 필드 매핑 추가
-        dto.setPoints(mazeQuestion.getPoints()); // points 필드 매핑 추가
+        dto.setTitle(mazeQuestion.getTitle());
+        dto.setPoints(mazeQuestion.getPoints());
+        dto.setHint(mazeQuestion.getHint());
         dto.setCreatedAt(mazeQuestion.getCreatedAt());
         dto.setUpdatedAt(mazeQuestion.getUpdatedAt());
 

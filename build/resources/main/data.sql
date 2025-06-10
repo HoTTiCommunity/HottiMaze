@@ -2,7 +2,6 @@
 INSERT INTO category (name) VALUES ('공지사항');
 INSERT INTO category (name) VALUES ('자유게시판');
 INSERT INTO category (name) VALUES ('질문과답변');
-INSERT INTO category (name) VALUES ('감옥 Confirm게시판');
 INSERT INTO category (name) VALUES ('감옥게시판');
 
 -- 사용자 더미 데이터 (role 컬럼 추가)
@@ -37,15 +36,10 @@ INSERT INTO post (title, content, author, created_at, updated_at, view_count, ca
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('Java 람다 표현식 사용법', '람다 표현식을 처음 배우는데 이해가 잘 안됩니다. 쉬운 예제 있을까요?', 'user001', '2024-02-05 15:20:00', '2024-02-05 15:20:00', 92, 3, 0, 0);
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('React Hook 사용 시 주의사항', 'useState와 useEffect를 사용할 때 주의해야 할 점들이 있나요?', 'designer', '2024-02-12 10:40:00', '2024-02-12 10:40:00', 56, 3, 0, 0);
 
--- 감옥 Confirm게시판 카테고리 게시글 (category_id = 4)
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('알고리즘 스터디 모집', '매주 토요일 오후 2시에 알고리즘 문제 풀이 스터디를 진행합니다. 참여하실 분 댓글 남겨주세요!', 'developer', '2024-01-28 20:00:00', '2024-01-28 20:00:00', 125, 4, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('Java 기초 스터디 시작', '자바 기초부터 차근차근 공부할 스터디원을 모집합니다. 초보자 환영!', 'manager', '2024-02-08 18:30:00', '2024-02-08 18:30:00', 87, 4, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('데이터베이스 공부 모임', 'SQL과 데이터베이스 설계에 대해 함께 공부하실 분들 모집합니다.', 'developer', '2024-02-14 21:15:00', '2024-02-14 21:15:00', 64, 4, 0, 0);
-
--- 감옥게시판 카테고리 게시글 (category_id = 5)
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('웹 포트폴리오 사이트 제작', '개인 포트폴리오 웹사이트 제작 프로젝트입니다. React와 Spring Boot를 사용할 예정입니다.', 'developer', '2024-02-01 14:20:00', '2024-02-01 14:20:00', 156, 5, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('모바일 앱 개발 프로젝트', 'Flutter를 이용한 간단한 일정 관리 앱을 만들고 있습니다. 협업하실 분 환영합니다.', 'designer', '2024-02-10 11:45:00', '2024-02-10 11:45:00', 98, 5, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('미로 게임 개발 진행상황', 'HottiMaze 프로젝트의 현재 진행상황을 공유합니다. 피드백 환영합니다!', 'manager', '2024-02-18 16:10:00', '2024-02-18 16:10:00', 142, 5, 0, 0);
+-- 감옥게시판 카테고리 게시글 (category_id = 4)
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('웹 포트폴리오 사이트 제작', '개인 포트폴리오 웹사이트 제작 프로젝트입니다. React와 Spring Boot를 사용할 예정입니다.', 'developer', '2024-02-01 14:20:00', '2024-02-01 14:20:00', 156, 4, 0, 0);
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('모바일 앱 개발 프로젝트', 'Flutter를 이용한 간단한 일정 관리 앱을 만들고 있습니다. 협업하실 분 환영합니다.', 'designer', '2024-02-10 11:45:00', '2024-02-10 11:45:00', 98, 4, 0, 0);
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('미로 게임 개발 진행상황', 'HottiMaze 프로젝트의 현재 진행상황을 공유합니다. 피드백 환영합니다!', 'manager', '2024-02-18 16:10:00', '2024-02-18 16:10:00', 142, 4, 0, 0);
 
 -- 미로 데이터 (상태 컬럼 추가)
 -- 승인된 미로들
@@ -63,27 +57,33 @@ VALUES ('극한의 어려움 - 고급 미로', '/static/imgs/mazes/maze3/main.pn
 INSERT INTO maze (maze_title, maze_dir, created_at, updated_at, view_count, user_id, status, approved_at, approved_by)
 VALUES ('숲속의 미스터리 미로', '/static/imgs/mazes/maze4/main.png', '2024-01-22 11:20:00', '2024-01-22 11:20:00', 298, 4, 'APPROVED', '2024-01-22 12:20:00', 6);
 
--- 미로 1번 문제들 (승인된 미로)
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (1, '/static/imgs/mazes/maze1/question1.png', 'test', 1, '첫 번째 문제', '2024-01-10 10:00:00', '2024-01-10 10:00:00');
+-- 미로 1번 문제들 (승인된 미로) - 힌트 추가
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, hint, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question1.png', 'test', 1, '첫 번째 문제', 10, '영어로 "시험"을 의미하는 단어입니다', '2024-01-10 10:00:00', '2024-01-10 10:00:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (1, '/static/imgs/mazes/maze1/question2.png', 'test', 2, '두 번째 문제', '2024-01-10 10:05:00', '2024-01-10 10:05:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, hint, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question2.png', 'test', 2, '두 번째 문제', 10, '첫 번째 문제와 같은 답입니다', '2024-01-10 10:05:00', '2024-01-10 10:05:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (1, '/static/imgs/mazes/maze1/question3.png', 'test', 3, '세 번째 문제', '2024-01-10 10:10:00', '2024-01-10 10:10:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, hint, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question3.png', 'test', 3, '세 번째 문제', 10, '4글자 영단어로 시작은 t입니다', '2024-01-10 10:10:00', '2024-01-10 10:10:00');
 
--- 미로 2번 문제들 (승인된 미로)
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (2, '/static/imgs/mazes/maze2/question1.png', 'test', 1, '중급 문제 1', '2024-01-15 14:30:00', '2024-01-15 14:30:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, hint, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question4.png', 'test', 4, '네 번째 문제', 10, '검사나 시험을 의미하는 영단어입니다', '2024-01-10 10:15:00', '2024-01-10 10:15:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (2, '/static/imgs/mazes/maze2/question2.png', 'test', 2, '중급 문제 2', '2024-01-15 14:35:00', '2024-01-15 14:35:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, points, hint, created_at, updated_at)
+VALUES (1, '/static/imgs/mazes/maze1/question5.png', 'test', 5, '다섯 번째 문제', 10, '이전 문제들과 모두 같은 답입니다', '2024-01-10 10:20:00', '2024-01-10 10:20:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (2, '/static/imgs/mazes/maze2/question3.png', 'test', 3, '중급 문제 3', '2024-01-15 14:40:00', '2024-01-15 14:40:00');
+-- 미로 2번 문제들 (승인된 미로) - 힌트 추가
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, hint, created_at, updated_at)
+VALUES (2, '/static/imgs/mazes/maze2/question1.png', 'test', 1, '중급 문제 1', '이것도 "test"입니다', '2024-01-15 14:30:00', '2024-01-15 14:30:00');
 
--- 미로 3번 문제들 (승인 대기 중인 미로)
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, hint, created_at, updated_at)
+VALUES (2, '/static/imgs/mazes/maze2/question2.png', 'test', 2, '중급 문제 2', '첫 번째 문제와 동일한 답입니다', '2024-01-15 14:35:00', '2024-01-15 14:35:00');
+
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, hint, created_at, updated_at)
+VALUES (2, '/static/imgs/mazes/maze2/question3.png', 'test', 3, '중급 문제 3', '모든 문제의 답이 같습니다', '2024-01-15 14:40:00', '2024-01-15 14:40:00');
+
+-- 미로 3번 문제들 (승인 대기 중인 미로) - 힌트 없음
 INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
 VALUES (3, '/static/imgs/mazes/maze3/question1.png', 'test', 1, '고급 문제 1', '2024-01-20 16:45:00', '2024-01-20 16:45:00');
 
@@ -93,17 +93,16 @@ VALUES (3, '/static/imgs/mazes/maze3/question2.png', 'test', 2, '고급 문제 2
 INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
 VALUES (3, '/static/imgs/mazes/maze3/question3.png', 'test', 3, '고급 문제 3', '2024-01-20 16:55:00', '2024-01-20 16:55:00');
 
--- 미로 4번 문제들 (승인된 미로)
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (4, '/static/imgs/mazes/maze4/question1.png', 'test', 1, '숲속 문제 1', '2024-01-22 11:20:00', '2024-01-22 11:20:00');
+-- 미로 4번 문제들 (승인된 미로) - 힌트 추가
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, hint, created_at, updated_at)
+VALUES (4, '/static/imgs/mazes/maze4/question1.png', 'test', 1, '숲속 문제 1', '숲 속에서도 답은 "test"입니다', '2024-01-22 11:20:00', '2024-01-22 11:20:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (4, '/static/imgs/mazes/maze4/question2.png', 'test', 2, '숲속 문제 2', '2024-01-22 11:25:00', '2024-01-22 11:25:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, hint, created_at, updated_at)
+VALUES (4, '/static/imgs/mazes/maze4/question2.png', 'test', 2, '숲속 문제 2', '나무들 사이에 숨어있는 4글자 영단어', '2024-01-22 11:25:00', '2024-01-22 11:25:00');
 
-INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, created_at, updated_at)
-VALUES (4, '/static/imgs/mazes/maze4/question3.png', 'test', 3, '숲속 문제 3', '2024-01-22 11:30:00', '2024-01-22 11:30:00');
+INSERT INTO maze_question (maze_id, question_image, correct_answer, question_order, title, hint, created_at, updated_at)
+VALUES (4, '/static/imgs/mazes/maze4/question3.png', 'test', 3, '숲속 문제 3', '지금까지의 모든 답과 동일합니다', '2024-01-22 11:30:00', '2024-01-22 11:30:00');
 
--- 미로 투표 더미 데이터
 -- 미로 1번에 대한 투표 (좋아요가 많은 미로)
 INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
 VALUES (1, 2, true, '2024-01-11 10:30:00', '2024-01-11 10:30:00');
@@ -176,3 +175,46 @@ VALUES (4, 6, true, '2024-01-25 11:30:00', '2024-01-25 11:30:00');
 
 INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
 VALUES (4, 7, true, '2024-01-25 15:20:00', '2024-01-25 15:20:00');
+
+-- 미로 1번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 2, '너무 쉽다', true, '2024-01-11 11:00:00', '2024-01-11 11:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 3, '이걸 문제라고 냈어??', true, '2024-01-11 15:00:00', '2024-01-11 15:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 4, '너무 재미있었어요', true, '2024-01-12 10:00:00', '2024-01-12 10:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 5, '다시 만들도록', true, '2024-01-12 17:00:00', '2024-01-12 17:00:00');
+
+-- 미로 2번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (2, 1, '접어라 ㅋ', true, '2024-01-16 11:00:00', '2024-01-16 11:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (2, 3, '너무 재미가 있었어요~', true, '2024-01-16 15:00:00', '2024-01-16 15:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (2, 5, '너무 재미있어서 좋아요 눌렀어요', true, '2024-01-17 17:00:00', '2024-01-17 17:00:00');
+
+-- 미로 3번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (3, 1, '이게 문제냐?', true, '2024-01-21 11:00:00', '2024-01-21 11:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (3, 5, '생각이 너무 짧은 미로였다', true, '2024-01-22 17:00:00', '2024-01-22 17:00:00');
+
+-- 미로 4번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 1, 'test', true, '2024-01-23 13:00:00', '2024-01-23 13:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 2, 'test12', true, '2024-01-23 15:00:00', '2024-01-23 15:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 3, 'test123', true, '2024-01-24 10:00:00', '2024-01-24 10:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 5, 'test1234', true, '2024-01-24 17:00:00', '2024-01-24 17:00:00');

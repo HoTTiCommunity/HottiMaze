@@ -12,10 +12,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MazeCreateDto {
+public class MazeUpdateDto {
     private String mazeTitle;
-    private String creatorName;
     private MultipartFile mainImage;
+    private List<Long> existingQuestionIds;
     private List<String> questionTitles;
     private List<MultipartFile> questionImages;
     private List<String> correctAnswers;

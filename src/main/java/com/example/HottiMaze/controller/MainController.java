@@ -31,7 +31,7 @@ public class MainController {
         // ─── 1) 로그인된 사용자가 있으면 User 엔티티 조회해서 모델에 담기 ───
         if (principal != null) {
             String username = principal.getUsername();
-            User user = userService.getUserEntityByUsername(username);
+            User user = userService.getUserByUsername(username);
 
             model.addAttribute("loginUsername", user.getUsername());
             model.addAttribute("loginPoint", user.getPoint());
@@ -43,7 +43,7 @@ public class MainController {
         List<PostDto> noticePosts = postService.getPostsByCategoryName("공지사항");
         List<PostDto> freePosts = postService.getPostsByCategoryName("자유게시판");
         List<PostDto> qnaPosts = postService.getPostsByCategoryName("질문과답변");
-        List<PostDto> confirmPosts = postService.getPostsByCategoryName("감옥 Confirm게시판");
+        // List<PostDto> confirmPosts = postService.getPostsByCategoryName("감옥 Confirm게시판");
         List<PostDto> jailPosts = postService.getPostsByCategoryName("감옥게시판");
 
         // 최대 5개까지만 표시
@@ -56,9 +56,9 @@ public class MainController {
         if (qnaPosts.size() > 5) {
             qnaPosts = qnaPosts.subList(0, 5);
         }
-        if (confirmPosts.size() > 5) {
-            confirmPosts = confirmPosts.subList(0, 5);
-        }
+//        if (confirmPosts.size() > 5) {
+//            confirmPosts = confirmPosts.subList(0, 5);
+//        }
         if (jailPosts.size() > 5) {
             jailPosts = jailPosts.subList(0, 5);
         }
@@ -72,7 +72,7 @@ public class MainController {
         model.addAttribute("noticePosts", noticePosts);
         model.addAttribute("freePosts", freePosts);
         model.addAttribute("qnaPosts", qnaPosts);
-        model.addAttribute("confirmPosts", confirmPosts);
+        // model.addAttribute("confirmPosts", confirmPosts);
         model.addAttribute("jailPosts", jailPosts);
 
         // 미로 데이터 (한 번만 추가)

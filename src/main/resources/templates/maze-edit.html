@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>미로 업로드 - HottiMaze</title>
+    <title>미로 수정 - HottiMaze</title>
     <style>
         * {
             margin: 0;
@@ -65,8 +65,23 @@
             color: #2c3e50;
         }
 
-        .upload-content {
+        .edit-content {
             padding: 40px;
+        }
+
+        .status-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            color: #856404;
+        }
+
+        .status-info.rejected {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
         }
 
         .form-section {
@@ -191,6 +206,25 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        .current-image {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .current-image img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .current-image-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #495057;
+        }
+
         .questions-section {
             margin-top: 30px;
         }
@@ -283,6 +317,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            margin-right: 15px;
         }
 
         .submit-btn:hover:not(:disabled) {
@@ -294,6 +329,28 @@
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+        }
+
+        .cancel-btn {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cancel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(149, 165, 166, 0.4);
+            color: white;
+            text-decoration: none;
         }
 
         .hint-field {
@@ -313,6 +370,19 @@
             font-weight: 500;
         }
 
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -325,7 +395,7 @@
         }
 
         @media (max-width: 768px) {
-            .upload-content {
+            .edit-content {
                 padding: 20px;
             }
 
@@ -338,20 +408,43 @@
                 margin-bottom: 20px;
                 display: inline-block;
             }
+
+            .submit-section {
+                text-align: center;
+            }
+
+            .submit-btn, .cancel-btn {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
 <body>
-<a href="/" class="back-button">← 메인으로</a>
+<a href="/user/profile" class="back-button">← 내 프로필로</a>
 
 <div class="container">
     <header>
-        <h1>🧩 새로운 미로 업로드</h1>
-        <p>창의적인 미로를 만들어 다른 사용자들과 공유해보세요!</p>
+        <h1>✏️ 미로 수정</h1>
+        <p>미로 정보를 업데이트하고 개선해보세요!</p>
     </header>
 
-    <div class="upload-content">
-        <form action="/mazes/upload" method="post" enctype="multipart/form-data" id="mazeUploadForm">
+    <div class="edit-content">
+        <!-- 상태 정보 -->
+        <div th:if="${maze.status.name() == 'PENDING'}" class="status-info">
+            ⏳ <strong>승인 대기 중</strong> - 이 미로는 현재 관리자의 승인을 기다리고 있습니다. 수정 후 다시 검토됩니다.
+        </div>
+
+        <div th:if="${maze.status.name() == 'REJECTED'}" class="status-info rejected">
+            ❌ <strong>거부됨</strong> - 거부 사유: <span th:text="${maze.rejectionReason}">거부 사유</span><br>
+            수정 후 다시 승인 요청할 수 있습니다.
+        </div>
+
+        <!-- 에러 메시지 -->
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form action="#" th:action="@{'/user/maze/' + ${maze.id} + '/edit'}" method="post" enctype="multipart/form-data" id="mazeEditForm">
             <!-- 미로 기본 정보 -->
             <div class="form-section">
                 <h2 class="section-title">
@@ -360,36 +453,39 @@
 
                 <div class="form-group">
                     <label for="mazeTitle">미로 제목 <span class="required">*</span></label>
-                    <input type="text" id="mazeTitle" name="mazeTitle" placeholder="예: 신나는 보물찾기 미로" required>
+                    <input type="text" id="mazeTitle" name="mazeTitle" th:value="${maze.mazeTitle}" placeholder="예: 신나는 보물찾기 미로" required>
                     <div class="helper-text">사용자들이 쉽게 찾을 수 있도록 흥미로운 제목을 지어주세요</div>
                 </div>
 
                 <div class="form-group">
-                    <label for="creatorName">제작자 이름 <span class="required">*</span></label>
-                    <input type="text"
-                           id="creatorName"
-                           name="creatorName"
-                           sec:authentication="name"
-                           readonly>
-                    <div class="helper-text">현재 로그인한 사용자 이름이 자동으로 입력됩니다</div>
+                    <label>제작자</label>
+                    <input type="text" th:value="${maze.creatorName}" readonly style="background: #f8f9fa; color: #6c757d;">
+                    <div class="helper-text">제작자는 변경할 수 없습니다</div>
                 </div>
 
                 <div class="form-group">
-                    <label for="mainImage">미로 대표 이미지 <span class="required">*</span></label>
+                    <label for="mainImage">미로 대표 이미지</label>
+
+                    <!-- 현재 이미지 표시 -->
+                    <div class="current-image" th:if="${maze.mazeDir}">
+                        <span class="current-image-label">현재 이미지:</span>
+                        <img th:src="${maze.mazeDir}" th:alt="${maze.mazeTitle}" />
+                    </div>
+
                     <div class="file-upload">
-                        <input type="file" id="mainImage" name="mainImage" class="file-input" accept="image/*" required onchange="previewMainImage(this)">
+                        <input type="file" id="mainImage" name="mainImage" class="file-input" accept="image/*" onchange="previewMainImage(this)">
                         <label for="mainImage" class="file-label">
                             <span class="file-icon">🖼️</span>
                             <div>
-                                <strong>미로 대표 이미지 업로드</strong>
+                                <strong>새 대표 이미지 업로드</strong>
                                 <div style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
-                                    JPG, PNG 파일만 업로드 가능합니다
+                                    선택하지 않으면 기존 이미지가 유지됩니다
                                 </div>
                             </div>
                         </label>
                     </div>
                     <div id="mainImagePreview" class="image-preview"></div>
-                    <div class="helper-text">미로의 전체적인 모습을 보여주는 이미지를 업로드해주세요</div>
+                    <div class="helper-text">JPG, PNG 파일만 업로드 가능합니다. 선택하지 않으면 기존 이미지가 유지됩니다.</div>
                 </div>
             </div>
 
@@ -399,32 +495,54 @@
                     🧩 미로 문제
                 </h2>
                 <div class="helper-text" style="margin-bottom: 25px;">
-                    미로를 풀기 위한 문제들을 등록해주세요. 최소 1개 이상의 문제가 필요합니다.
+                    기존 문제를 수정하거나 새로운 문제를 추가할 수 있습니다.
                 </div>
 
                 <div id="questionsContainer">
-                    <!-- 첫 번째 문제 (기본) -->
-                    <div class="question-item" data-question-index="0">
+                    <!-- 기존 문제들 -->
+                    <div th:each="question, iterStat : ${mazeQuestions}"
+                         class="question-item"
+                         th:data-question-index="${iterStat.index}"
+                         th:data-existing-id="${question.id}">
+
                         <div class="question-header">
-                            <span class="question-number">문제 1</span>
-                            <button type="button" class="remove-question" onclick="removeQuestion(0)" style="display: none;">
+                            <span class="question-number" th:text="'문제 ' + ${iterStat.index + 1}">문제 1</span>
+                            <button type="button" class="remove-question"
+                                    th:onclick="'removeQuestion(' + ${iterStat.index} + ')'"
+                                    th:style="${iterStat.size > 1} ? '' : 'display: none;'">
                                 🗑️ 삭제
                             </button>
                         </div>
 
+                        <input type="hidden" th:name="'existingQuestionIds[' + ${iterStat.index} + ']'" th:value="${question.id}">
+
                         <div class="form-group">
                             <label>문제 제목</label>
-                            <input type="text" name="questionTitles[0]" placeholder="예: 첫 번째 단서를 찾아보세요">
+                            <input type="text"
+                                   th:name="'questionTitles[' + ${iterStat.index} + ']'"
+                                   th:value="${question.title}"
+                                   placeholder="예: 첫 번째 단서를 찾아보세요">
                             <div class="helper-text">문제의 제목이나 설명을 입력하세요 (선택사항)</div>
                         </div>
 
                         <div class="form-group">
-                            <label>문제 이미지 <span class="required">*</span></label>
+                            <label>문제 이미지</label>
+
+                            <!-- 현재 이미지 표시 -->
+                            <div class="current-image" th:if="${question.questionImage}">
+                                <span class="current-image-label">현재 이미지:</span>
+                                <img th:src="${question.questionImage}" th:alt="${question.title}" />
+                            </div>
+
                             <div class="file-upload">
-                                <input type="file" name="questionImages" class="file-input" accept="image/*" required onchange="previewQuestionImage(this, 0)">
+                                <input type="file"
+                                       th:name="'questionImages[' + ${iterStat.index} + ']'"
+                                       class="file-input"
+                                       accept="image/*"
+                                       th:onchange="'previewQuestionImage(this, ' + ${iterStat.index} + ')'">
                                 <label class="file-label">
                                     <span class="file-icon">🖼️</span>
-                                    <div>문제 이미지 업로드</div>
+                                    <div>새 문제 이미지 업로드</div>
                                 </label>
                             </div>
                             <div class="question-image-preview"></div>
@@ -433,19 +551,29 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>정답 <span class="required">*</span></label>
-                                <input type="text" name="correctAnswers[0]" placeholder="예: test" required>
+                                <input type="text"
+                                       th:name="'correctAnswers[' + ${iterStat.index} + ']'"
+                                       th:value="${question.correctAnswer}"
+                                       placeholder="예: test"
+                                       required>
                                 <div class="helper-text">복수 정답은 |로 구분 (예: test|테스트|정답)</div>
                             </div>
                             <div class="form-group">
                                 <label>획득 점수</label>
-                                <input type="number" name="pointsList[0]" value="10" min="1" max="100">
+                                <input type="number"
+                                       th:name="'pointsList[' + ${iterStat.index} + ']'"
+                                       th:value="${question.points}"
+                                       min="1" max="100">
                                 <div class="helper-text">문제를 맞췄을 때 받을 점수 (기본: 10점)</div>
                             </div>
                         </div>
 
                         <div class="form-group hint-field">
                             <label>💡 힌트 (선택사항)</label>
-                            <textarea name="hints[0]" placeholder="문제 해결에 도움이 되는 힌트를 입력하세요. 사용자는 50포인트를 소모하여 이 힌트를 볼 수 있습니다." rows="3"></textarea>
+                            <textarea th:name="'hints[' + ${iterStat.index} + ']'"
+                                      th:text="${question.hint}"
+                                      placeholder="문제 해결에 도움이 되는 힌트를 입력하세요. 사용자는 50포인트를 소모하여 이 힌트를 볼 수 있습니다."
+                                      rows="3"></textarea>
                             <div class="helper-text">
                                 <strong>💰 힌트는 사용자가 50포인트를 소모하여 볼 수 있습니다</strong><br>
                                 너무 쉬운 힌트보다는 문제 해결에 적절한 도움이 되는 힌트를 작성해주세요
@@ -461,21 +589,24 @@
 
             <!-- 제출 섹션 -->
             <div class="submit-section">
-                <h3 style="margin-bottom: 15px; color: #2c3e50;">🚀 미로 업로드 준비 완료!</h3>
+                <h3 style="margin-bottom: 15px; color: #2c3e50;">🔄 미로 수정 완료</h3>
                 <p style="color: #6c757d; margin-bottom: 25px;">
-                    업로드한 미로는 관리자 검토 후 승인됩니다.<br>
-                    승인되면 다른 사용자들이 도전할 수 있게 됩니다.
+                    수정된 미로는 다시 관리자 검토를 거쳐 승인됩니다.<br>
+                    승인되면 다른 사용자들이 업데이트된 버전을 플레이할 수 있습니다.
                 </p>
                 <button type="submit" class="submit-btn" id="submitBtn">
-                    🎯 미로 업로드하기
+                    ✅ 수정 완료
                 </button>
+                <a href="/user/profile" class="cancel-btn">
+                    ❌ 취소
+                </a>
             </div>
         </form>
     </div>
 </div>
 
-<script>
-    let questionCount = 1;
+<script th:inline="javascript">
+    let questionCount = /*[[${#lists.size(mazeQuestions)}]]*/ 1;
 
     // 메인 이미지 미리보기
     function previewMainImage(input) {
@@ -484,7 +615,7 @@
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="미로 대표 이미지 미리보기">`;
+                preview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="새 미로 대표 이미지 미리보기">`;
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -498,7 +629,7 @@
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="문제 ${questionIndex + 1} 이미지 미리보기">`;
+                preview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="새 문제 ${questionIndex + 1} 이미지 미리보기">`;
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -512,54 +643,54 @@
         questionItem.setAttribute('data-question-index', questionCount);
 
         questionItem.innerHTML = `
-                <div class="question-header">
-                    <span class="question-number">문제 ${questionCount + 1}</span>
-                    <button type="button" class="remove-question" onclick="removeQuestion(${questionCount})">
-                        🗑️ 삭제
-                    </button>
-                </div>
+            <div class="question-header">
+                <span class="question-number">문제 ${questionCount + 1}</span>
+                <button type="button" class="remove-question" onclick="removeQuestion(${questionCount})">
+                    🗑️ 삭제
+                </button>
+            </div>
 
+            <div class="form-group">
+                <label>문제 제목</label>
+                <input type="text" name="questionTitles[${questionCount}]" placeholder="예: ${questionCount + 1}번째 단서를 찾아보세요">
+                <div class="helper-text">문제의 제목이나 설명을 입력하세요 (선택사항)</div>
+            </div>
+
+            <div class="form-group">
+                <label>문제 이미지 <span class="required">*</span></label>
+                <div class="file-upload">
+                    <input type="file" name="questionImages[${questionCount}]" class="file-input"
+                           accept="image/*" required onchange="previewQuestionImage(this, ${questionCount})">
+                    <label class="file-label">
+                        <span class="file-icon">🖼️</span>
+                        <div>문제 이미지 업로드</div>
+                    </label>
+                </div>
+                <div class="question-image-preview"></div>
+            </div>
+
+            <div class="form-row">
                 <div class="form-group">
-                    <label>문제 제목</label>
-                    <input type="text" name="questionTitles[${questionCount}]" placeholder="예: ${questionCount + 1}번째 단서를 찾아보세요">
-                    <div class="helper-text">문제의 제목이나 설명을 입력하세요 (선택사항)</div>
+                    <label>정답 <span class="required">*</span></label>
+                    <input type="text" name="correctAnswers[${questionCount}]" placeholder="예: test" required>
+                    <div class="helper-text">복수 정답은 |로 구분 (예: test|테스트|정답)</div>
                 </div>
-
                 <div class="form-group">
-                    <label>문제 이미지 <span class="required">*</span></label>
-                    <div class="file-upload">
-                        <input type="file" name="questionImages" class="file-input"
-                               accept="image/*" required onchange="previewQuestionImage(this, ${questionCount})">
-                        <label class="file-label">
-                            <span class="file-icon">🖼️</span>
-                            <div>문제 이미지 업로드</div>
-                        </label>
-                    </div>
-                    <div class="question-image-preview"></div>
+                    <label>획득 점수</label>
+                    <input type="number" name="pointsList[${questionCount}]" value="10" min="1" max="100">
+                    <div class="helper-text">문제를 맞췄을 때 받을 점수 (기본: 10점)</div>
                 </div>
+            </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>정답 <span class="required">*</span></label>
-                        <input type="text" name="correctAnswers[${questionCount}]" placeholder="예: test" required>
-                        <div class="helper-text">복수 정답은 |로 구분 (예: test|테스트|정답)</div>
-                    </div>
-                    <div class="form-group">
-                        <label>획득 점수</label>
-                        <input type="number" name="pointsList[${questionCount}]" value="10" min="1" max="100">
-                        <div class="helper-text">문제를 맞췄을 때 받을 점수 (기본: 10점)</div>
-                    </div>
+            <div class="form-group hint-field">
+                <label>💡 힌트 (선택사항)</label>
+                <textarea name="hints[${questionCount}]" placeholder="문제 해결에 도움이 되는 힌트를 입력하세요. 사용자는 50포인트를 소모하여 이 힌트를 볼 수 있습니다." rows="3"></textarea>
+                <div class="helper-text">
+                    <strong>💰 힌트는 사용자가 50포인트를 소모하여 볼 수 있습니다</strong><br>
+                    너무 쉬운 힌트보다는 문제 해결에 적절한 도움이 되는 힌트를 작성해주세요
                 </div>
-
-                <div class="form-group hint-field">
-                    <label>💡 힌트 (선택사항)</label>
-                    <textarea name="hints[${questionCount}]" placeholder="문제 해결에 도움이 되는 힌트를 입력하세요. 사용자는 50포인트를 소모하여 이 힌트를 볼 수 있습니다." rows="3"></textarea>
-                    <div class="helper-text">
-                        <strong>💰 힌트는 사용자가 50포인트를 소모하여 볼 수 있습니다</strong><br>
-                        너무 쉬운 힌트보다는 문제 해결에 적절한 도움이 되는 힌트를 작성해주세요
-                    </div>
-                </div>
-            `;
+            </div>
+        `;
 
         container.appendChild(questionItem);
         questionCount++;
@@ -585,11 +716,13 @@
 
             question.setAttribute('data-question-index', index);
 
-            const inputs = question.querySelectorAll('input, textarea');
+            // 폼 필드 이름 업데이트
+            const inputs = question.querySelectorAll('input[name*="["], textarea[name*="["]');
             inputs.forEach(input => {
                 const name = input.getAttribute('name');
-                if (name) {
-                    const newName = name.replace(/\[\d+\]/, `[${index}]`);
+                if (name && !name.includes('existingQuestionIds')) {
+                    const baseName = name.substring(0, name.indexOf('['));
+                    const newName = `${baseName}[${index}]`;
                     input.setAttribute('name', newName);
                 }
             });
@@ -615,12 +748,32 @@
     }
 
     // 폼 제출 전 검증
-    document.getElementById('mazeUploadForm').addEventListener('submit', function(e) {
+    document.getElementById('mazeEditForm').addEventListener('submit', function(e) {
         const questions = document.querySelectorAll('.question-item');
 
         if (questions.length === 0) {
             e.preventDefault();
             alert('최소 1개 이상의 문제를 등록해야 합니다.');
+            return false;
+        }
+
+        // 새로 추가된 문제들은 이미지가 필수
+        let hasError = false;
+        questions.forEach((question, index) => {
+            const existingId = question.querySelector('input[name*="existingQuestionIds"]');
+            const imageInput = question.querySelector('input[type="file"]');
+
+            // 새 문제인데 이미지가 없는 경우
+            if (!existingId && (!imageInput.files || imageInput.files.length === 0)) {
+                hasError = true;
+                alert(`문제 ${index + 1}의 이미지를 업로드해주세요.`);
+                imageInput.focus();
+                return false;
+            }
+        });
+
+        if (hasError) {
+            e.preventDefault();
             return false;
         }
 
@@ -636,7 +789,7 @@
 
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
-        submitBtn.textContent = '업로드 중...';
+        submitBtn.textContent = '수정 중...';
 
         return true;
     });
