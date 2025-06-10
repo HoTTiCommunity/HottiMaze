@@ -562,8 +562,6 @@
 </head>
 <body>
 <div class="container">
-    <!-- 로그인 상태에 따라 다른 상단 바 출력 -->
-    <!-- 로그인된 사용자가 있을 때 -->
     <div class="user-info-bar" th:if="${loginUsername != null}">
         <span class="welcome">
             환영합니다, <strong th:text="${loginUsername}">username</strong>님!
@@ -589,7 +587,6 @@
         <a class="logout-link" th:href="@{/logout}">로그아웃</a>
     </div>
 
-    <!-- 비로그인 사용자일 때 -->
     <div class="guest-info-bar" th:if="${loginUsername == null}">
         <a th:href="@{/login}">로그인</a>
         <a th:href="@{/sign-up}">회원가입</a>
@@ -601,9 +598,7 @@
     </header>
 
     <div class="content-wrapper">
-        <!-- 게시판 섹션 -->
         <div class="board-container">
-            <!-- 공지사항 게시판 -->
             <div class="board-section notice-board">
                 <div class="board-header">
                     <a th:href="@{/post/name/공지사항}">
@@ -629,7 +624,6 @@
                 </div>
             </div>
 
-            <!-- 자유게시판 -->
             <div class="board-section free-board">
                 <div class="board-header">
                     <a th:href="@{/post}">
@@ -655,20 +649,16 @@
             </div>
         </div>
 
-        <!-- 구분선 -->
         <div class="section-divider"></div>
 
-        <!-- 미로 섹션 -->
         <div class="maze-section">
             <h2 class="section-title">🎯 미로 탐험</h2>
 
-            <!-- 탭 버튼 -->
             <div class="maze-tabs">
                 <button class="tab-button active" onclick="showMazeTab('latest')">🆕 최신 미로</button>
                 <button class="tab-button" onclick="showMazeTab('popular')">🔥 인기 미로</button>
             </div>
 
-            <!-- 최신 미로 -->
             <div id="latest-mazes" class="maze-grid">
                 <div th:if="${latestMazes != null and !latestMazes.isEmpty()}">
                     <div th:each="maze : ${latestMazes}"
@@ -690,47 +680,25 @@
                         <div class="maze-content">
                             <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
 
-                            <!-- 투표 통계 표시 -->
                             <div class="maze-vote-stats" th:data-maze-id="${maze.id}">
                                 <div class="vote-indicator like-indicator">
                                     <span>👍</span>
-                                    <span class="vote-count like-count">0</span>
+                                    <span class="vote-count like-count" th:text="${maze.likeCount}">0</span>
                                 </div>
                                 <div class="vote-ratio-mini">
-                                    <div class="like-fill" style="width: 50%;"></div>
-                                    <div class="dislike-fill" style="width: 50%;"></div>
+                                    <div class="like-fill" th:style="'width: ' + ${maze.likePercentage} + '%;'"></div>
+                                    <div class="dislike-fill" th:style="'width: ' + ${maze.dislikePercentage} + '%;'"></div>
                                 </div>
                                 <div class="vote-indicator dislike-indicator">
                                     <span>👎</span>
-                                    <span class="vote-count dislike-count">0</span>
+                                    <span class="vote-count dislike-count" th:text="${maze.dislikeCount}">0</span>
                                 </div>
                             </div>
-
-                            <div class="maze-rating">
-                                <div class="stars">★★★★☆</div>
-                                <span class="rating-score">4.2</span>
-                                <span class="rating-count">(15)</span>
-                            </div>
-
                             <div class="maze-stats">
                                 <div class="stat-item">
                                     <span>👁</span>
                                     <span th:text="${maze.viewCount}">조회수</span>
                                 </div>
-                                <div class="stat-item">
-                                    <span>⏱</span>
-                                    <span>5분</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span>🏆</span>
-                                    <span>23</span>
-                                </div>
-                            </div>
-
-                            <div class="maze-tags">
-                                <span class="tag difficulty-easy">쉬움</span>
-                                <span class="tag">모험</span>
-                                <span class="tag">퍼즐</span>
                             </div>
 
                             <div class="maze-creator">
@@ -748,7 +716,6 @@
                 </div>
             </div>
 
-            <!-- 인기 미로 -->
             <div id="popular-mazes" class="maze-grid hidden">
                 <div th:if="${popularMazes != null and !popularMazes.isEmpty()}">
                     <div th:each="maze : ${popularMazes}"
@@ -770,19 +737,18 @@
                         <div class="maze-content">
                             <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
 
-                            <!-- 투표 통계 표시 -->
                             <div class="maze-vote-stats" th:data-maze-id="${maze.id}">
                                 <div class="vote-indicator like-indicator">
                                     <span>👍</span>
-                                    <span class="vote-count like-count">0</span>
+                                    <span class="vote-count like-count" th:text="${maze.likeCount}">0</span>
                                 </div>
                                 <div class="vote-ratio-mini">
-                                    <div class="like-fill" style="width: 50%;"></div>
-                                    <div class="dislike-fill" style="width: 50%;"></div>
+                                    <div class="like-fill" th:style="'width: ' + ${maze.likePercentage} + '%;'"></div>
+                                    <div class="dislike-fill" th:style="'width: ' + ${maze.dislikePercentage} + '%;'"></div>
                                 </div>
                                 <div class="vote-indicator dislike-indicator">
                                     <span>👎</span>
-                                    <span class="vote-count dislike-count">0</span>
+                                    <span class="vote-count dislike-count" th:text="${maze.dislikeCount}">0</span>
                                 </div>
                             </div>
 

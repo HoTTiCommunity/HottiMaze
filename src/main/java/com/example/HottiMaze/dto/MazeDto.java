@@ -24,12 +24,13 @@ public class MazeDto {
     private LocalDateTime approvedAt;
     private String approvedByUsername;
     private String rejectionReason;
+    // 투표 관련 필드 추가
     private Long totalVotes;
     private Long likeCount;
     private Long dislikeCount;
     private Double likeRatio;
     private Double dislikeRatio;
-    private Boolean userVote;
+    private Boolean userVote; // 현재 로그인된 사용자의 투표 상태 (null: 투표 안함, true: 좋아요, false: 싫어요)
 
     public void calculateVoteRatios() {
         if (totalVotes != null && totalVotes > 0) {
