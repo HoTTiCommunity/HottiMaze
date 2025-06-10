@@ -112,148 +112,6 @@
             opacity: 0.9;
         }
 
-        /* 투표 섹션 스타일 */
-        .vote-section {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .vote-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .vote-title {
-            font-size: 1.3rem;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .vote-stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 25px;
-        }
-
-        .vote-stat {
-            text-align: center;
-        }
-
-        .vote-count {
-            font-size: 2rem;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .vote-count.like {
-            color: #28a745;
-        }
-
-        .vote-count.dislike {
-            color: #dc3545;
-        }
-
-        .vote-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .vote-ratio-bar {
-            width: 100%;
-            height: 20px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 20px 0;
-            position: relative;
-        }
-
-        .vote-ratio-fill {
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .like-fill {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            float: left;
-        }
-
-        .dislike-fill {
-            background: linear-gradient(45deg, #dc3545, #e74c3c);
-            float: right;
-        }
-
-        .vote-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .vote-btn {
-            padding: 12px 25px;
-            border: 2px solid;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            background: white;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 120px;
-            justify-content: center;
-        }
-
-        .vote-btn.like {
-            border-color: #28a745;
-            color: #28a745;
-        }
-
-        .vote-btn.like:hover {
-            background: #28a745;
-            color: white;
-        }
-
-        .vote-btn.like.active {
-            background: #28a745;
-            color: white;
-            box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
-        }
-
-        .vote-btn.dislike {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-
-        .vote-btn.dislike:hover {
-            background: #dc3545;
-            color: white;
-        }
-
-        .vote-btn.dislike.active {
-            background: #dc3545;
-            color: white;
-            box-shadow: 0 0 20px rgba(220, 53, 69, 0.3);
-        }
-
-        .vote-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .login-required {
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-        }
-
         .maze-actions {
             display: flex;
             gap: 15px;
@@ -288,19 +146,6 @@
             text-decoration: none;
         }
 
-        .btn-secondary {
-            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
-            color: white;
-            box-shadow: 0 5px 20px rgba(149, 165, 166, 0.3);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-
         .btn-quiz {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
@@ -331,19 +176,8 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .maze-fallback {
-            width: 100%;
-            height: 300px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
-            font-weight: bold;
-        }
-
-        .maze-info-section {
+        /* 리뷰 섹션 스타일 */
+        .review-section {
             background: white;
             border-radius: 15px;
             padding: 30px;
@@ -351,50 +185,248 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .section-title {
-            font-size: 1.5rem;
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .review-title {
+            font-size: 1.8rem;
             color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
             font-weight: bold;
         }
 
-        .creator-section {
-            background: white;
+        .review-count {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .review-write-section {
+            background: #f8f9fa;
             border-radius: 15px;
             padding: 25px;
-            margin: 30px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
-        .creator-header {
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .review-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .review-textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        .review-form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review-submit-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .review-submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .review-submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .review-char-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .review-author {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
         }
 
-        .creator-avatar {
-            width: 60px;
-            height: 60px;
+        .review-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .review-author-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .review-author-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+
+        .review-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .review-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
             font-weight: bold;
         }
 
-        .creator-info h3 {
-            color: #2c3e50;
-            margin-bottom: 5px;
+        .review-content {
+            line-height: 1.6;
+            color: #495057;
+            margin-bottom: 15px;
         }
 
-        .creator-info p {
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .review-action-btn {
+            background: transparent;
+            border: 1px solid #dee2e6;
             color: #6c757d;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .review-action-btn:hover {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        .review-action-btn.edit {
+            color: #007bff;
+            border-color: #007bff;
+        }
+
+        .review-action-btn.delete {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .no-reviews-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .login-required, .completion-required {
+            text-align: center;
+            padding: 25px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            color: #856404;
+            margin-bottom: 20px;
+        }
+
+        .completion-required {
+            background: #e2e3e5;
+            border-color: #d6d8db;
+            color: #6c757d;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .back-button {
@@ -420,48 +452,6 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             color: #2c3e50;
             text-decoration: none;
-        }
-
-        .difficulty-badge {
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .difficulty-easy {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .difficulty-medium {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .difficulty-hard {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .alert {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
         }
 
         @media (max-width: 768px) {
@@ -504,13 +494,16 @@
                 width: fit-content;
             }
 
-            .vote-stats {
-                gap: 20px;
+            .review-form-actions {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
             }
 
-            .vote-buttons {
+            .review-item-header {
                 flex-direction: column;
-                align-items: center;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
     </style>
@@ -556,12 +549,12 @@
                         <span class="stat-label">조회수</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number" id="totalVotes">0</span>
-                        <span class="stat-label">총 투표</span>
+                        <span class="stat-number" id="reviewCount">0</span>
+                        <span class="stat-label">리뷰</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number" id="likePercentage">0%</span>
-                        <span class="stat-label">좋아요율</span>
+                        <span class="stat-number" id="completionCount">0</span>
+                        <span class="stat-label">완주자</span>
                     </div>
                 </div>
 
@@ -572,9 +565,6 @@
                     <a href="/" class="btn btn-primary">
                         🏠 메인으로 돌아가기
                     </a>
-                    <button class="btn btn-secondary" onclick="window.history.back()">
-                        ← 이전 페이지
-                    </button>
                 </div>
             </div>
 
@@ -583,156 +573,323 @@
                      th:alt="${maze.mazeTitle}"
                      class="maze-image"
                      onerror="handleImageError(this)">
-                <div class="maze-fallback" style="display: none;">
-                    🧩
-                </div>
             </div>
         </div>
 
-        <!-- 투표 섹션 -->
-        <div class="vote-section">
-            <div class="vote-header">
-                <h2 class="vote-title">이 미로가 어떠셨나요?</h2>
-                <p style="color: #6c757d;">다른 사용자들에게 도움이 되는 평가를 남겨주세요!</p>
+        <!-- 리뷰 섹션 -->
+        <div class="review-section">
+            <div class="review-header">
+                <h2 class="review-title">💬 미로 리뷰</h2>
+                <span class="review-count" id="reviewCountBadge">리뷰 0개</span>
             </div>
 
-            <!-- 투표 통계 -->
-            <div class="vote-stats">
-                <div class="vote-stat">
-                    <span class="vote-count like" id="likeCount">0</span>
-                    <span class="vote-label">👍 좋아요</span>
-                </div>
-                <div class="vote-stat">
-                    <span class="vote-count dislike" id="dislikeCount">0</span>
-                    <span class="vote-label">👎 싫어요</span>
-                </div>
-            </div>
-
-            <!-- 투표 비율 바 -->
-            <div class="vote-ratio-bar">
-                <div class="vote-ratio-fill like-fill" id="likeBar" style="width: 50%;"></div>
-                <div class="vote-ratio-fill dislike-fill" id="dislikeBar" style="width: 50%;"></div>
-            </div>
-
-            <!-- 투표 버튼 -->
+            <!-- 리뷰 작성 영역 -->
             <div sec:authorize="isAuthenticated()">
-                <div class="vote-buttons">
-                    <button class="vote-btn like" id="likeBtn" onclick="vote('like')">
-                        👍 좋아요
-                    </button>
-                    <button class="vote-btn dislike" id="dislikeBtn" onclick="vote('dislike')">
-                        👎 싫어요
-                    </button>
+                <div id="reviewWriteSection" class="review-write-section">
+                    <div class="review-form">
+                        <textarea
+                                id="reviewContent"
+                                class="review-textarea"
+                                placeholder="미로를 완주한 후 솔직한 리뷰를 남겨주세요! (최대 1000자)"
+                                maxlength="1000"
+                                oninput="updateCharCount()"></textarea>
+
+                        <div class="review-form-actions">
+                            <span class="review-char-count" id="charCount">0 / 1000</span>
+                            <button
+                                    id="submitReviewBtn"
+                                    class="review-submit-btn"
+                                    onclick="submitReview()"
+                                    disabled>
+                                ✍️ 리뷰 작성
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div style="text-align: center; margin-top: 10px;">
-                    <button class="btn btn-secondary" id="cancelBtn" onclick="cancelVote()" style="display: none;">
-                        투표 취소
-                    </button>
+
+                <!-- 완주하지 않은 경우 -->
+                <div id="completionRequired" class="completion-required" style="display: none;">
+                    <p><strong>🚫 리뷰 작성 불가</strong></p>
+                    <p>미로를 완주한 후에 리뷰를 작성할 수 있습니다.</p>
+                    <p>먼저 <a th:href="@{'/mazes/' + ${maze.id} + '/quiz'}" style="color: #4ecdc4; text-decoration: none;">미궁 시작</a>을 클릭해서 문제를 풀어보세요!</p>
+                </div>
+
+                <!-- 이미 리뷰를 작성한 경우 -->
+                <div id="alreadyReviewed" class="completion-required" style="display: none;">
+                    <p><strong>✅ 리뷰 작성 완료</strong></p>
+                    <p>이미 이 미로에 대한 리뷰를 작성하셨습니다.</p>
                 </div>
             </div>
 
-            <div sec:authorize="!isAuthenticated()">
-                <div class="login-required">
-                    <p>투표하려면 <a href="/login" style="color: #4ecdc4; text-decoration: none;">로그인</a>이 필요합니다.</p>
-                </div>
+            <!-- 비로그인 사용자 -->
+            <div sec:authorize="!isAuthenticated()" class="login-required">
+                <p><strong>📝 리뷰 작성하기</strong></p>
+                <p>리뷰를 작성하려면 <a href="/login" style="color: #4ecdc4; text-decoration: none;">로그인</a>이 필요합니다.</p>
             </div>
-        </div>
 
-        <!-- 미로 정보 섹션 -->
-        <div class="maze-info-section">
-            <h2 class="section-title">📋 미로 정보</h2>
-            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; color: #495057;">
-                <h4 style="margin-bottom: 10px; color: #2c3e50;">상세 정보</h4>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                    <div><strong>제목:</strong> <span th:text="${maze.mazeTitle}">미로 제목</span></div>
-                    <div><strong>제작자:</strong> <span th:text="${maze.creatorName}">제작자</span></div>
-                    <div><strong>생성일:</strong> <span th:text="${maze.createdAt}">2024-01-15</span></div>
-                    <div><strong>수정일:</strong> <span th:text="${maze.updatedAt}">2024-01-15</span></div>
+            <!-- 리뷰 목록 -->
+            <div id="reviewList" class="review-list">
+                <!-- 리뷰가 없을 때 -->
+                <div id="noReviews" class="no-reviews">
+                    <div class="no-reviews-icon">💭</div>
+                    <p>아직 작성된 리뷰가 없습니다.</p>
+                    <p>첫 번째 리뷰를 남겨보세요!</p>
                 </div>
             </div>
-        </div>
-
-        <!-- 제작자 정보 -->
-        <div class="creator-section">
-            <div class="creator-header">
-                <div class="creator-avatar" th:text="${#strings.substring(maze.creatorName, 0, 1)}">A</div>
-                <div class="creator-info">
-                    <h3 th:text="${maze.creatorName}">제작자 이름</h3>
-                    <p th:text="'제작일: ' + ${#temporals.format(maze.createdAt, 'yyyy년 MM월 dd일')}">제작일: 2024년 1월 15일</p>
-                    <p th:if="${maze.updatedAt != null and !maze.updatedAt.equals(maze.createdAt)}"
-                       th:text="'수정일: ' + ${#temporals.format(maze.updatedAt, 'yyyy년 MM월 dd일')}"
-                       style="font-size: 0.8rem; color: #888;">수정일: 2024년 1월 20일</p>
-                </div>
-            </div>
-            <p style="color: #6c757d; line-height: 1.6;">
-                이 미로는 중급 난이도로 설계되었으며, 평균 5-8분 정도의 시간이 소요됩니다.
-                전략적 사고와 인내심이 필요한 도전적인 미로입니다.
-                막힐 때는 힌트 기능을 활용해보세요!
-                <strong>미궁 시작</strong> 버튼을 눌러 문제를 풀어보세요!
-            </p>
         </div>
     </div>
 </div>
 
 <script th:inline="javascript">
     const mazeId = /*[[${maze.id}]]*/ 1;
-    let currentUserVote = null; // null: 투표안함, true: 좋아요, false: 싫어요
+    let userCanReview = false;
+    let userHasReviewed = false;
 
-    // 페이지 로드 시 투표 통계 불러오기
+    // 페이지 로드 시 초기화
     document.addEventListener('DOMContentLoaded', function() {
-        loadVoteStats();
+        checkReviewStatus();
+        loadReviews();
+        loadReviewCount();
     });
 
-    // 투표 통계 로드
-    function loadVoteStats() {
-        fetch(`/api/mazes/${mazeId}/vote-stats`)
+    // 리뷰 작성 가능 상태 확인
+    function checkReviewStatus() {
+        const isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+        if (!isAuthenticated) {
+            return;
+        }
+
+        // 완주 여부 확인
+        fetch(`/api/mazes/${mazeId}/my-review-status`)
             .then(response => response.json())
             .then(data => {
-                updateVoteDisplay(data);
+                if (data.success) {
+                    userHasReviewed = data.hasReviewed;
+                    updateReviewWriteSection();
+                }
             })
             .catch(error => {
-                console.error('투표 통계 로드 실패:', error);
+                console.error('리뷰 상태 확인 실패:', error);
             });
     }
 
-    // 투표 실행
-    function vote(type) {
-        const endpoint = type === 'like' ? 'like' : 'dislike';
+    // 리뷰 작성 영역 업데이트
+    function updateReviewWriteSection() {
+        const writeSection = document.getElementById('reviewWriteSection');
+        const completionRequired = document.getElementById('completionRequired');
+        const alreadyReviewed = document.getElementById('alreadyReviewed');
 
-        // 버튼 비활성화
-        setVoteButtonsEnabled(false);
+        if (userHasReviewed) {
+            // 이미 리뷰 작성함
+            writeSection.style.display = 'none';
+            completionRequired.style.display = 'none';
+            alreadyReviewed.style.display = 'block';
+        } else {
+            // 완주했는지 확인 필요
+            fetch(`/api/mazes/${mazeId}/my-review-status`)
+                .then(response => {
+                    if (response.status === 401) {
+                        // 로그인 안됨
+                        return { hasCompleted: false };
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const hasCompleted = data.hasCompleted || false;
 
-        fetch(`/api/mazes/${mazeId}/${endpoint}`, {
+                    if (hasCompleted) {
+                        writeSection.style.display = 'block';
+                        completionRequired.style.display = 'none';
+                        alreadyReviewed.style.display = 'none';
+                        userCanReview = true;
+                    } else {
+                        writeSection.style.display = 'none';
+                        completionRequired.style.display = 'block';
+                        alreadyReviewed.style.display = 'none';
+                        userCanReview = false;
+                    }
+                });
+        }
+    }
+
+    // 리뷰 목록 로드
+    function loadReviews() {
+        fetch(`/api/mazes/${mazeId}/reviews`)
+            .then(response => response.json())
+            .then(reviews => {
+                displayReviews(reviews);
+            })
+            .catch(error => {
+                console.error('리뷰 로드 실패:', error);
+                showAlert('리뷰를 불러오는 중 오류가 발생했습니다.', 'error');
+            });
+    }
+
+    // 리뷰 개수 로드
+    function loadReviewCount() {
+        fetch(`/api/mazes/${mazeId}/review-count`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const count = data.count;
+                    document.getElementById('reviewCount').textContent = count;
+                    document.getElementById('reviewCountBadge').textContent = `리뷰 ${count}개`;
+                }
+            })
+            .catch(error => {
+                console.error('리뷰 개수 로드 실패:', error);
+            });
+    }
+
+    // 리뷰 표시
+    function displayReviews(reviews) {
+        const reviewList = document.getElementById('reviewList');
+        const noReviews = document.getElementById('noReviews');
+
+        if (reviews.length === 0) {
+            noReviews.style.display = 'block';
+            return;
+        }
+
+        noReviews.style.display = 'none';
+
+        const reviewsHtml = reviews.map(review => `
+            <div class="review-item" data-review-id="${review.id}">
+                <div class="review-item-header">
+                    <div class="review-author">
+                        <div class="review-avatar">${review.userDisplayName.charAt(0)}</div>
+                        <div class="review-author-info">
+                            <div class="review-author-name">${review.userDisplayName}</div>
+                            <div class="review-date">${formatDate(review.createdAt)}</div>
+                        </div>
+                    </div>
+                    <div class="review-badge">완주</div>
+                </div>
+
+                <div class="review-content">${review.content}</div>
+
+                ${review.myReview ? `
+                    <div class="review-actions">
+                        <button class="review-action-btn edit" onclick="editReview(${review.id})">✏️ 수정</button>
+                        <button class="review-action-btn delete" onclick="deleteReview(${review.id})">🗑️ 삭제</button>
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+
+        reviewList.innerHTML = reviewsHtml;
+    }
+
+    // 문자 수 업데이트
+    function updateCharCount() {
+        const textarea = document.getElementById('reviewContent');
+        const charCount = document.getElementById('charCount');
+        const submitBtn = document.getElementById('submitReviewBtn');
+
+        const length = textarea.value.length;
+        charCount.textContent = `${length} / 1000`;
+
+        // 버튼 활성화/비활성화
+        if (length > 0 && length <= 1000) {
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.disabled = true;
+        }
+    }
+
+    // 리뷰 작성
+    function submitReview() {
+        const content = document.getElementById('reviewContent').value.trim();
+
+        if (!content) {
+            showAlert('리뷰 내용을 입력해주세요.', 'error');
+            return;
+        }
+
+        if (content.length > 1000) {
+            showAlert('리뷰는 1000자 이내로 작성해주세요.', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitReviewBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '작성 중...';
+
+        fetch(`/api/mazes/${mazeId}/reviews`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                content: content
+            })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    updateVoteDisplay(data.stats);
                     showAlert(data.message, 'success');
+                    document.getElementById('reviewContent').value = '';
+                    updateCharCount();
+                    loadReviews();
+                    loadReviewCount();
+                    updateReviewWriteSection();
                 } else {
                     showAlert(data.message, 'error');
                 }
             })
             .catch(error => {
-                console.error('투표 실패:', error);
-                showAlert('투표 중 오류가 발생했습니다.', 'error');
+                console.error('리뷰 작성 실패:', error);
+                showAlert('리뷰 작성 중 오류가 발생했습니다.', 'error');
             })
             .finally(() => {
-                setVoteButtonsEnabled(true);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✍️ 리뷰 작성';
             });
     }
 
-    // 투표 취소
-    function cancelVote() {
-        if (!confirm('투표를 취소하시겠습니까?')) return;
+    // 리뷰 수정
+    function editReview(reviewId) {
+        const reviewContent = prompt('리뷰를 수정하세요:');
 
-        setVoteButtonsEnabled(false);
+        if (reviewContent === null) return;
 
-        fetch(`/api/mazes/${mazeId}/vote`, {
+        if (!reviewContent.trim()) {
+            alert('리뷰 내용을 입력해주세요.');
+            return;
+        }
+
+        fetch(`/api/mazes/reviews/${reviewId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                content: reviewContent.trim()
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    loadReviews();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('리뷰 수정 실패:', error);
+                showAlert('리뷰 수정 중 오류가 발생했습니다.', 'error');
+            });
+    }
+
+    // 리뷰 삭제
+    function deleteReview(reviewId) {
+        if (!confirm('정말로 이 리뷰를 삭제하시겠습니까?')) {
+            return;
+        }
+
+        fetch(`/api/mazes/reviews/${reviewId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -741,79 +898,40 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    updateVoteDisplay(data.stats);
                     showAlert(data.message, 'success');
+                    loadReviews();
+                    loadReviewCount();
+                    updateReviewWriteSection(); // 리뷰 삭제 후 다시 작성 가능하게
                 } else {
                     showAlert(data.message, 'error');
                 }
             })
             .catch(error => {
-                console.error('투표 취소 실패:', error);
-                showAlert('투표 취소 중 오류가 발생했습니다.', 'error');
-            })
-            .finally(() => {
-                setVoteButtonsEnabled(true);
+                console.error('리뷰 삭제 실패:', error);
+                showAlert('리뷰 삭제 중 오류가 발생했습니다.', 'error');
             });
     }
 
-    // 투표 화면 업데이트
-    function updateVoteDisplay(stats) {
-        // 통계 업데이트
-        document.getElementById('likeCount').textContent = stats.likeCount;
-        document.getElementById('dislikeCount').textContent = stats.dislikeCount;
-        document.getElementById('totalVotes').textContent = stats.totalVotes;
-        document.getElementById('likePercentage').textContent = stats.likePercentage + '%';
+    // 날짜 포맷팅
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        // 비율 바 업데이트
-        const likeBar = document.getElementById('likeBar');
-        const dislikeBar = document.getElementById('dislikeBar');
-
-        if (stats.totalVotes > 0) {
-            likeBar.style.width = stats.likePercentage + '%';
-            dislikeBar.style.width = stats.dislikePercentage + '%';
+        if (diffDays === 1) {
+            return '오늘';
+        } else if (diffDays === 2) {
+            return '어제';
+        } else if (diffDays <= 7) {
+            return `${diffDays - 1}일 전`;
         } else {
-            likeBar.style.width = '50%';
-            dislikeBar.style.width = '50%';
+            return date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
         }
-
-        // 사용자 투표 상태 업데이트
-        currentUserVote = stats.userVote;
-        updateButtonStates();
-    }
-
-    // 버튼 상태 업데이트
-    function updateButtonStates() {
-        const likeBtn = document.getElementById('likeBtn');
-        const dislikeBtn = document.getElementById('dislikeBtn');
-        const cancelBtn = document.getElementById('cancelBtn');
-
-        if (!likeBtn || !dislikeBtn) return; // 로그인 안된 경우
-
-        // 모든 버튼 초기화
-        likeBtn.classList.remove('active');
-        dislikeBtn.classList.remove('active');
-
-        // 현재 투표 상태에 따라 버튼 활성화
-        if (currentUserVote === true) {
-            likeBtn.classList.add('active');
-            cancelBtn.style.display = 'inline-block';
-        } else if (currentUserVote === false) {
-            dislikeBtn.classList.add('active');
-            cancelBtn.style.display = 'inline-block';
-        } else {
-            cancelBtn.style.display = 'none';
-        }
-    }
-
-    // 투표 버튼 활성화/비활성화
-    function setVoteButtonsEnabled(enabled) {
-        const likeBtn = document.getElementById('likeBtn');
-        const dislikeBtn = document.getElementById('dislikeBtn');
-        const cancelBtn = document.getElementById('cancelBtn');
-
-        if (likeBtn) likeBtn.disabled = !enabled;
-        if (dislikeBtn) dislikeBtn.disabled = !enabled;
-        if (cancelBtn) cancelBtn.disabled = !enabled;
     }
 
     // 알림 메시지 표시
@@ -827,14 +945,38 @@
         setTimeout(() => {
             alertDiv.style.display = 'none';
         }, 3000);
+
+        // 페이지 상단으로 스크롤
+        alertDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     // 이미지 로딩 오류 처리
     function handleImageError(img) {
         console.log('이미지 로딩 실패:', img.src);
         img.style.display = 'none';
-        img.nextElementSibling.style.display = 'flex';
+        const fallback = document.createElement('div');
+        fallback.className = 'maze-fallback';
+        fallback.style.cssText = `
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+        `;
+        fallback.textContent = '🧩';
+        img.parentNode.appendChild(fallback);
     }
+
+    // 엔터키로 리뷰 작성
+    document.addEventListener('keydown', function(event) {
+        if (event.target.id === 'reviewContent' && event.ctrlKey && event.key === 'Enter') {
+            submitReview();
+        }
+    });
 </script>
 </body>
 </html>

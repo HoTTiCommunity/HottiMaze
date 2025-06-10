@@ -37,9 +37,9 @@ INSERT INTO post (title, content, author, created_at, updated_at, view_count, ca
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('React Hook 사용 시 주의사항', 'useState와 useEffect를 사용할 때 주의해야 할 점들이 있나요?', 'designer', '2024-02-12 10:40:00', '2024-02-12 10:40:00', 56, 3, 0, 0);
 
 -- 감옥게시판 카테고리 게시글 (category_id = 4)
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('웹 포트폴리오 사이트 제작', '개인 포트폴리오 웹사이트 제작 프로젝트입니다. React와 Spring Boot를 사용할 예정입니다.', 'developer', '2024-02-01 14:20:00', '2024-02-01 14:20:00', 156, 5, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('모바일 앱 개발 프로젝트', 'Flutter를 이용한 간단한 일정 관리 앱을 만들고 있습니다. 협업하실 분 환영합니다.', 'designer', '2024-02-10 11:45:00', '2024-02-10 11:45:00', 98, 5, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('미로 게임 개발 진행상황', 'HottiMaze 프로젝트의 현재 진행상황을 공유합니다. 피드백 환영합니다!', 'manager', '2024-02-18 16:10:00', '2024-02-18 16:10:00', 142, 5, 0, 0);
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('웹 포트폴리오 사이트 제작', '개인 포트폴리오 웹사이트 제작 프로젝트입니다. React와 Spring Boot를 사용할 예정입니다.', 'developer', '2024-02-01 14:20:00', '2024-02-01 14:20:00', 156, 4, 0, 0);
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('모바일 앱 개발 프로젝트', 'Flutter를 이용한 간단한 일정 관리 앱을 만들고 있습니다. 협업하실 분 환영합니다.', 'designer', '2024-02-10 11:45:00', '2024-02-10 11:45:00', 98, 4, 0, 0);
+INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('미로 게임 개발 진행상황', 'HottiMaze 프로젝트의 현재 진행상황을 공유합니다. 피드백 환영합니다!', 'manager', '2024-02-18 16:10:00', '2024-02-18 16:10:00', 142, 4, 0, 0);
 
 -- 미로 데이터 (상태 컬럼 추가)
 -- 승인된 미로들
@@ -175,3 +175,68 @@ VALUES (4, 6, true, '2024-01-25 11:30:00', '2024-01-25 11:30:00');
 
 INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
 VALUES (4, 7, true, '2024-01-25 15:20:00', '2024-01-25 15:20:00');
+
+-- 미로 완주 기록 (리뷰 시스템용) - 빈 content로 완주만 표시
+-- 미로 1번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 2, '', true, '2024-01-11 11:00:00', '2024-01-11 11:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 3, '', true, '2024-01-11 15:00:00', '2024-01-11 15:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 4, '', true, '2024-01-12 10:00:00', '2024-01-12 10:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (1, 5, '', true, '2024-01-12 17:00:00', '2024-01-12 17:00:00');
+
+-- 미로 2번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (2, 1, '', true, '2024-01-16 11:00:00', '2024-01-16 11:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (2, 3, '', true, '2024-01-16 15:00:00', '2024-01-16 15:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (2, 5, '', true, '2024-01-17 17:00:00', '2024-01-17 17:00:00');
+
+-- 미로 3번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (3, 1, '', true, '2024-01-21 11:00:00', '2024-01-21 11:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (3, 5, '', true, '2024-01-22 17:00:00', '2024-01-22 17:00:00');
+
+-- 미로 4번 완주자들
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 1, '', true, '2024-01-23 13:00:00', '2024-01-23 13:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 2, '', true, '2024-01-23 15:00:00', '2024-01-23 15:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 3, '', true, '2024-01-24 10:00:00', '2024-01-24 10:00:00');
+
+INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
+VALUES (4, 5, '', true, '2024-01-24 17:00:00', '2024-01-24 17:00:00');
+
+-- 실제 리뷰들 (완주 기록에 내용 추가)
+-- 미로 1번 리뷰들
+UPDATE maze_review SET content = '정말 재미있는 미로였어요! 초보자에게 딱 맞는 난이도 같습니다. 문제도 적당히 어렵고 힌트도 도움이 많이 됐어요.', updated_at = '2024-01-11 12:00:00'
+WHERE maze_id = 1 AND user_id = 2;
+
+UPDATE maze_review SET content = '처음 해보는 미로 게임인데 생각보다 재미있네요! 다음엔 더 어려운 미로에 도전해보고 싶어요.', updated_at = '2024-01-11 16:00:00'
+WHERE maze_id = 1 AND user_id = 3;
+
+UPDATE maze_review SET content = '문제가 너무 쉬웠어요ㅠㅠ 좀 더 어려운 걸로 만들어주세요! 그래도 UI는 예쁘네요 👍', updated_at = '2024-01-12 11:00:00'
+WHERE maze_id = 1 AND user_id = 4;
+
+-- 미로 2번 리뷰들
+UPDATE maze_review SET content = '중급 난이도라고 하더니 정말 적당히 어렵네요. 문제 풀면서 머리도 써야 하고 재미있었습니다!', updated_at = '2024-01-16 12:00:00'
+WHERE maze_id = 2 AND user_id = 1;
+
+UPDATE maze_review SET content = '1번 미로보다 확실히 어려워졌네요. 그래도 힌트가 있어서 끝까지 풀 수 있었어요. 성취감 굿!', updated_at = '2024-01-16 16:00:00'
+WHERE maze_id = 2 AND user_id = 3;
+
+-- 미로 3번 리뷰들 (어려운 미로라 리뷰가 적음)
+UPDATE maze_review SET content = '와... 이건 정말 어렵네요. 고급자용이라더니 맞는 것 같아요. 몇 번 시도 끝에 겨우 성공했습니다.', updated_at = '2024-01-21 12:00:00'

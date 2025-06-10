@@ -25,23 +25,65 @@ public class MazeReviewService {
     private final UserRepository userRepository;
 
     /**
-     * 미로 리뷰 작성
+     * 미로 완주 기록 생성 (내용 없는 완주 기록용)
      */
     @Transactional
-    public MazeReviewDto createReview(String username, MazeReviewCreateDto createDto) {
-        // 사용자 조회
+    public void createCompletionRecord(Long mazeId, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + username));
 
-        // 미로 조회
+        Maze maze = mazeRepository.findById(mazeId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + mazeId));
+
+        // 이미 완주 기록이 있는지 확인
+        Optional<MazeReview> existingRecord = mazeReviewRepository.findByMazeIdAndUserId(mazeId, user.getId());
+
+        if (existingRecord.isEmpty()) {
+            // 완주 기록용 빈 리뷰 생성
+            MazeReview completionRecord = new MazeReview();
+            completionRecord.setMaze(maze);
+            completionRecord.setUser(user);
+            completionRecord.setContent(""); // 빈 내용 (완주 기록용)
+            completionRecord.setIsCompleted(true); // 완주 표시
+
+            mazeReviewRepository.save(completionRecord);
+        }
+    }
+
+    /**
+     * 사용자가 미로를 완주했는지 확인
+     */
+    @Transactional(readOnly = true)
+    public boolean hasUserCompleted(Long mazeId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + username));
+
+        return mazeReviewRepository.findByMazeIdAndUserId(mazeId, user.getId()).isPresent();
+    }
+
+    /**
+     * 미로 리뷰 작성 (완주 검증 추가)
+     */
+    @Transactional
+    public MazeReviewDto createReview(String username, MazeReviewCreateDto createDto) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + username));
+
         Maze maze = mazeRepository.findById(createDto.getMazeId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 미로입니다: " + createDto.getMazeId()));
 
-        // 이미 리뷰를 작성했는지 확인
-        Optional<MazeReview> existingReview = mazeReviewRepository.findByMazeIdAndUserId(
+        // 완주 여부 확인
+        Optional<MazeReview> existingRecord = mazeReviewRepository.findByMazeIdAndUserId(
                 createDto.getMazeId(), user.getId());
 
-        if (existingReview.isPresent()) {
+        if (existingRecord.isEmpty()) {
+            throw new IllegalStateException("미로를 완주한 후에 리뷰를 작성할 수 있습니다.");
+        }
+
+        MazeReview record = existingRecord.get();
+
+        // 이미 리뷰 내용이 있다면 (빈 문자열이 아니라면) 중복 작성
+        if (record.getContent() != null && !record.getContent().trim().isEmpty()) {
             throw new IllegalStateException("이미 이 미로에 대한 리뷰를 작성하셨습니다.");
         }
 
@@ -50,45 +92,57 @@ public class MazeReviewService {
             throw new IllegalArgumentException("리뷰 내용을 입력해주세요.");
         }
 
-        // 리뷰 생성
-        MazeReview review = new MazeReview();
-        review.setMaze(maze);
-        review.setUser(user);
-        review.setContent(createDto.getContent().trim());
-        review.setIsCompleted(true);
+        // 기존 완주 기록에 리뷰 내용 추가
+        record.setContent(createDto.getContent().trim());
+        record.setIsCompleted(true); // 이미 true지만 명시적으로 설정
 
-        MazeReview savedReview = mazeReviewRepository.save(review);
+        MazeReview savedReview = mazeReviewRepository.save(record);
         return convertToDto(savedReview, username);
     }
 
     /**
-     * 특정 미로의 모든 리뷰 조회
+     * 특정 미로의 모든 리뷰 조회 (내용이 있는 리뷰만)
      */
     @Transactional(readOnly = true)
     public List<MazeReviewDto> getMazeReviews(Long mazeId, String currentUsername) {
-        List<MazeReview> reviews = mazeReviewRepository.findByMazeIdOrderByCreatedAtDesc(mazeId);
-        return reviews.stream()
+        List<MazeReview> allRecords = mazeReviewRepository.findByMazeIdOrderByCreatedAtDesc(mazeId);
+
+        // 내용이 있는 리뷰만 필터링
+        List<MazeReview> actualReviews = allRecords.stream()
+                .filter(record -> record.getContent() != null && !record.getContent().trim().isEmpty())
+                .collect(Collectors.toList());
+
+        return actualReviews.stream()
                 .map(review -> convertToDto(review, currentUsername))
                 .collect(Collectors.toList());
     }
 
     /**
-     * 미로 리뷰 개수 조회
+     * 미로 리뷰 개수 조회 (내용이 있는 리뷰만)
      */
     @Transactional(readOnly = true)
     public long getMazeReviewCount(Long mazeId) {
-        return mazeReviewRepository.countByMazeId(mazeId);
+        List<MazeReview> allRecords = mazeReviewRepository.findByMazeIdOrderByCreatedAtDesc(mazeId);
+
+        return allRecords.stream()
+                .filter(record -> record.getContent() != null && !record.getContent().trim().isEmpty())
+                .count();
     }
 
     /**
-     * 사용자가 특정 미로에 리뷰를 작성했는지 확인
+     * 사용자가 특정 미로에 리뷰를 작성했는지 확인 (내용이 있는 리뷰)
      */
     @Transactional(readOnly = true)
     public boolean hasUserReviewed(Long mazeId, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + username));
 
-        return mazeReviewRepository.findByMazeIdAndUserId(mazeId, user.getId()).isPresent();
+        Optional<MazeReview> record = mazeReviewRepository.findByMazeIdAndUserId(mazeId, user.getId());
+
+        // 완주 기록은 있지만 리뷰 내용이 없으면 false
+        return record.isPresent() &&
+                record.get().getContent() != null &&
+                !record.get().getContent().trim().isEmpty();
     }
 
     /**
@@ -146,9 +200,6 @@ public class MazeReviewService {
         mazeReviewRepository.deleteByMazeId(mazeId);
     }
 
-    /**
-     * 엔티티를 DTO로 변환
-     */
     private MazeReviewDto convertToDto(MazeReview review, String currentUsername) {
         MazeReviewDto dto = new MazeReviewDto();
         dto.setId(review.getId());
@@ -156,7 +207,6 @@ public class MazeReviewService {
         dto.setMazeTitle(review.getMaze().getMazeTitle());
         dto.setUsername(review.getUser().getUsername());
 
-        // 사용자명 익명 처리 (처음 2글자 + ***)
         String originalUsername = review.getUser().getUsername();
         if (originalUsername.length() <= 2) {
             dto.setUserDisplayName(originalUsername.charAt(0) + "***");
