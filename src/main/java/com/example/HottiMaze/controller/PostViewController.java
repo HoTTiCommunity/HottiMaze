@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.security.Principal;
 
 @Controller
 @RequestMapping("/post")
@@ -23,15 +22,10 @@ public class PostViewController {
 
     // 게시글 목록 (전체)
     @GetMapping
-    public String boardList(Model model, Principal principal) {
+    public String boardList(Model model) {
         List<PostDto> allPosts = postService.getAllPosts();
         model.addAttribute("posts", allPosts);
         model.addAttribute("categoryName", null);
-
-        // 로그인 여부
-        boolean isLoggedIn = principal != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
-
         return "post-list";
     }
 
@@ -127,6 +121,7 @@ public class PostViewController {
             return "redirect:/post";
         }
     }
+  
     // 북마크 페이지
     @GetMapping("/bookmarks")
     public String bookmarks(Model m) {

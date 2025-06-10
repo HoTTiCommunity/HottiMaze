@@ -37,4 +37,11 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @Column(nullable = false)
+    private Integer gaechu = 0;
+
+    @Column(nullable = false)
+    private Integer bechu = 0;
+
 }
