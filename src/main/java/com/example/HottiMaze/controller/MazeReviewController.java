@@ -174,4 +174,28 @@ public class MazeReviewController {
                     .body(Map.of("success", false, "message", e.getMessage()));
         }
     }
+    @GetMapping("/{mazeId}/my-completion-status")
+    public ResponseEntity<Map<String, Object>> getMyCompletionStatus(
+            @PathVariable Long mazeId,
+            @AuthenticationPrincipal UserDetails principal) {
+
+        if (principal == null) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("success", false, "message", "로그인이 필요합니다."));
+        }
+
+        try {
+            boolean hasCompleted = mazeReviewService.hasUserCompleted(mazeId, principal.getUsername());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("hasCompleted", hasCompleted);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
 }

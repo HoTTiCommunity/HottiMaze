@@ -645,12 +645,33 @@
     let userCanReview = false;
     let userHasReviewed = false;
 
-    // 페이지 로드 시 초기화
-    document.addEventListener('DOMContentLoaded', function() {
-        checkReviewStatus();
-        loadReviews();
-        loadReviewCount();
-    });
+    function checkReviewStatus() {
+        const isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+        if (!isAuthenticated) {
+            return;
+        }
+
+        // 리뷰 작성 여부 확인
+        fetch(`/api/mazes/${mazeId}/my-review-status`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    userHasReviewed = data.hasReviewed;
+
+                    // 완주 여부도 함께 확인
+                    return fetch(`/api/mazes/${mazeId}/my-completion-status`);
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const hasCompleted = data.hasCompleted || false;
+                updateReviewWriteSection(hasCompleted);
+            })
+            .catch(error => {
+                console.error('상태 확인 실패:', error);
+            });
+    }
 
     // 리뷰 작성 가능 상태 확인
     function checkReviewStatus() {

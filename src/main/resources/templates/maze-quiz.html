@@ -568,6 +568,8 @@
 
   function showQuestion() {
     const allQuestions = document.querySelectorAll('.quiz-question');
+
+    // 모든 문제 숨기기
     allQuestions.forEach(q => q.classList.remove('active'));
 
     if (currentQuestionIndex < allQuestions.length) {
@@ -579,12 +581,14 @@
     document.getElementById('progressFill').style.width = progress + '%';
     document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
 
-    // 상태 초기화
+    // ⭐ 중요: 상태 초기화 - 새 문제로 넘어갈 때마다 초기화
     currentAnswerCorrect = false;
+
     const currentQuestion = allQuestions[currentQuestionIndex];
     const input = currentQuestion.querySelector('.answer-input');
     const feedback = currentQuestion.querySelector('.feedback-message');
 
+    // 입력 필드 및 피드백 초기화
     input.value = '';
     input.classList.remove('correct', 'incorrect');
     input.disabled = false;
@@ -594,12 +598,14 @@
     // 버튼 상태 초기화
     document.getElementById('nextBtn').disabled = true;
     document.getElementById('nextBtn').textContent = '정답 확인';
+    document.getElementById('nextBtn').onclick = checkAnswer; // ⭐ 핵심: onclick 함수 재설정
     document.getElementById('tryAgainBtn').style.display = 'none';
 
-    // 힌트 상태 초기화 (새 문제로 넘어갈 때)
+    // 힌트 상태는 유지 (사용자가 이미 포인트를 소모했으므로)
     const hintButton = currentQuestion.querySelector('.hint-button');
     const hintContent = currentQuestion.querySelector('.hint-content');
 
+    // 새 문제인 경우에만 힌트 상태 초기화
     if (hintButton && hintContent && !hintContent.classList.contains('show')) {
       hintButton.disabled = false;
       hintButton.textContent = '💡 힌트 보기 (50포인트)';
@@ -611,6 +617,7 @@
     const answer = input.value.trim();
     const nextBtn = document.getElementById('nextBtn');
 
+    // 아직 정답을 맞추지 않은 상태에서만 버튼 활성화 제어
     if (answer.length > 0 && !currentAnswerCorrect) {
       nextBtn.disabled = false;
     } else {
@@ -647,13 +654,14 @@
       feedback.classList.add('correct');
       feedback.style.display = 'block';
 
+      // ⭐ 중요: 정답 상태 업데이트
       currentAnswerCorrect = true;
       userAnswers[currentQuestionIndex] = userAnswer;
 
       // 버튼 변경
       document.getElementById('nextBtn').textContent = currentQuestionIndex === questions.length - 1 ? '완료!' : '다음 →';
       document.getElementById('nextBtn').disabled = false;
-      document.getElementById('nextBtn').onclick = nextQuestion;
+      document.getElementById('nextBtn').onclick = nextQuestion; // ⭐ 핵심: onclick 함수 변경
       document.getElementById('tryAgainBtn').style.display = 'none';
 
       // 입력 필드 비활성화
@@ -697,6 +705,7 @@
   }
 
   function nextQuestion() {
+    // ⭐ 중요: 정답을 맞춘 경우에만 다음 문제로 진행
     if (!currentAnswerCorrect) {
       alert('정답을 맞춰야 다음 문제로 넘어갈 수 있습니다!');
       return;
@@ -706,7 +715,7 @@
     if (currentQuestionIndex >= questions.length) {
       showResult();
     } else {
-      showQuestion();
+      showQuestion(); // 여기서 currentAnswerCorrect가 false로 초기화됨
     }
   }
 
@@ -719,12 +728,50 @@
             `모든 문제를 정답으로 풀어 미궁을 성공적으로 탈출했습니다! 🏆`;
 
     document.getElementById('quizResult').classList.add('show');
+
+    // ⭐ 중요: 완주 기록을 서버에 전송 (로그인한 사용자만)
+    const isAuthenticated = document.getElementById('userPoints') !== null;
+    if (isAuthenticated) {
+      console.log('완주 기록 전송 시작...');
+
+      fetch(`/api/mazes/${mazeId}/complete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+              .then(response => {
+                console.log('완주 기록 응답 상태:', response.status);
+                return response.json();
+              })
+              .then(data => {
+                console.log('완주 기록 전송 응답:', data);
+                if (data.success) {
+                  console.log('완주 기록 생성 완료!');
+                  if (data.newCompletion) {
+                    // 새로운 완주 기록이 생성된 경우 알림
+                    setTimeout(() => {
+                      showAlert('축하합니다! 미로를 완주했습니다. 이제 리뷰를 작성할 수 있어요! 🎉', 'success');
+                    }, 1000);
+                  }
+                } else {
+                  console.error('완주 기록 생성 실패:', data.message);
+                }
+              })
+              .catch(error => {
+                console.error('완주 기록 전송 실패:', error);
+                // 완주 기록 전송이 실패해도 사용자에게는 성공 메시지 표시
+                // (이미 퀴즈는 완료했으므로)
+              });
+    } else {
+      console.log('비로그인 사용자 - 완주 기록 저장 안함');
+    }
   }
 
   function restartQuiz() {
     currentQuestionIndex = 0;
     userAnswers = [];
-    currentAnswerCorrect = false;
+    currentAnswerCorrect = false; // 초기화
     document.getElementById('quizResult').classList.remove('show');
 
     // 모든 입력 필드 및 힌트 상태 초기화
@@ -757,11 +804,34 @@
     window.open(src, '_blank');
   }
 
-  // 알림 메시지 표시
+  // 알림 메시지 표시 함수 개선
   function showAlert(message, type) {
-    // 간단한 알림 (필요시 더 정교하게 구현 가능)
-    const alertClass = type === 'success' ? '✅' : '❌';
-    alert(alertClass + ' ' + message);
+    // 더 나은 알림 표시 (기존 단순 alert 대신)
+    const alertDiv = document.createElement('div');
+    alertDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#28a745' : '#dc3545'};
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      z-index: 10000;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      max-width: 400px;
+      word-wrap: break-word;
+    `;
+    alertDiv.textContent = message;
+
+    document.body.appendChild(alertDiv);
+
+    // 5초 후 자동 제거
+    setTimeout(() => {
+      if (alertDiv.parentNode) {
+        alertDiv.parentNode.removeChild(alertDiv);
+      }
+    }, 5000);
   }
 </script>
 </body>

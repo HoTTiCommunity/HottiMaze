@@ -176,67 +176,45 @@ VALUES (4, 6, true, '2024-01-25 11:30:00', '2024-01-25 11:30:00');
 INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
 VALUES (4, 7, true, '2024-01-25 15:20:00', '2024-01-25 15:20:00');
 
--- 미로 완주 기록 (리뷰 시스템용) - 빈 content로 완주만 표시
 -- 미로 1번 완주자들
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (1, 2, '', true, '2024-01-11 11:00:00', '2024-01-11 11:00:00');
+VALUES (1, 2, '너무 쉽다', true, '2024-01-11 11:00:00', '2024-01-11 11:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (1, 3, '', true, '2024-01-11 15:00:00', '2024-01-11 15:00:00');
+VALUES (1, 3, '이걸 문제라고 냈어??', true, '2024-01-11 15:00:00', '2024-01-11 15:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (1, 4, '', true, '2024-01-12 10:00:00', '2024-01-12 10:00:00');
+VALUES (1, 4, '너무 재미있었어요', true, '2024-01-12 10:00:00', '2024-01-12 10:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (1, 5, '', true, '2024-01-12 17:00:00', '2024-01-12 17:00:00');
+VALUES (1, 5, '다시 만들도록', true, '2024-01-12 17:00:00', '2024-01-12 17:00:00');
 
 -- 미로 2번 완주자들
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (2, 1, '', true, '2024-01-16 11:00:00', '2024-01-16 11:00:00');
+VALUES (2, 1, '접어라 ㅋ', true, '2024-01-16 11:00:00', '2024-01-16 11:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (2, 3, '', true, '2024-01-16 15:00:00', '2024-01-16 15:00:00');
+VALUES (2, 3, '너무 재미가 있었어요~', true, '2024-01-16 15:00:00', '2024-01-16 15:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (2, 5, '', true, '2024-01-17 17:00:00', '2024-01-17 17:00:00');
+VALUES (2, 5, '너무 재미있어서 좋아요 눌렀어요', true, '2024-01-17 17:00:00', '2024-01-17 17:00:00');
 
 -- 미로 3번 완주자들
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (3, 1, '', true, '2024-01-21 11:00:00', '2024-01-21 11:00:00');
+VALUES (3, 1, '이게 문제냐?', true, '2024-01-21 11:00:00', '2024-01-21 11:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (3, 5, '', true, '2024-01-22 17:00:00', '2024-01-22 17:00:00');
+VALUES (3, 5, '생각이 너무 짧은 미로였다', true, '2024-01-22 17:00:00', '2024-01-22 17:00:00');
 
 -- 미로 4번 완주자들
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (4, 1, '', true, '2024-01-23 13:00:00', '2024-01-23 13:00:00');
+VALUES (4, 1, 'test', true, '2024-01-23 13:00:00', '2024-01-23 13:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (4, 2, '', true, '2024-01-23 15:00:00', '2024-01-23 15:00:00');
+VALUES (4, 2, 'test12', true, '2024-01-23 15:00:00', '2024-01-23 15:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (4, 3, '', true, '2024-01-24 10:00:00', '2024-01-24 10:00:00');
+VALUES (4, 3, 'test123', true, '2024-01-24 10:00:00', '2024-01-24 10:00:00');
 
 INSERT INTO maze_review (maze_id, user_id, content, is_completed, created_at, updated_at)
-VALUES (4, 5, '', true, '2024-01-24 17:00:00', '2024-01-24 17:00:00');
-
--- 실제 리뷰들 (완주 기록에 내용 추가)
--- 미로 1번 리뷰들
-UPDATE maze_review SET content = '정말 재미있는 미로였어요! 초보자에게 딱 맞는 난이도 같습니다. 문제도 적당히 어렵고 힌트도 도움이 많이 됐어요.', updated_at = '2024-01-11 12:00:00'
-WHERE maze_id = 1 AND user_id = 2;
-
-UPDATE maze_review SET content = '처음 해보는 미로 게임인데 생각보다 재미있네요! 다음엔 더 어려운 미로에 도전해보고 싶어요.', updated_at = '2024-01-11 16:00:00'
-WHERE maze_id = 1 AND user_id = 3;
-
-UPDATE maze_review SET content = '문제가 너무 쉬웠어요ㅠㅠ 좀 더 어려운 걸로 만들어주세요! 그래도 UI는 예쁘네요 👍', updated_at = '2024-01-12 11:00:00'
-WHERE maze_id = 1 AND user_id = 4;
-
--- 미로 2번 리뷰들
-UPDATE maze_review SET content = '중급 난이도라고 하더니 정말 적당히 어렵네요. 문제 풀면서 머리도 써야 하고 재미있었습니다!', updated_at = '2024-01-16 12:00:00'
-WHERE maze_id = 2 AND user_id = 1;
-
-UPDATE maze_review SET content = '1번 미로보다 확실히 어려워졌네요. 그래도 힌트가 있어서 끝까지 풀 수 있었어요. 성취감 굿!', updated_at = '2024-01-16 16:00:00'
-WHERE maze_id = 2 AND user_id = 3;
-
--- 미로 3번 리뷰들 (어려운 미로라 리뷰가 적음)
-UPDATE maze_review SET content = '와... 이건 정말 어렵네요. 고급자용이라더니 맞는 것 같아요. 몇 번 시도 끝에 겨우 성공했습니다.', updated_at = '2024-01-21 12:00:00'
+VALUES (4, 5, 'test1234', true, '2024-01-24 17:00:00', '2024-01-24 17:00:00');
