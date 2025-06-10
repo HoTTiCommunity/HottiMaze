@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${post.title}">게시글 상세</title>
+</head>
+<body>
+
+<!-- 제목 + 북마크 -->
+<h1 th:text="${post.title}"
+    style="display:inline-block; margin-right:0.5rem;">제목</h1>
+<span class="bookmark-icon"
+      th:data-id="${post.id}"
+      onclick="toggleBookmark(this)"
+      title="북마크"
+      style="font-size:1.5rem; vertical-align:middle; cursor:pointer;">
+  </span>
+
+<p><strong>작성자:</strong>
+  <span th:text="${post.nickname}">닉네임</span>
+</p>
+<p><strong>작성일:</strong>
+  <span th:text="${post.createdAt}">작성일</span>
+</p>
+<p><strong>조회수:</strong>
+  <span th:text="${post.viewCount}">0</span>
+</p>
+<hr>
+<div th:text="${post.content}">내용</div>
+
+<!-- 개추/비추 수 표시 -->
+<p>개추 수: <span th:text="${post.gaechu}">0</span></p>
+<p>비추 수: <span th:text="${post.bechu}">0</span></p>
+
+<!-- 개추/비추 버튼 -->
+<button onclick="vote('like')">개추</button>
+<button onclick="vote('dislike')">비추</button>
+
+<script th:inline="javascript">
+  const postId = [[${post.id}]];
+
+  function vote(type) {
+    fetch(`/api/categories/posts/${postId}/${type}`, {
+      method: 'POST'
+    }).then(response => {
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert("오류가 발생했습니다.");
+      }
+    });
+  }
+</script>
+
+<!-- 북마크 로직 로드 -->
+<script th:src="@{/js/bookmark-local.js}"></script>
+
+<br>
+<a href="/">메인으로</a>
+<script th:src="@{/js/no-screenshot.js}"></script>
+</body>
+</html>
