@@ -2,11 +2,15 @@ package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.dto.MazeDto;
 import com.example.HottiMaze.dto.MazeQuestionDto;
+import com.example.HottiMaze.dto.MazeVoteStatsDto; // 추가
 import com.example.HottiMaze.enums.MazeStatus;
 import com.example.HottiMaze.service.MazeQuestionService;
 import com.example.HottiMaze.service.MazeService;
+import com.example.HottiMaze.service.MazeVoteService; // 추가
 import com.example.HottiMaze.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal; // 추가
+import org.springframework.security.core.userdetails.UserDetails; // 추가
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +26,13 @@ import java.util.List;
 public class MazeController {
     private final MazeService mazeService;
     private final MazeQuestionService mazeQuestionService;
+    private final MazeVoteService mazeVoteService; // MazeVoteService 주입
 
     @GetMapping("/{mazeId}")
-    public String getMaze(@PathVariable Long mazeId, Model model, RedirectAttributes redirectAttributes) {
+    public String getMaze(@PathVariable Long mazeId,
+                          Model model,
+                          RedirectAttributes redirectAttributes,
+                          @AuthenticationPrincipal UserDetails principal) { // UserDetails 추가
         try {
             System.out.println("미로 상세보기 요청 - ID: " + mazeId);
 
@@ -65,9 +73,17 @@ public class MazeController {
             List<MazeQuestionDto> mazeQuestionDto = mazeQuestionService.getMazeQuestions(mazeId);
             System.out.println("미로 문제 개수: " + mazeQuestionDto.size());
 
+            // 투표 통계 및 현재 사용자의 투표 상태 조회
+            String username = principal != null ? principal.getUsername() : null;
+            MazeVoteStatsDto voteStats = mazeVoteService.getMazeVoteStats(mazeId, username);
+
+            // MazeDto에 투표 통계 설정 (DTO 내부에 필드 추가됨)
+            mazeDto.setVoteStats(voteStats.getLikeCount(), voteStats.getDislikeCount(), voteStats.getUserVote());
+
             // 모델에 데이터 추가
             model.addAttribute("maze", mazeDto);
-            model.addAttribute("mazeQuestions", mazeQuestionDto);
+            model.addAttribute("mazeQuestions", mazeQuestionDto); // 이 부분은 퀴즈 페이지에서 사용
+            model.addAttribute("voteStats", voteStats); // 투표 통계 객체도 모델에 직접 추가
 
             System.out.println("모델에 데이터 추가 완료");
             return "maze-detail";

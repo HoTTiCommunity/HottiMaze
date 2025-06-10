@@ -18,7 +18,6 @@ public class MazeVoteStatsDto {
     private double dislikeRatio;
     private Boolean userVote;
 
-    // 비율 계산 메서드
     public void calculateRatios() {
         if (totalVotes > 0) {
             this.likeRatio = (double) likeCount / totalVotes;

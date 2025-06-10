@@ -454,6 +454,104 @@
             text-decoration: none;
         }
 
+        /* 투표 버튼 추가 */
+        .vote-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center; /* 중앙 정렬 */
+            align-items: center;
+        }
+
+        .vote-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vote-btn.like.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .vote-btn.dislike.active {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        .vote-btn:hover:not(.active):not(:disabled) {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .vote-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 투표 통계 바 */
+        .maze-vote-stats-detail {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 25px;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            font-size: 1rem;
+        }
+
+        .vote-indicator-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .like-indicator-detail {
+            color: #28a745;
+        }
+
+        .dislike-indicator-detail {
+            color: #dc3545;
+        }
+
+        .vote-ratio-bar {
+            flex: 1;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .vote-ratio-bar .like-fill {
+            height: 100%;
+            background: #28a745;
+            float: left;
+            transition: width 0.3s ease;
+        }
+
+        .vote-ratio-bar .dislike-fill {
+            height: 100%;
+            background: #dc3545;
+            float: right;
+            transition: width 0.3s ease;
+        }
+
         @media (max-width: 768px) {
             .maze-header {
                 flex-direction: column;
@@ -505,6 +603,11 @@
                 align-items: flex-start;
                 gap: 10px;
             }
+
+            .vote-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -555,6 +658,33 @@
                         <span class="stat-label">완주자</span>
                     </div>
                 </div>
+
+                <div sec:authorize="isAuthenticated()" class="vote-buttons">
+                    <button id="likeBtn" class="vote-btn like" onclick="handleVote(true)">
+                        👍 <span id="likeCountDisplay" th:text="${maze.likeCount}">0</span>
+                    </button>
+                    <button id="dislikeBtn" class="vote-btn dislike" onclick="handleVote(false)">
+                        👎 <span id="dislikeCountDisplay" th:text="${maze.dislikeCount}">0</span>
+                    </button>
+                </div>
+                <div sec:authorize="!isAuthenticated()" class="vote-buttons" style="font-size: 0.9rem; color: #6c757d;">
+                    좋아요/싫어요를 누르려면 <a href="/login" style="color: #4ecdc4; text-decoration: none;">로그인</a>이 필요합니다.
+                </div>
+
+
+                <div class="maze-vote-stats-detail">
+                    <div class="vote-indicator-detail like-indicator-detail">
+                        <span>👍</span> <span id="totalLikeCount" th:text="${maze.likeCount}">0</span>
+                    </div>
+                    <div class="vote-ratio-bar">
+                        <div id="likeFill" class="like-fill" th:style="'width: ' + ${maze.likePercentage} + '%;'"></div>
+                        <div id="dislikeFill" class="dislike-fill" th:style="'width: ' + ${maze.dislikePercentage} + '%;'"></div>
+                    </div>
+                    <div class="vote-indicator-detail dislike-indicator-detail">
+                        <span>👎</span> <span id="totalDislikeCount" th:text="${maze.dislikeCount}">0</span>
+                    </div>
+                </div>
+
 
                 <div class="maze-actions">
                     <a th:href="@{'/mazes/' + ${maze.id} + '/quiz'}" class="btn btn-quiz">
@@ -635,12 +765,80 @@
     const mazeId = /*[[${maze.id}]]*/ 1;
     let userCanReview = false;
     let userHasReviewed = false;
+    let currentUserVote = /*[[${maze.userVote}]]*/ null; // 현재 사용자의 투표 상태 (null, true, false)
 
     document.addEventListener('DOMContentLoaded', function() {
         loadReviews(); // 페이지 로드 시 리뷰 목록 로드
         loadReviewCount(); // 페이지 로드 시 리뷰 개수 로드
         checkReviewStatus(); // 페이지 로드 시 리뷰 작성 상태 확인
+        updateVoteButtons(currentUserVote); // 페이지 로드 시 투표 버튼 상태 업데이트
     });
+
+    // 투표 버튼 상태 업데이트
+    function updateVoteButtons(userVoteStatus) {
+        const likeBtn = document.getElementById('likeBtn');
+        const dislikeBtn = document.getElementById('dislikeBtn');
+
+        if (!likeBtn || !dislikeBtn) return; // 비로그인 사용자 등 버튼이 없는 경우
+
+        // 모든 버튼의 active 클래스 제거
+        likeBtn.classList.remove('active');
+        dislikeBtn.classList.remove('active');
+
+        if (userVoteStatus === true) {
+            likeBtn.classList.add('active');
+        } else if (userVoteStatus === false) {
+            dislikeBtn.classList.add('active');
+        }
+    }
+
+    // 투표 핸들러
+    function handleVote(isLike) {
+        // 로그인 여부는 Spring Security에서 처리하므로 여기서는 별도 체크 안함 (API가 401 반환)
+        const endpoint = isLike ? `/api/mazes/${mazeId}/like` : `/api/mazes/${mazeId}/dislike`;
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showAlert('로그인이 필요합니다.', 'error');
+                        window.location.href = '/login'; // 로그인 페이지로 리디렉션
+                        return Promise.reject('로그인 필요');
+                    }
+                    return response.json().then(err => Promise.reject(err.message || '투표 처리 중 오류 발생'));
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // UI 업데이트
+                    document.getElementById('likeCountDisplay').textContent = data.stats.likeCount;
+                    document.getElementById('dislikeCountDisplay').textContent = data.stats.dislikeCount;
+                    document.getElementById('totalLikeCount').textContent = data.stats.likeCount;
+                    document.getElementById('totalDislikeCount').textContent = data.stats.dislikeCount;
+                    document.getElementById('likeFill').style.width = data.stats.likePercentage + '%';
+                    document.getElementById('dislikeFill').style.width = data.stats.dislikePercentage + '%';
+
+                    currentUserVote = data.stats.userVote; // 현재 사용자의 투표 상태 업데이트
+                    updateVoteButtons(currentUserVote);
+                    showAlert(data.message, 'success');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('투표 실패:', error);
+                if (error !== '로그인 필요') { // 로그인 필요 메시지는 이미 showAlert에서 처리했으므로 중복 호출 방지
+                    showAlert(error, 'error');
+                }
+            });
+    }
+
 
     // 리뷰 작성 가능 상태 확인
     function checkReviewStatus() {
@@ -738,19 +936,10 @@
         // 기존 리뷰 목록 초기화
         reviewList.innerHTML = '';
 
-        if (reviews.length === 0) {
-            noReviews.style.display = 'block';
-            return;
-        }
-
-        noReviews.style.display = 'none';
-
-        const reviewsHtml = reviews.map(review => {
-            // 리뷰 내용이 비어있으면 표시하지 않음 (단, 완주 기록으로만 남은 경우는 content가 없으므로)
-            // 여기서는 getMazeReviews에서 isCompleted로 필터링했으므로, content가 비어있어도 표시될 수 있음.
-            // 필요하다면 여기서도 content가 없으면 표시하지 않도록 추가 필터링 가능
+        const reviewsHtmlArray = reviews.map(review => {
+            // content가 비어있으면 표시하지 않도록 필터링
             if (!review.content || review.content.trim() === '') {
-                return ''; // 내용이 없으면 이 리뷰는 건너뜀
+                return '';
             }
 
             return `
@@ -776,12 +965,15 @@
                     ` : ''}
                 </div>
             `;
-        }).join('');
+        });
 
-        reviewList.innerHTML = reviewsHtml;
+        // 빈 문자열을 제거하고 실제 HTML로 조인
+        const filteredReviewsHtml = reviewsHtmlArray.filter(html => html !== '').join('');
 
-        // 리뷰 목록이 비어 있으면 "아직 작성된 리뷰가 없습니다" 메시지 표시
-        if (reviewsHtml.trim() === '') {
+        reviewList.innerHTML = filteredReviewsHtml;
+
+        // 리뷰 목록이 실제로 비어 있으면 "아직 작성된 리뷰가 없습니다" 메시지 표시
+        if (filteredReviewsHtml.trim() === '') {
             noReviews.style.display = 'block';
         } else {
             noReviews.style.display = 'none';
