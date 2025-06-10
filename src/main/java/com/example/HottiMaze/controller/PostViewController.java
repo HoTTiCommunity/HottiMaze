@@ -121,4 +121,11 @@ public class PostViewController {
             return "redirect:/post";
         }
     }
+  
+    // 북마크 페이지
+    @GetMapping("/bookmarks")
+    public String bookmarks(Model m) {
+        m.addAttribute("posts", postService.getAllPosts());
+        return "bookmarks";
+    }
 }
