@@ -6,9 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.List;
 
@@ -63,14 +68,6 @@ public class QuestionPostController {
         return "redirect:/questions?mgId=" + saved.getMgId();
     }
 
-    @GetMapping("/{id}/edit")
-    public String editForm(@PathVariable Long id, Model model) {
-        QuestionPostDto post = questionPostService.getPost(id);
-        model.addAttribute("post", post);
-        model.addAttribute("mgId", post.getMgId());
-        return "migung/form";
-    }
-
     @PostMapping("/{id}")
     public String update(
             @PathVariable Long id,
@@ -80,11 +77,26 @@ public class QuestionPostController {
         return "redirect:/questions/" + id;
     }
 
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
+    @GetMapping("/delete/{id}")
+    public String deletePost(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails user,
+            RedirectAttributes redirectAttributes
+    ) {
         QuestionPostDto post = questionPostService.getPost(id);
+        Long mgId = post.getMgId();
+
+        String username = user.getUsername();
+
+        if (!post.getAuthor().equals(username)) {
+            redirectAttributes.addFlashAttribute("error", "삭제 권한이 없습니다.");
+            return "redirect:/questions/" + id;
+        }
+
         questionPostService.deletePost(id);
-        return "redirect:/questions?mgId=" + post.getMgId();
+        redirectAttributes.addFlashAttribute("success", "게시글이 삭제되었습니다.");
+
+        return "redirect:/questions?mgId=" + mgId;
     }
 
     @GetMapping("/maze-questionPost")
