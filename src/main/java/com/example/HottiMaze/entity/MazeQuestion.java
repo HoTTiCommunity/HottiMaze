@@ -15,7 +15,8 @@ public class MazeQuestion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne @JoinColumn(name = "maze_id")
+    @ManyToOne
+    @JoinColumn(name = "maze_id")
     private Maze maze;
 
     @Column(name = "question_image", nullable = false)
@@ -39,4 +40,8 @@ public class MazeQuestion {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "hint", length = 500)
+    private String hint; // 문제 힌트
+
 }

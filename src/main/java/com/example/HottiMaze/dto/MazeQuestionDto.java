@@ -19,4 +19,5 @@ public class MazeQuestionDto {
     private Integer points;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String hint;
 }

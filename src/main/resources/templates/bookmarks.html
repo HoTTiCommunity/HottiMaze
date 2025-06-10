@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: content">
+<head><meta charset="UTF-8"/><title>북마크된 문제</title></head>
+<body>
+<div style="padding:1rem;">
+    <h1>내 북마크</h1>
+    <ul id="bookmark-list" style="list-style:none; padding:0;">
+        <li th:each="p : ${posts}"
+            th:data-id="${p.id}"
+            th:data-title="${p.title}"
+            style="padding:.5rem 0; border-bottom:1px solid #ddd;">
+            <a th:href="@{/post/{id}(id=${p.id})}"
+               th:text="${p.title}"
+               style="text-decoration:none; color:#333;"></a>
+        </li>
+    </ul>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const BOOKS=JSON.parse(localStorage.getItem('hottimaze_bookmarks')||'[]');
+      document.querySelectorAll('#bookmark-list li').forEach(li=>{
+        if(!BOOKS.includes(li.getAttribute('data-id'))) {
+          li.style.display='none';
+        }
+      });
+    });
+</script>
+</body>
+</html>

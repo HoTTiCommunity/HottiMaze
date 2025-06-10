@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -12,7 +13,26 @@
     게시글
 </h1>
 
-<table border="1" cellpadding="6" style="width: 100%; margin-top: 20px;">
+<div style="margin-bottom: 20px; display: flex; align-items: center; gap: 1rem;">
+    <!-- 북마크만 보기 (로그인 시에만 보이려면 th:if="${isLoggedIn}" 추가) -->
+    <label>
+        <input type="checkbox" id="view-bookmarks-only"/>
+        북마크만 보기
+    </label>
+
+    <!-- 검색창 -->
+    <input type="text"
+           id="search-input"
+           placeholder="제목으로 검색"
+           style="padding: .5rem; flex:1; max-width:300px;"/>
+
+    <button id="search-button"
+            style="padding: .5rem 1rem;">
+        검색
+    </button>
+</div>
+
+<table border="1" cellpadding="6" id="post-list" style="width: 100%; margin-top: 20px;">
     <thead>
     <tr>
         <th>ID</th>
@@ -23,7 +43,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="post : ${posts}">
+    <tr th:each="post : ${posts}" th:attr="data-id=${post.id}">
         <td th:text="${post.id}">1</td>
         <td>
             <a th:href="@{/post/{id}(id=${post.id})}"
@@ -46,5 +66,23 @@
 <p style="margin-top: 20px;">
     <a th:href="@{/post/create}">✏️ 새 글 작성</a>
 </p>
+<script th:src="@{/js/no-screenshot.js}"></script>
+<script th:src="@{/js/bookmark-local.js}"></script>
+<script th:src="@{/js/search.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('view-bookmarks-only');
+      if (!toggle) return;
+      toggle.addEventListener('change', () => {
+        const only = toggle.checked;
+        const bookmarks = JSON.parse(localStorage.getItem('hottimaze_bookmarks') || '[]');
+        document.querySelectorAll('#post-list tbody tr[data-id]').forEach(tr => {
+          const id = tr.getAttribute('data-id');
+          tr.style.display = (!only || bookmarks.includes(id)) ? '' : 'none';
+        });
+      });
+    });
+</script>
 </body>
 </html>

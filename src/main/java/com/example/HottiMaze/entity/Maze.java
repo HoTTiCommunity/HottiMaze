@@ -1,5 +1,6 @@
 package com.example.HottiMaze.entity;
 
+import com.example.HottiMaze.enums.MazeStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,4 +35,20 @@ public class Maze {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    // 승인 상태 필드 추가
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private MazeStatus status = MazeStatus.PENDING;
+
+    // 승인/거부 관련 필드
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    @Column(name = "rejection_reason", length = 500)
+    private String rejectionReason;
 }
