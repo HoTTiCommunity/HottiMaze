@@ -107,9 +107,10 @@ public class MazeReviewService {
     public List<MazeReviewDto> getMazeReviews(Long mazeId, String currentUsername) {
         List<MazeReview> allRecords = mazeReviewRepository.findByMazeIdOrderByCreatedAtDesc(mazeId);
 
-        // 내용이 있는 리뷰만 필터링
+        // 수정: isCompleted가 true인 모든 리뷰를 가져오도록 변경
+        // 내용이 비어있어도 완주 기록이므로 표시
         List<MazeReview> actualReviews = allRecords.stream()
-                .filter(record -> record.getContent() != null && !record.getContent().trim().isEmpty())
+                .filter(record -> record.getIsCompleted() != null && record.getIsCompleted())
                 .collect(Collectors.toList());
 
         return actualReviews.stream()
@@ -124,8 +125,10 @@ public class MazeReviewService {
     public long getMazeReviewCount(Long mazeId) {
         List<MazeReview> allRecords = mazeReviewRepository.findByMazeIdOrderByCreatedAtDesc(mazeId);
 
+        // 수정: isCompleted가 true인 리뷰 중 내용이 있는 것만 카운트하도록 변경
         return allRecords.stream()
-                .filter(record -> record.getContent() != null && !record.getContent().trim().isEmpty())
+                .filter(record -> record.getIsCompleted() != null && record.getIsCompleted() &&
+                        record.getContent() != null && !record.getContent().trim().isEmpty())
                 .count();
     }
 
@@ -209,8 +212,10 @@ public class MazeReviewService {
 
         String originalUsername = review.getUser().getUsername();
         if (originalUsername.length() <= 2) {
+            // 한 글자 사용자명 처리: 첫 글자 + *** (예: 'a' -> 'a***')
             dto.setUserDisplayName(originalUsername.charAt(0) + "***");
         } else {
+            // 두 글자 이상 사용자명 처리: 앞 두 글자 + *** (예: 'user' -> 'us***')
             dto.setUserDisplayName(originalUsername.substring(0, 2) + "***");
         }
 

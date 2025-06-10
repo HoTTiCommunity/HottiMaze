@@ -520,10 +520,8 @@
     </header>
 
     <div class="content-wrapper">
-        <!-- 알림 메시지 -->
         <div id="alertMessage" class="alert" style="display: none;"></div>
 
-        <!-- 미로 헤더 정보 -->
         <div class="maze-header">
             <div class="maze-info">
                 <h1 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h1>
@@ -576,14 +574,12 @@
             </div>
         </div>
 
-        <!-- 리뷰 섹션 -->
         <div class="review-section">
             <div class="review-header">
                 <h2 class="review-title">💬 미로 리뷰</h2>
                 <span class="review-count" id="reviewCountBadge">리뷰 0개</span>
             </div>
 
-            <!-- 리뷰 작성 영역 -->
             <div sec:authorize="isAuthenticated()">
                 <div id="reviewWriteSection" class="review-write-section">
                     <div class="review-form">
@@ -607,29 +603,24 @@
                     </div>
                 </div>
 
-                <!-- 완주하지 않은 경우 -->
                 <div id="completionRequired" class="completion-required" style="display: none;">
                     <p><strong>🚫 리뷰 작성 불가</strong></p>
                     <p>미로를 완주한 후에 리뷰를 작성할 수 있습니다.</p>
                     <p>먼저 <a th:href="@{'/mazes/' + ${maze.id} + '/quiz'}" style="color: #4ecdc4; text-decoration: none;">미궁 시작</a>을 클릭해서 문제를 풀어보세요!</p>
                 </div>
 
-                <!-- 이미 리뷰를 작성한 경우 -->
                 <div id="alreadyReviewed" class="completion-required" style="display: none;">
                     <p><strong>✅ 리뷰 작성 완료</strong></p>
                     <p>이미 이 미로에 대한 리뷰를 작성하셨습니다.</p>
                 </div>
             </div>
 
-            <!-- 비로그인 사용자 -->
             <div sec:authorize="!isAuthenticated()" class="login-required">
                 <p><strong>📝 리뷰 작성하기</strong></p>
                 <p>리뷰를 작성하려면 <a href="/login" style="color: #4ecdc4; text-decoration: none;">로그인</a>이 필요합니다.</p>
             </div>
 
-            <!-- 리뷰 목록 -->
             <div id="reviewList" class="review-list">
-                <!-- 리뷰가 없을 때 -->
                 <div id="noReviews" class="no-reviews">
                     <div class="no-reviews-icon">💭</div>
                     <p>아직 작성된 리뷰가 없습니다.</p>
@@ -645,33 +636,11 @@
     let userCanReview = false;
     let userHasReviewed = false;
 
-    function checkReviewStatus() {
-        const isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
-
-        if (!isAuthenticated) {
-            return;
-        }
-
-        // 리뷰 작성 여부 확인
-        fetch(`/api/mazes/${mazeId}/my-review-status`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    userHasReviewed = data.hasReviewed;
-
-                    // 완주 여부도 함께 확인
-                    return fetch(`/api/mazes/${mazeId}/my-completion-status`);
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const hasCompleted = data.hasCompleted || false;
-                updateReviewWriteSection(hasCompleted);
-            })
-            .catch(error => {
-                console.error('상태 확인 실패:', error);
-            });
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        loadReviews(); // 페이지 로드 시 리뷰 목록 로드
+        loadReviewCount(); // 페이지 로드 시 리뷰 개수 로드
+        checkReviewStatus(); // 페이지 로드 시 리뷰 작성 상태 확인
+    });
 
     // 리뷰 작성 가능 상태 확인
     function checkReviewStatus() {
@@ -681,22 +650,32 @@
             return;
         }
 
-        // 완주 여부 확인
+        // 먼저 사용자가 리뷰를 작성했는지 확인
         fetch(`/api/mazes/${mazeId}/my-review-status`)
+            .then(response => {
+                if (response.status === 401) { // 비로그인 상태일 경우
+                    userHasReviewed = false;
+                    return Promise.resolve({ hasCompleted: false }); // 완주 여부도 false로 간주
+                }
+                return response.json();
+            })
+            .then(data => {
+                userHasReviewed = data.hasReviewed;
+                // 리뷰 작성 여부 확인 후, 완주 여부 확인
+                return fetch(`/api/mazes/${mazeId}/my-completion-status`);
+            })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    userHasReviewed = data.hasReviewed;
-                    updateReviewWriteSection();
-                }
+                const hasCompleted = data.hasCompleted || false;
+                updateReviewWriteSection(hasCompleted); // 실제 DOM 업데이트
             })
             .catch(error => {
-                console.error('리뷰 상태 확인 실패:', error);
+                console.error('상태 확인 실패:', error);
             });
     }
 
     // 리뷰 작성 영역 업데이트
-    function updateReviewWriteSection() {
+    function updateReviewWriteSection(hasCompleted) {
         const writeSection = document.getElementById('reviewWriteSection');
         const completionRequired = document.getElementById('completionRequired');
         const alreadyReviewed = document.getElementById('alreadyReviewed');
@@ -706,31 +685,19 @@
             writeSection.style.display = 'none';
             completionRequired.style.display = 'none';
             alreadyReviewed.style.display = 'block';
+            userCanReview = false;
+        } else if (hasCompleted) {
+            // 완주했지만 리뷰는 아직 작성 안함
+            writeSection.style.display = 'block';
+            completionRequired.style.display = 'none';
+            alreadyReviewed.style.display = 'none';
+            userCanReview = true;
         } else {
-            // 완주했는지 확인 필요
-            fetch(`/api/mazes/${mazeId}/my-review-status`)
-                .then(response => {
-                    if (response.status === 401) {
-                        // 로그인 안됨
-                        return { hasCompleted: false };
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const hasCompleted = data.hasCompleted || false;
-
-                    if (hasCompleted) {
-                        writeSection.style.display = 'block';
-                        completionRequired.style.display = 'none';
-                        alreadyReviewed.style.display = 'none';
-                        userCanReview = true;
-                    } else {
-                        writeSection.style.display = 'none';
-                        completionRequired.style.display = 'block';
-                        alreadyReviewed.style.display = 'none';
-                        userCanReview = false;
-                    }
-                });
+            // 완주 안함
+            writeSection.style.display = 'none';
+            completionRequired.style.display = 'block';
+            alreadyReviewed.style.display = 'none';
+            userCanReview = false;
         }
     }
 
@@ -768,6 +735,9 @@
         const reviewList = document.getElementById('reviewList');
         const noReviews = document.getElementById('noReviews');
 
+        // 기존 리뷰 목록 초기화
+        reviewList.innerHTML = '';
+
         if (reviews.length === 0) {
             noReviews.style.display = 'block';
             return;
@@ -775,32 +745,49 @@
 
         noReviews.style.display = 'none';
 
-        const reviewsHtml = reviews.map(review => `
-            <div class="review-item" data-review-id="${review.id}">
-                <div class="review-item-header">
-                    <div class="review-author">
-                        <div class="review-avatar">${review.userDisplayName.charAt(0)}</div>
-                        <div class="review-author-info">
-                            <div class="review-author-name">${review.userDisplayName}</div>
-                            <div class="review-date">${formatDate(review.createdAt)}</div>
+        const reviewsHtml = reviews.map(review => {
+            // 리뷰 내용이 비어있으면 표시하지 않음 (단, 완주 기록으로만 남은 경우는 content가 없으므로)
+            // 여기서는 getMazeReviews에서 isCompleted로 필터링했으므로, content가 비어있어도 표시될 수 있음.
+            // 필요하다면 여기서도 content가 없으면 표시하지 않도록 추가 필터링 가능
+            if (!review.content || review.content.trim() === '') {
+                return ''; // 내용이 없으면 이 리뷰는 건너뜀
+            }
+
+            return `
+                <div class="review-item" data-review-id="${review.id}">
+                    <div class="review-item-header">
+                        <div class="review-author">
+                            <div class="review-avatar">${review.userDisplayName.charAt(0)}</div>
+                            <div class="review-author-info">
+                                <div class="review-author-name">${review.userDisplayName}</div>
+                                <div class="review-date">${formatDate(review.createdAt)}</div>
+                            </div>
                         </div>
+                        <div class="review-badge">완주</div>
                     </div>
-                    <div class="review-badge">완주</div>
+
+                    <div class="review-content">${review.content}</div>
+
+                    ${review.myReview ? `
+                        <div class="review-actions">
+                            <button class="review-action-btn edit" onclick="editReview(${review.id})">✏️ 수정</button>
+                            <button class="review-action-btn delete" onclick="deleteReview(${review.id})">🗑️ 삭제</button>
+                        </div>
+                    ` : ''}
                 </div>
-
-                <div class="review-content">${review.content}</div>
-
-                ${review.myReview ? `
-                    <div class="review-actions">
-                        <button class="review-action-btn edit" onclick="editReview(${review.id})">✏️ 수정</button>
-                        <button class="review-action-btn delete" onclick="deleteReview(${review.id})">🗑️ 삭제</button>
-                    </div>
-                ` : ''}
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         reviewList.innerHTML = reviewsHtml;
+
+        // 리뷰 목록이 비어 있으면 "아직 작성된 리뷰가 없습니다" 메시지 표시
+        if (reviewsHtml.trim() === '') {
+            noReviews.style.display = 'block';
+        } else {
+            noReviews.style.display = 'none';
+        }
     }
+
 
     // 문자 수 업데이트
     function updateCharCount() {
@@ -854,7 +841,7 @@
                     updateCharCount();
                     loadReviews();
                     loadReviewCount();
-                    updateReviewWriteSection();
+                    checkReviewStatus(); // 리뷰 작성 후 상태 다시 확인하여 UI 업데이트
                 } else {
                     showAlert(data.message, 'error');
                 }
@@ -922,7 +909,7 @@
                     showAlert(data.message, 'success');
                     loadReviews();
                     loadReviewCount();
-                    updateReviewWriteSection(); // 리뷰 삭제 후 다시 작성 가능하게
+                    checkReviewStatus(); // 리뷰 삭제 후 상태 다시 확인하여 UI 업데이트
                 } else {
                     showAlert(data.message, 'error');
                 }
