@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${post.id} != null ? '글 수정' : '새 글 쓰기'">글 쓰기</title>
+</head>
+<body>
+<h1 th:text="${post.id} != null ? '글 수정' : '새 글 쓰기'">폼</h1>
+<form th:action="@{${post.id} != null ? '/questions/' + ${post.id} : '/questions'}"
+      method="post">
+  <input type="hidden" name="mgId" th:value="${mgId}" />
+
+  <div>
+    <label>제목</label><br/>
+    <input type="text" name="title" th:value="${post.title}" required/>
+  </div>
+  <div>
+    <label>내용</label><br/>
+    <textarea name="content" rows="8" required
+              th:text="${post.content}"></textarea>
+  </div>
+  <div>
+    <button type="submit" class="btn">저장</button>
+    <a th:href="@{/questions(mgId=${mgId})}" class="btn">취소</a>
+  </div>
+</form>
+</body>
+</html>

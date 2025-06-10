@@ -705,10 +705,17 @@
       <button class="btn btn-history" onclick="openHistoryModal()">
         📋 문제 목록
       </button>
+    <div class="quiz-controls">
+      <div class="quiz-timer" id="quizTimer">⏰ 60초</div>
       <div class="quiz-nav">
-        <button class="btn btn-warning" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 다시 시도</button>
-        <button class="btn btn-primary" id="nextBtn" onclick="checkAnswer()" disabled>정답 확인</button>
+        <a th:href="@{/questions/maze-questionPost(mgId=${maze.id})}"
+           target="_blank"
+           class="btn btn-primary">
+          질문 게시판 보기
+        </a>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
       </div>
+    </div>
     </div>
 
     <!-- 결과 화면 -->
