@@ -2,7 +2,6 @@
 INSERT INTO category (name) VALUES ('공지사항');
 INSERT INTO category (name) VALUES ('자유게시판');
 INSERT INTO category (name) VALUES ('질문과답변');
-INSERT INTO category (name) VALUES ('감옥 Confirm게시판');
 INSERT INTO category (name) VALUES ('감옥게시판');
 
 -- 사용자 더미 데이터 (role 컬럼 추가)
@@ -37,12 +36,7 @@ INSERT INTO post (title, content, author, created_at, updated_at, view_count, ca
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('Java 람다 표현식 사용법', '람다 표현식을 처음 배우는데 이해가 잘 안됩니다. 쉬운 예제 있을까요?', 'user001', '2024-02-05 15:20:00', '2024-02-05 15:20:00', 92, 3, 0, 0);
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('React Hook 사용 시 주의사항', 'useState와 useEffect를 사용할 때 주의해야 할 점들이 있나요?', 'designer', '2024-02-12 10:40:00', '2024-02-12 10:40:00', 56, 3, 0, 0);
 
--- 감옥 Confirm게시판 카테고리 게시글 (category_id = 4)
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('알고리즘 스터디 모집', '매주 토요일 오후 2시에 알고리즘 문제 풀이 스터디를 진행합니다. 참여하실 분 댓글 남겨주세요!', 'developer', '2024-01-28 20:00:00', '2024-01-28 20:00:00', 125, 4, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('Java 기초 스터디 시작', '자바 기초부터 차근차근 공부할 스터디원을 모집합니다. 초보자 환영!', 'manager', '2024-02-08 18:30:00', '2024-02-08 18:30:00', 87, 4, 0, 0);
-INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('데이터베이스 공부 모임', 'SQL과 데이터베이스 설계에 대해 함께 공부하실 분들 모집합니다.', 'developer', '2024-02-14 21:15:00', '2024-02-14 21:15:00', 64, 4, 0, 0);
-
--- 감옥게시판 카테고리 게시글 (category_id = 5)
+-- 감옥게시판 카테고리 게시글 (category_id = 4)
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('웹 포트폴리오 사이트 제작', '개인 포트폴리오 웹사이트 제작 프로젝트입니다. React와 Spring Boot를 사용할 예정입니다.', 'developer', '2024-02-01 14:20:00', '2024-02-01 14:20:00', 156, 5, 0, 0);
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('모바일 앱 개발 프로젝트', 'Flutter를 이용한 간단한 일정 관리 앱을 만들고 있습니다. 협업하실 분 환영합니다.', 'designer', '2024-02-10 11:45:00', '2024-02-10 11:45:00', 98, 5, 0, 0);
 INSERT INTO post (title, content, author, created_at, updated_at, view_count, category_id, gaechu, bechu) VALUES ('미로 게임 개발 진행상황', 'HottiMaze 프로젝트의 현재 진행상황을 공유합니다. 피드백 환영합니다!', 'manager', '2024-02-18 16:10:00', '2024-02-18 16:10:00', 142, 5, 0, 0);

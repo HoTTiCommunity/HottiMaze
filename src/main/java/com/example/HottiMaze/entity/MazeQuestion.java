@@ -15,7 +15,8 @@ public class MazeQuestion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne @JoinColumn(name = "maze_id")
+    @ManyToOne
+    @JoinColumn(name = "maze_id")
     private Maze maze;
 
     @Column(name = "question_image", nullable = false)
