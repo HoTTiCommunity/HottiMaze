@@ -542,6 +542,17 @@
       margin: 10px 0;
     }
 
+    .completion-info {
+      background: #e3f2fd;
+      border: 1px solid #81d4fa;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #0277bd;
+      font-weight: 500;
+    }
+
     @keyframes slideIn {
       from {
         opacity: 0;
@@ -633,6 +644,12 @@
     </div>
     <div style="text-align: center; margin-bottom: 30px; color: #6c757d;">
       문제 <span id="currentQuestion">1</span> / <span th:text="${#lists.size(questions)}">3</span>
+    </div>
+
+    <!-- 완주 진행도 표시 -->
+    <div class="completion-info">
+      완료한 문제: <span id="completedCount">0</span> / <span id="totalQuestions" th:text="${#lists.size(questions)}">3</span>
+      | 모든 문제를 순서대로 풀어야 미로를 완주할 수 있습니다!
     </div>
 
     <!-- 문제들 -->
@@ -727,10 +744,8 @@
   const mazeId = /*[[${maze.id}]]*/ 1;
 
   let currentQuestionIndex = 0;
-  let userAnswers = [];
-  let currentAnswerCorrect = false;
-  let userPoints = 0;
   let questionStates = []; // 각 문제의 상태를 저장
+  let userPoints = 0;
 
   // 페이지 로드 시 첫 번째 문제 표시 및 포인트 로드
   document.addEventListener('DOMContentLoaded', function() {
@@ -738,6 +753,7 @@
     showQuestion();
     loadUserPoints();
     updateHistoryList();
+    updateCompletionInfo();
   });
 
   // 문제 상태 초기화
@@ -755,13 +771,13 @@
   function openHistoryModal() {
     updateHistoryList();
     document.getElementById('historyModal').style.display = 'block';
-    document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+    document.body.style.overflow = 'hidden';
   }
 
   // 히스토리 모달 닫기
   function closeHistoryModal() {
     document.getElementById('historyModal').style.display = 'none';
-    document.body.style.overflow = 'auto'; // 배경 스크롤 복구
+    document.body.style.overflow = 'auto';
   }
 
   // 히스토리 리스트 업데이트
@@ -800,7 +816,6 @@
 
   // 특정 문제로 이동
   function goToQuestion(questionIndex) {
-    // 모든 문제로 자유롭게 이동 가능
     if (questionIndex >= 0 && questionIndex < questions.length) {
       currentQuestionIndex = questionIndex;
       showQuestion();
@@ -811,6 +826,11 @@
     }
   }
 
+  // 완료 정보 업데이트
+  function updateCompletionInfo() {
+    const completedCount = questionStates.filter(state => state.completed).length;
+    document.getElementById('completedCount').textContent = completedCount;
+  }
 
   // 모달 외부 클릭 시 닫기
   window.onclick = function(event) {
@@ -830,7 +850,7 @@
   // 사용자 포인트 로드
   function loadUserPoints() {
     const pointsDisplay = document.getElementById('userPoints');
-    if (!pointsDisplay) return; // 비로그인 사용자
+    if (!pointsDisplay) return;
 
     fetch('/api/maze-hints/user-points')
             .then(response => response.json())
@@ -923,47 +943,69 @@
     document.getElementById('progressFill').style.width = progress + '%';
     document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
 
-    // ⭐ 중요: 상태 초기화 - 새 문제로 넘어갈 때마다 초기화
-    currentAnswerCorrect = false;
-
     const currentQuestion = allQuestions[currentQuestionIndex];
     const input = currentQuestion.querySelector('.answer-input');
     const feedback = currentQuestion.querySelector('.feedback-message');
 
-    // 입력 필드 및 피드백 초기화
-    input.value = '';
-    input.classList.remove('correct', 'incorrect');
-    input.disabled = false;
-    feedback.style.display = 'none';
-    feedback.classList.remove('correct', 'incorrect');
+    // 이미 완료된 문제인지 확인
+    const isCompleted = questionStates[currentQuestionIndex].completed;
 
-    // 버튼 상태 초기화
-    document.getElementById('nextBtn').disabled = true;
-    document.getElementById('nextBtn').textContent = '정답 확인';
-    document.getElementById('nextBtn').onclick = checkAnswer; // ⭐ 핵심: onclick 함수 재설정
-    document.getElementById('tryAgainBtn').style.display = 'none';
+    if (isCompleted) {
+      // 완료된 문제: 정답을 보여주고 입력 비활성화
+      const userAnswer = questionStates[currentQuestionIndex].userAnswer;
+      input.value = userAnswer;
+      input.classList.add('correct');
+      input.disabled = true;
+      feedback.textContent = '✅ 이미 완료된 문제입니다.';
+      feedback.classList.add('correct');
+      feedback.style.display = 'block';
 
-    // 히스토리 업데이트
+      // 버튼 상태
+      document.getElementById('nextBtn').disabled = false;
+      document.getElementById('nextBtn').textContent = '다음 문제 →';
+      document.getElementById('nextBtn').onclick = nextQuestion;
+      document.getElementById('tryAgainBtn').style.display = 'none';
+    } else {
+      // 미완료 문제: 초기 상태로 설정
+      input.value = '';
+      input.classList.remove('correct', 'incorrect');
+      input.disabled = false;
+      feedback.style.display = 'none';
+      feedback.classList.remove('correct', 'incorrect');
+
+      // 버튼 상태 초기화
+      document.getElementById('nextBtn').disabled = true;
+      document.getElementById('nextBtn').textContent = '정답 확인';
+      document.getElementById('nextBtn').onclick = checkAnswer;
+      document.getElementById('tryAgainBtn').style.display = 'none';
+    }
+
+    // 히스토리 및 완료 정보 업데이트
     updateHistoryList();
+    updateCompletionInfo();
   }
 
   function handleAnswerInput(input, event) {
     const answer = input.value.trim();
     const nextBtn = document.getElementById('nextBtn');
+    const isCompleted = questionStates[currentQuestionIndex].completed;
 
-    // 아직 정답을 맞추지 않은 상태에서만 버튼 활성화 제어
-    if (answer.length > 0 && !currentAnswerCorrect) {
-      nextBtn.disabled = false;
-    } else {
-      nextBtn.disabled = true;
-    }
-
-    // Enter 키로 정답 확인 또는 다음 문제
-    if (event.key === 'Enter' && answer.length > 0) {
-      if (currentAnswerCorrect) {
-        nextQuestion();
+    // 완료된 문제가 아닌 경우에만 버튼 활성화 제어
+    if (!isCompleted) {
+      if (answer.length > 0) {
+        nextBtn.disabled = false;
       } else {
+        nextBtn.disabled = true;
+      }
+
+      // Enter 키로 정답 확인
+      if (event.key === 'Enter' && answer.length > 0) {
         checkAnswer();
+      }
+    } else {
+      // 완료된 문제에서 Enter 키로 다음 문제
+      if (event.key === 'Enter') {
+        nextQuestion();
       }
     }
   }
@@ -974,6 +1016,12 @@
     const feedback = currentQuestion.querySelector('.feedback-message');
     const userAnswer = input.value.trim();
     const correctAnswer = currentQuestion.dataset.correctAnswer;
+
+    // 이미 완료된 문제인지 확인
+    if (questionStates[currentQuestionIndex].completed) {
+      nextQuestion();
+      return;
+    }
 
     // 복수 정답 처리 ("|"로 구분된 경우)
     const correctAnswers = correctAnswer.toLowerCase().split('|').map(ans => ans.trim());
@@ -988,25 +1036,22 @@
       feedback.classList.add('correct');
       feedback.style.display = 'block';
 
-      // ⭐ 중요: 정답 상태 업데이트
-      currentAnswerCorrect = true;
-      userAnswers[currentQuestionIndex] = userAnswer;
-
-      // 문제 상태 업데이트
+      // ⭐ 중요: 현재 문제를 완료로 표시
       questionStates[currentQuestionIndex].completed = true;
       questionStates[currentQuestionIndex].userAnswer = userAnswer;
 
       // 버튼 변경
       document.getElementById('nextBtn').textContent = currentQuestionIndex === questions.length - 1 ? '완료!' : '다음 →';
       document.getElementById('nextBtn').disabled = false;
-      document.getElementById('nextBtn').onclick = nextQuestion; // ⭐ 핵심: onclick 함수 변경
+      document.getElementById('nextBtn').onclick = nextQuestion;
       document.getElementById('tryAgainBtn').style.display = 'none';
 
       // 입력 필드 비활성화
       input.disabled = true;
 
-      // 히스토리 업데이트
+      // 히스토리 및 완료 정보 업데이트
       updateHistoryList();
+      updateCompletionInfo();
 
     } else {
       // 틀린 경우
@@ -1046,21 +1091,45 @@
   }
 
   function nextQuestion() {
-    // ⭐ 중요: 정답을 맞춘 경우에만 다음 문제로 진행
-    if (!currentAnswerCorrect) {
-      alert('정답을 맞춰야 다음 문제로 넘어갈 수 있습니다!');
-      return;
-    }
-
     currentQuestionIndex++;
     if (currentQuestionIndex >= questions.length) {
-      showResult();
+      // ⭐ 중요: 모든 문제가 완료되었는지 확인
+      const allCompleted = questionStates.every(state => state.completed);
+      if (allCompleted) {
+        showResult();
+      } else {
+        // 완료되지 않은 문제가 있으면 첫 번째 미완료 문제로 이동
+        const nextIncompleteIndex = questionStates.findIndex(state => !state.completed);
+        if (nextIncompleteIndex !== -1) {
+          currentQuestionIndex = nextIncompleteIndex;
+          showQuestion();
+          showAlert('아직 완료하지 않은 문제가 있습니다. 모든 문제를 풀어야 미로를 완주할 수 있습니다!', 'warning');
+        } else {
+          showResult();
+        }
+      }
     } else {
-      showQuestion(); // 여기서 currentAnswerCorrect가 false로 초기화됨
+      showQuestion();
     }
   }
 
   function showResult() {
+    // ⭐ 최종 검증: 모든 문제가 정말로 완료되었는지 확인
+    const allCompleted = questionStates.every(state => state.completed);
+
+    if (!allCompleted) {
+      const incompleteCount = questionStates.filter(state => !state.completed).length;
+      showAlert(`아직 ${incompleteCount}개의 문제가 완료되지 않았습니다. 모든 문제를 풀어야 미로를 완주할 수 있습니다!`, 'error');
+
+      // 첫 번째 미완료 문제로 이동
+      const firstIncompleteIndex = questionStates.findIndex(state => !state.completed);
+      if (firstIncompleteIndex !== -1) {
+        currentQuestionIndex = firstIncompleteIndex;
+        showQuestion();
+      }
+      return;
+    }
+
     document.querySelector('.quiz-question.active').classList.remove('active');
 
     document.getElementById('resultIcon').textContent = '🎉';
@@ -1101,8 +1170,6 @@
               })
               .catch(error => {
                 console.error('완주 기록 전송 실패:', error);
-                // 완주 기록 전송이 실패해도 사용자에게는 성공 메시지 표시
-                // (이미 퀴즈는 완료했으므로)
               });
     } else {
       console.log('비로그인 사용자 - 완주 기록 저장 안함');
@@ -1111,8 +1178,6 @@
 
   function restartQuiz() {
     currentQuestionIndex = 0;
-    userAnswers = [];
-    currentAnswerCorrect = false; // 초기화
     document.getElementById('quizResult').classList.remove('show');
 
     // 문제 상태 초기화
@@ -1150,14 +1215,13 @@
 
   // 알림 메시지 표시 함수 개선
   function showAlert(message, type) {
-    // 더 나은 알림 표시 (기존 단순 alert 대신)
     const alertDiv = document.createElement('div');
     alertDiv.style.cssText = `
       position: fixed;
       top: 20px;
       right: 20px;
-      background: ${type === 'success' ? '#28a745' : type === 'info' ? '#17a2b8' : '#dc3545'};
-      color: white;
+      background: ${type === 'success' ? '#28a745' : type === 'info' ? '#17a2b8' : type === 'warning' ? '#ffc107' : '#dc3545'};
+      color: ${type === 'warning' ? '#856404' : 'white'};
       padding: 15px 20px;
       border-radius: 10px;
       font-weight: bold;
