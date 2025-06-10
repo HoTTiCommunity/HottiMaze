@@ -1,838 +1,922 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${maze.mazeTitle} + ' 퀴즈 - HottiMaze'">미로 퀴즈 - HottiMaze</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HottiMaze - 메인페이지</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-    header {
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-      color: white;
-      padding: 25px;
-      text-align: center;
-      position: relative;
-    }
+        /* 로그인/비로그인 상태 바 */
+        .guest-info-bar, .user-info-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 30px;
+            background: #ffffffcc;
+            border-bottom: 1px solid #ddd;
+        }
 
-    header h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
+        .guest-info-bar a, .user-info-bar button, .user-info-bar a.logout-link {
+            margin-left: 15px;
+            padding: 6px 12px;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-    /* 포인트 표시 */
-    .points-display {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 10px 15px;
-      border-radius: 20px;
-      font-weight: bold;
-    }
+        .guest-info-bar a:hover, .user-info-bar button:hover, .user-info-bar a.logout-link:hover {
+            background: #5a67d8;
+        }
 
-    .quiz-content {
-      padding: 30px;
-    }
+        .user-info-bar .welcome {
+            margin-right: 20px;
+            font-size: 1rem;
+            color: #333;
+        }
 
-    .quiz-question {
-      background: white;
-      border-radius: 15px;
-      padding: 30px;
-      margin-bottom: 30px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      display: none;
-      text-align: center;
-    }
+        .user-info-bar .info-item {
+            margin-right: 15px;
+            font-size: 0.9rem;
+            color: #555;
+        }
 
-    .quiz-question.active {
-      display: block;
-      animation: slideIn 0.3s ease;
-    }
+        header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
 
-    .question-number {
-      color: #6c757d;
-      font-size: 1rem;
-      margin-bottom: 20px;
-    }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
 
-    .question-title {
-      font-size: 1.6rem;
-      color: #2c3e50;
-      margin-bottom: 25px;
-      font-weight: 600;
-    }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
 
-    .question-image-container {
-      margin: 25px 0 30px;
-      position: relative;
-    }
+        .content-wrapper {
+            padding: 30px;
+        }
 
-    .question-image {
-      max-width: 100%;
-      max-height: 400px;
-      object-fit: contain;
-      border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease;
-      border: 3px solid #e9ecef;
-      cursor: pointer;
-    }
+        /* 게시판 섹션 */
+        .board-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
 
-    .question-image:hover {
-      transform: scale(1.02);
-    }
+        .board-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
 
-    .answer-input-container {
-      margin: 30px 0;
-    }
+        .board-section:hover {
+            transform: translateY(-5px);
+        }
 
-    .answer-input {
-      width: 100%;
-      max-width: 400px;
-      padding: 15px 20px;
-      font-size: 1.2rem;
-      border: 2px solid #e9ecef;
-      border-radius: 25px;
-      text-align: center;
-      transition: all 0.3s ease;
-      background: white;
-    }
+        .board-header {
+            padding: 20px;
+            color: white;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
 
-    .answer-input:focus {
-      outline: none;
-      border-color: #4ecdc4;
-      box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
-    }
+        .board-header a {
+            color: inherit;
+            text-decoration: none;
+            display: block;
+        }
 
-    .answer-input.correct {
-      border-color: #28a745;
-      background: #d4edda;
-    }
+        .notice-board .board-header {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+        }
 
-    .answer-input.incorrect {
-      border-color: #dc3545;
-      background: #f8d7da;
-      animation: shake 0.5s ease-in-out;
-    }
+        .free-board .board-header {
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+        }
 
-    .feedback-message {
-      margin-top: 15px;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 500;
-      display: none;
-    }
+        .post-list {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
 
-    .feedback-message.correct {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
+        .post-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    .feedback-message.incorrect {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
+        .post-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
 
-    /* 힌트 관련 스타일 */
-    .hint-section {
-      margin: 20px 0;
-      text-align: center;
-    }
+        .post-title {
+            font-weight: 500;
+            color: #2c3e50;
+            flex: 1;
+            margin-right: 15px;
+        }
 
-    .hint-button {
-      background: linear-gradient(45deg, #ffc107, #ff8f00);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3);
-    }
+        .post-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
 
-    .hint-button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
-    }
+        /* 구분선 */
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            margin: 40px 0;
+            border-radius: 2px;
+        }
 
-    .hint-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+        /* 미로 섹션 */
+        .maze-section {
+            margin-top: 40px;
+        }
 
-    .hint-content {
-      margin-top: 15px;
-      padding: 15px 20px;
-      background: #fff3cd;
-      border: 1px solid #ffeaa7;
-      border-radius: 10px;
-      color: #856404;
-      font-style: italic;
-      display: none;
-    }
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            position: relative;
+        }
 
-    .hint-content.show {
-      display: block;
-      animation: slideIn 0.3s ease;
-    }
+        .section-title::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: block;
+            margin: 10px auto;
+            border-radius: 2px;
+        }
 
-    .hint-cost {
-      font-size: 0.9rem;
-      color: #6c757d;
-      margin-top: 5px;
-    }
+        .maze-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
 
-    .hint {
-      margin-top: 15px;
-      color: #6c757d;
-      font-style: italic;
-    }
+        .tab-button {
+            padding: 12px 30px;
+            border: none;
+            background: #f8f9fa;
+            color: #6c757d;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
 
-    .quiz-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 15px;
-      margin-top: 30px;
-    }
+        .tab-button.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
 
-    .quiz-nav {
-      display: flex;
-      gap: 15px;
-      margin-left: auto;
-    }
+        .maze-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
 
-    .btn {
-      padding: 12px 25px;
-      border: none;
-      border-radius: 25px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
+        .maze-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    .btn-primary {
-      background: linear-gradient(45deg, #4ecdc4, #44a08d);
-      color: white;
-      box-shadow: 0 5px 20px rgba(78, 205, 196, 0.3);
-    }
+        .maze-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
 
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
-    }
+        .maze-thumbnail {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .btn-warning {
-      background: linear-gradient(45deg, #ffc107, #ff8f00);
-      color: white;
-      box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
-    }
+        .maze-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
 
-    .btn-warning:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
-    }
+        .maze-card:hover .maze-image {
+            transform: scale(1.05);
+        }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+        .maze-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: #e9ecef;
-      border-radius: 4px;
-      margin: 20px 0;
-      overflow: hidden;
-    }
+        .maze-card:hover .maze-overlay {
+            opacity: 1;
+        }
 
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(45deg, #4ecdc4, #44a08d);
-      transition: width 0.3s ease;
-    }
+        .maze-fallback {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+        }
 
-    .quiz-result {
-      text-align: center;
-      padding: 50px;
-      display: none;
-    }
+        .maze-content {
+            padding: 20px;
+        }
 
-    .quiz-result.show {
-      display: block;
-      animation: slideIn 0.5s ease;
-    }
+        .maze-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
 
-    .result-icon {
-      font-size: 4rem;
-      margin-bottom: 20px;
-    }
+        /* 투표 통계 스타일 */
+        .maze-vote-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
 
-    .back-button {
-      position: fixed;
-      top: 30px;
-      left: 30px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #2c3e50;
-      border: none;
-      border-radius: 50px;
-      padding: 12px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-      text-decoration: none;
-      z-index: 1000;
-    }
+        .vote-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-    .back-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      color: #2c3e50;
-      text-decoration: none;
-    }
+        .vote-count {
+            font-weight: 600;
+        }
 
-    .login-required {
-      text-align: center;
-      color: #6c757d;
-      font-style: italic;
-      padding: 10px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      margin: 10px 0;
-    }
+        .like-indicator {
+            color: #28a745;
+        }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        .dislike-indicator {
+            color: #dc3545;
+        }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-      20%, 40%, 60%, 80% { transform: translateX(10px); }
-    }
+        .vote-ratio-mini {
+            flex: 1;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
 
-    @media (max-width: 768px) {
-      .quiz-content {
-        padding: 20px;
-      }
+        .vote-ratio-mini .like-fill {
+            height: 100%;
+            background: #28a745;
+            float: left;
+            transition: width 0.3s ease;
+        }
 
-      .question-image {
-        max-height: 250px;
-      }
+        .vote-ratio-mini .dislike-fill {
+            height: 100%;
+            background: #dc3545;
+            float: right;
+            transition: width 0.3s ease;
+        }
 
-      .quiz-controls {
-        flex-direction: column;
-        gap: 15px;
-      }
+        .maze-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
 
-      .points-display {
-        position: static;
-        margin-bottom: 10px;
-        display: inline-block;
-      }
-    }
-  </style>
+        .stars {
+            color: #ffd700;
+            font-size: 1.1rem;
+        }
+
+        .rating-score {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .rating-count {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .maze-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .maze-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .tag.difficulty-easy { background: #d4edda; color: #155724; }
+        .tag.difficulty-medium { background: #fff3cd; color: #856404; }
+        .tag.difficulty-hard { background: #f8d7da; color: #721c24; }
+
+        .maze-creator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .creator-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .creator-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .creator-name {
+            font-size: 0.9rem;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .maze-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .create-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(238, 90, 36, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .create-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(238, 90, 36, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #6c757d;
+            padding: 60px 20px;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .content-wrapper {
+                padding: 20px;
+            }
+
+            .board-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .maze-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .maze-tabs {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .tab-button {
+                width: 200px;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .create-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .maze-vote-stats {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .maze-thumbnail {
+                height: 150px;
+            }
+
+            .maze-content {
+                padding: 15px;
+            }
+
+            .maze-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<a th:href="@{'/mazes/' + ${maze.id}}" class="back-button">
-  ← 미로로 돌아가기
-</a>
-
 <div class="container">
-  <header>
-    <h1>🧩 미궁 퀴즈</h1>
-    <p th:text="${maze.mazeTitle} + ' 문제를 풀어보세요!'">미로 문제를 풀어보세요!</p>
-
-    <!-- 로그인한 사용자의 포인트 표시 -->
-    <div sec:authorize="isAuthenticated()" class="points-display">
-      💰 포인트: <span id="userPoints">-</span>P
+    <div class="user-info-bar" th:if="${loginUsername != null}">
+        <span class="welcome">
+            환영합니다, <strong th:text="${loginUsername}">username</strong>님!
+        </span>
+        <span class="info-item">
+            포인트: <strong th:text="${loginPoint}">0</strong>P
+        </span>
+        <span class="info-item">
+            누적 출석: <strong th:text="${loginChulcheckCount}">0</strong>회
+        </span>
+        <span class="info-item" th:if="${loginIsAvailableChulcheck == 1}">
+            오늘 출석이 가능합니다.
+            <button id="btnCheckIn" type="button">출석체크</button>
+        </span>
+        <span class="info-item" th:if="${loginIsAvailableChulcheck != 1}">
+            오늘 출석 완료 또는 불가
+        </span>
+        <span class="info-item" sec:authorize="hasRole('ADMIN')">
+        <a href="/admin/mazes/approval" style="color: #ff6b6b; font-weight: bold;">
+            🛠️ 미로 승인 관리
+        </a>
+    </span>
+        <a class="logout-link" th:href="@{/logout}">로그아웃</a>
     </div>
-  </header>
 
-  <div class="quiz-content">
-    <!-- 진행률 -->
-    <div class="progress-bar">
-      <div id="progressFill" class="progress-fill" style="width: 0%"></div>
-    </div>
-    <div style="text-align: center; margin-bottom: 30px; color: #6c757d;">
-      문제 <span id="currentQuestion">1</span> / <span th:text="${#lists.size(questions)}">3</span>
+    <div class="guest-info-bar" th:if="${loginUsername == null}">
+        <a th:href="@{/login}">로그인</a>
+        <a th:href="@{/sign-up}">회원가입</a>
     </div>
 
-    <!-- 문제들 -->
-    <div id="quizQuestions">
-      <div th:each="question, iterStat : ${questions}"
-           class="quiz-question"
-           th:data-correct-answer="${question.correctAnswer}"
-           th:data-question-order="${question.questionOrder}"
-           th:data-has-hint="${question.hint != null and !#strings.isEmpty(question.hint)}">
+    <header>
+        <h1>🎯 HottiMaze</h1>
+        <p>미로를 탐험하고 소통하는 커뮤니티</p>
+    </header>
 
-        <div class="question-number" th:text="'문제 ' + ${iterStat.index + 1}">문제 1</div>
-        <h3 class="question-title" th:text="${question.title ?: '이미지를 보고 답을 입력하세요'}">문제 제목</h3>
+    <div class="content-wrapper">
+        <div class="board-container">
+            <div class="board-section notice-board">
+                <div class="board-header">
+                    <a th:href="@{/post/name/공지사항}">
+                        📢 공지사항
+                    </a>
+                </div>
+                <div class="post-list">
+                    <div th:if="${noticePosts != null and !noticePosts.isEmpty()}">
+                        <div th:each="post : ${noticePosts}"
+                             class="post-item"
+                             th:data-post-id="${post.id}"
+                             onclick="goToPost(this)">
+                            <div class="post-title" th:text="${post.title}">제목</div>
+                            <div class="post-meta">
+                                <span th:text="${post.nickname}">작성자</span>
+                                <span th:text="${#temporals.format(post.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${noticePosts == null or noticePosts.isEmpty()}" class="empty-message">
+                        등록된 공지사항이 없습니다.
+                    </div>
+                </div>
+            </div>
 
-        <div class="question-image-container">
-          <img th:src="${question.questionImage}"
-               th:alt="${question.title}"
-               class="question-image"
-               onclick="openImageModal(this.src)">
+            <div class="board-section free-board">
+                <div class="board-header">
+                    <a th:href="@{/post}">
+                        💬 자유게시판
+                    </a>
+                </div>
+                <div class="post-list">
+                    <div th:if="${freePosts != null and !freePosts.isEmpty()}">
+                        <div th:each="post : ${freePosts}"
+                             class="post-item"
+                             th:onclick="'location.href=\'/post/' + ${post.id} + '\''">
+                            <div class="post-title" th:text="${post.title}">제목</div>
+                            <div class="post-meta">
+                                <span th:text="${post.nickname}">작성자</span>
+                                <span th:text="${#temporals.format(post.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${freePosts == null or freePosts.isEmpty()}" class="empty-message">
+                        등록된 게시글이 없습니다.
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="answer-input-container">
-          <input type="text" class="answer-input" placeholder="답을 입력하세요"
-                 onkeyup="handleAnswerInput(this, event)">
+        <div class="section-divider"></div>
+
+        <div class="maze-section">
+            <h2 class="section-title">🎯 미로 탐험</h2>
+
+            <div class="maze-tabs">
+                <button class="tab-button active" onclick="showMazeTab('latest')">🆕 최신 미로</button>
+                <button class="tab-button" onclick="showMazeTab('popular')">🔥 인기 미로</button>
+            </div>
+
+            <div id="latest-mazes" class="maze-grid">
+                <div th:if="${latestMazes != null and !latestMazes.isEmpty()}">
+                    <div th:each="maze : ${latestMazes}"
+                         class="maze-card"
+                         th:data-maze-id="${maze.id}"
+                         th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
+                        <div class="maze-thumbnail">
+                            <img th:src="${maze.mazeDir}"
+                                 th:alt="${maze.mazeTitle}"
+                                 class="maze-image"
+                                 onerror="handleImageError(this)">
+                            <div class="maze-fallback" style="display: none;">
+                                🧩
+                            </div>
+                            <div class="maze-overlay">
+                                ▶️ PLAY
+                            </div>
+                        </div>
+                        <div class="maze-content">
+                            <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
+
+                            <div class="maze-vote-stats" th:data-maze-id="${maze.id}">
+                                <div class="vote-indicator like-indicator">
+                                    <span>👍</span>
+                                    <span class="vote-count like-count" th:text="${maze.likeCount}">0</span>
+                                </div>
+                                <div class="vote-ratio-mini">
+                                    <div class="like-fill" th:style="'width: ' + ${maze.likePercentage} + '%;'"></div>
+                                    <div class="dislike-fill" th:style="'width: ' + ${maze.dislikePercentage} + '%;'"></div>
+                                </div>
+                                <div class="vote-indicator dislike-indicator">
+                                    <span>👎</span>
+                                    <span class="vote-count dislike-count" th:text="${maze.dislikeCount}">0</span>
+                                </div>
+                            </div>
+                            <div class="maze-stats">
+                                <div class="stat-item">
+                                    <span>👁</span>
+                                    <span th:text="${maze.viewCount}">조회수</span>
+                                </div>
+                            </div>
+
+                            <div class="maze-creator">
+                                <div class="creator-info">
+                                    <div class="creator-avatar" th:text="${#strings.substring(maze.creatorName, 0, 1)}">A</div>
+                                    <span class="creator-name" th:text="${maze.creatorName}">제작자</span>
+                                </div>
+                                <span class="maze-date" th:text="${#temporals.format(maze.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${latestMazes == null or latestMazes.isEmpty()}" class="empty-message">
+                    등록된 미로가 없습니다.
+                </div>
+            </div>
+
+            <div id="popular-mazes" class="maze-grid hidden">
+                <div th:if="${popularMazes != null and !popularMazes.isEmpty()}">
+                    <div th:each="maze : ${popularMazes}"
+                         class="maze-card"
+                         th:data-maze-id="${maze.id}"
+                         th:onclick="'location.href=\'/mazes/' + ${maze.id} + '\''">
+                        <div class="maze-thumbnail">
+                            <img th:src="${maze.mazeDir}"
+                                 th:alt="${maze.mazeTitle}"
+                                 class="maze-image"
+                                 onerror="handleImageError(this)">
+                            <div class="maze-fallback" style="display: none;">
+                                🔥
+                            </div>
+                            <div class="maze-overlay">
+                                ▶️ PLAY
+                            </div>
+                        </div>
+                        <div class="maze-content">
+                            <h3 class="maze-title" th:text="${maze.mazeTitle}">미로 제목</h3>
+
+                            <div class="maze-vote-stats" th:data-maze-id="${maze.id}">
+                                <div class="vote-indicator like-indicator">
+                                    <span>👍</span>
+                                    <span class="vote-count like-count" th:text="${maze.likeCount}">0</span>
+                                </div>
+                                <div class="vote-ratio-mini">
+                                    <div class="like-fill" th:style="'width: ' + ${maze.likePercentage} + '%;'"></div>
+                                    <div class="dislike-fill" th:style="'width: ' + ${maze.dislikePercentage} + '%;'"></div>
+                                </div>
+                                <div class="vote-indicator dislike-indicator">
+                                    <span>👎</span>
+                                    <span class="vote-count dislike-count" th:text="${maze.dislikeCount}">0</span>
+                                </div>
+                            </div>
+
+                            <div class="maze-rating">
+                                <div class="stars">★★★★★</div>
+                                <span class="rating-score">4.8</span>
+                                <span class="rating-count">(42)</span>
+                            </div>
+
+                            <div class="maze-stats">
+                                <div class="stat-item">
+                                    <span>👁</span>
+                                    <span th:text="${maze.viewCount}">조회수</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⏱</span>
+                                    <span>8분</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>🏆</span>
+                                    <span>56</span>
+                                </div>
+                            </div>
+
+                            <div class="maze-tags">
+                                <span class="tag difficulty-hard">어려움</span>
+                                <span class="tag">전략</span>
+                                <span class="tag">도전</span>
+                            </div>
+
+                            <div class="maze-creator">
+                                <div class="creator-info">
+                                    <div class="creator-avatar" th:text="${#strings.substring(maze.creatorName, 0, 1)}">A</div>
+                                    <span class="creator-name" th:text="${maze.creatorName}">제작자</span>
+                                </div>
+                                <span class="maze-date" th:text="${#temporals.format(maze.createdAt, 'MM-dd')}">날짜</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${popularMazes == null or popularMazes.isEmpty()}" class="empty-message">
+                    등록된 미로가 없습니다.
+                </div>
+            </div>
         </div>
-
-        <div class="feedback-message"></div>
-
-        <!-- 힌트 섹션 -->
-        <div class="hint-section" th:if="${question.hint != null and !#strings.isEmpty(question.hint)}">
-          <!-- 로그인한 사용자만 힌트 버튼 표시 -->
-          <div sec:authorize="isAuthenticated()">
-            <button class="hint-button" th:onclick="'requestHint(' + ${question.questionOrder} + ')'">
-              💡 힌트 보기 (50포인트)
-            </button>
-            <div class="hint-cost">힌트를 보면 50포인트가 소모됩니다</div>
-          </div>
-
-          <!-- 비로그인 사용자 -->
-          <div sec:authorize="!isAuthenticated()" class="login-required">
-            힌트를 보려면 <a href="/login" style="color: #4ecdc4;">로그인</a>이 필요합니다
-          </div>
-
-          <!-- 힌트 내용 표시 영역 -->
-          <div class="hint-content"></div>
-        </div>
-
-        <div class="hint">💡 이미지를 클릭하면 확대해서 볼 수 있습니다. 정답을 맞춰야 다음 문제로 넘어갈 수 있습니다.</div>
-      </div>
     </div>
-
-    <!-- 컨트롤 -->
-    <div class="quiz-controls">
-      <div></div> <!-- 빈 공간 -->
-      <div class="quiz-nav">
-        <button class="btn btn-warning" id="tryAgainBtn" onclick="tryAgain()" style="display: none;">🔄 다시 시도</button>
-        <button class="btn btn-primary" id="nextBtn" onclick="checkAnswer()" disabled>정답 확인</button>
-      </div>
-    </div>
-
-    <!-- 결과 화면 -->
-    <div id="quizResult" class="quiz-result">
-      <div class="result-icon" id="resultIcon">🎉</div>
-      <h2 id="resultTitle">미궁 탈출 성공!</h2>
-      <p id="resultScore"></p>
-      <div style="margin-top: 30px;">
-        <button class="btn btn-primary" onclick="restartQuiz()">🔄 다시 도전</button>
-        <a th:href="@{'/mazes/' + ${maze.id}}" class="btn btn-primary">🏠 미로로 돌아가기</a>
-      </div>
-    </div>
-  </div>
 </div>
 
+<a href="/post/create" class="create-button">
+    ✏️ 글쓰기
+</a>
+
+<a href="/mazes/upload" class="create-button" style="bottom: 90px; background: linear-gradient(45deg, #4ecdc4, #44a08d);">
+    🧩 미로 업로드
+</a>
+
 <script th:inline="javascript">
-  const questions = /*[[${questions}]]*/ [];
-  const mazeId = /*[[${maze.id}]]*/ 1;
+    // 게시글 클릭 시 상세 페이지로 이동
+    function goToPost(element) {
+        const postId = element.getAttribute('data-post-id');
+        location.href = '/post/' + postId;
+    }
 
-  let currentQuestionIndex = 0;
-  let userAnswers = [];
-  let currentAnswerCorrect = false;
-  let userPoints = 0;
-
-  // 페이지 로드 시 첫 번째 문제 표시 및 포인트 로드
-  document.addEventListener('DOMContentLoaded', function() {
-    showQuestion();
-    loadUserPoints();
-  });
-
-  // 사용자 포인트 로드
-  function loadUserPoints() {
-    const pointsDisplay = document.getElementById('userPoints');
-    if (!pointsDisplay) return; // 비로그인 사용자
-
-    fetch('/api/maze-hints/user-points')
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                userPoints = data.userPoints;
-                pointsDisplay.textContent = userPoints;
-              }
-            })
-            .catch(error => {
-              console.error('포인트 로드 실패:', error);
+    // 출석 체크 버튼 클릭 이벤트
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('btnCheckIn');
+        if (btn) {
+            btn.addEventListener('click', function() {
+                fetch('/api/user/checkin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            throw new Error('오늘 출석이 불가능하거나 오류가 발생했습니다.');
+                        }
+                    })
+                    .then(message => {
+                        alert(message);
+                        window.location.reload();
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                    });
             });
-  }
-
-  // 힌트 요청
-  function requestHint(questionOrder) {
-    const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
-    const hintButton = currentQuestion.querySelector('.hint-button');
-    const hintContent = currentQuestion.querySelector('.hint-content');
-
-    // 이미 힌트를 본 경우
-    if (hintContent.classList.contains('show')) {
-      return;
-    }
-
-    // 포인트 확인
-    if (userPoints < 50) {
-      alert('포인트가 부족합니다. 힌트를 보려면 50포인트가 필요합니다.');
-      return;
-    }
-
-    if (!confirm('힌트를 보시겠습니까? 50포인트가 소모됩니다.')) {
-      return;
-    }
-
-    // 버튼 비활성화
-    hintButton.disabled = true;
-    hintButton.textContent = '힌트 요청 중...';
-
-    fetch(`/api/maze-hints/${mazeId}/${questionOrder}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                // 힌트 표시
-                hintContent.innerHTML = `💡 <strong>힌트:</strong> ${data.hint}`;
-                hintContent.classList.add('show');
-
-                // 포인트 업데이트
-                userPoints = data.userPoints;
-                document.getElementById('userPoints').textContent = userPoints;
-
-                // 버튼 상태 변경
-                hintButton.textContent = '힌트 확인됨';
-                hintButton.style.background = '#6c757d';
-
-                showAlert(data.message, 'success');
-              } else {
-                showAlert(data.message, 'error');
-                // 버튼 다시 활성화
-                hintButton.disabled = false;
-                hintButton.textContent = '💡 힌트 보기 (50포인트)';
-              }
-            })
-            .catch(error => {
-              console.error('힌트 요청 실패:', error);
-              showAlert('힌트를 불러오는 중 오류가 발생했습니다.', 'error');
-              // 버튼 다시 활성화
-              hintButton.disabled = false;
-              hintButton.textContent = '💡 힌트 보기 (50포인트)';
-            });
-  }
-
-  function showQuestion() {
-    const allQuestions = document.querySelectorAll('.quiz-question');
-
-    // 모든 문제 숨기기
-    allQuestions.forEach(q => q.classList.remove('active'));
-
-    if (currentQuestionIndex < allQuestions.length) {
-      allQuestions[currentQuestionIndex].classList.add('active');
-    }
-
-    // 진행률 업데이트
-    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-    document.getElementById('progressFill').style.width = progress + '%';
-    document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
-
-    // ⭐ 중요: 상태 초기화 - 새 문제로 넘어갈 때마다 초기화
-    currentAnswerCorrect = false;
-
-    const currentQuestion = allQuestions[currentQuestionIndex];
-    const input = currentQuestion.querySelector('.answer-input');
-    const feedback = currentQuestion.querySelector('.feedback-message');
-
-    // 입력 필드 및 피드백 초기화
-    input.value = '';
-    input.classList.remove('correct', 'incorrect');
-    input.disabled = false;
-    feedback.style.display = 'none';
-    feedback.classList.remove('correct', 'incorrect');
-
-    // 버튼 상태 초기화
-    document.getElementById('nextBtn').disabled = true;
-    document.getElementById('nextBtn').textContent = '정답 확인';
-    document.getElementById('nextBtn').onclick = checkAnswer; // ⭐ 핵심: onclick 함수 재설정
-    document.getElementById('tryAgainBtn').style.display = 'none';
-
-    // 힌트 상태는 유지 (사용자가 이미 포인트를 소모했으므로)
-    const hintButton = currentQuestion.querySelector('.hint-button');
-    const hintContent = currentQuestion.querySelector('.hint-content');
-
-    // 새 문제인 경우에만 힌트 상태 초기화
-    if (hintButton && hintContent && !hintContent.classList.contains('show')) {
-      hintButton.disabled = false;
-      hintButton.textContent = '💡 힌트 보기 (50포인트)';
-      hintButton.style.background = '';
-    }
-  }
-
-  function handleAnswerInput(input, event) {
-    const answer = input.value.trim();
-    const nextBtn = document.getElementById('nextBtn');
-
-    // 아직 정답을 맞추지 않은 상태에서만 버튼 활성화 제어
-    if (answer.length > 0 && !currentAnswerCorrect) {
-      nextBtn.disabled = false;
-    } else {
-      nextBtn.disabled = true;
-    }
-
-    // Enter 키로 정답 확인 또는 다음 문제
-    if (event.key === 'Enter' && answer.length > 0) {
-      if (currentAnswerCorrect) {
-        nextQuestion();
-      } else {
-        checkAnswer();
-      }
-    }
-  }
-
-  function checkAnswer() {
-    const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
-    const input = currentQuestion.querySelector('.answer-input');
-    const feedback = currentQuestion.querySelector('.feedback-message');
-    const userAnswer = input.value.trim();
-    const correctAnswer = currentQuestion.dataset.correctAnswer;
-
-    // 복수 정답 처리 ("|"로 구분된 경우)
-    const correctAnswers = correctAnswer.toLowerCase().split('|').map(ans => ans.trim());
-    const isCorrect = correctAnswers.includes(userAnswer.toLowerCase());
-
-    if (isCorrect) {
-      // 정답인 경우
-      input.classList.remove('incorrect');
-      input.classList.add('correct');
-      feedback.textContent = '🎉 정답입니다! 다음 문제로 넘어가세요.';
-      feedback.classList.remove('incorrect');
-      feedback.classList.add('correct');
-      feedback.style.display = 'block';
-
-      // ⭐ 중요: 정답 상태 업데이트
-      currentAnswerCorrect = true;
-      userAnswers[currentQuestionIndex] = userAnswer;
-
-      // 버튼 변경
-      document.getElementById('nextBtn').textContent = currentQuestionIndex === questions.length - 1 ? '완료!' : '다음 →';
-      document.getElementById('nextBtn').disabled = false;
-      document.getElementById('nextBtn').onclick = nextQuestion; // ⭐ 핵심: onclick 함수 변경
-      document.getElementById('tryAgainBtn').style.display = 'none';
-
-      // 입력 필드 비활성화
-      input.disabled = true;
-
-    } else {
-      // 틀린 경우
-      input.classList.remove('correct');
-      input.classList.add('incorrect');
-      feedback.textContent = '❌ 틀렸습니다. 이미지를 다시 자세히 보고 시도해보세요.';
-      feedback.classList.remove('correct');
-      feedback.classList.add('incorrect');
-      feedback.style.display = 'block';
-
-      // 버튼 상태 변경
-      document.getElementById('nextBtn').disabled = true;
-      document.getElementById('tryAgainBtn').style.display = 'inline-flex';
-
-      // 입력 필드는 활성 상태 유지 (다시 시도 가능)
-    }
-  }
-
-  function tryAgain() {
-    const currentQuestion = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
-    const input = currentQuestion.querySelector('.answer-input');
-    const feedback = currentQuestion.querySelector('.feedback-message');
-
-    // 상태 초기화
-    input.value = '';
-    input.classList.remove('correct', 'incorrect');
-    feedback.style.display = 'none';
-
-    // 버튼 상태 초기화
-    document.getElementById('nextBtn').disabled = true;
-    document.getElementById('nextBtn').textContent = '정답 확인';
-    document.getElementById('nextBtn').onclick = checkAnswer;
-    document.getElementById('tryAgainBtn').style.display = 'none';
-
-    // 입력 필드에 포커스
-    input.focus();
-  }
-
-  function nextQuestion() {
-    // ⭐ 중요: 정답을 맞춘 경우에만 다음 문제로 진행
-    if (!currentAnswerCorrect) {
-      alert('정답을 맞춰야 다음 문제로 넘어갈 수 있습니다!');
-      return;
-    }
-
-    currentQuestionIndex++;
-    if (currentQuestionIndex >= questions.length) {
-      showResult();
-    } else {
-      showQuestion(); // 여기서 currentAnswerCorrect가 false로 초기화됨
-    }
-  }
-
-  function showResult() {
-    document.querySelector('.quiz-question.active').classList.remove('active');
-
-    document.getElementById('resultIcon').textContent = '🎉';
-    document.getElementById('resultTitle').textContent = '미궁 탈출 성공!';
-    document.getElementById('resultScore').textContent =
-            `모든 문제를 정답으로 풀어 미궁을 성공적으로 탈출했습니다! 🏆`;
-
-    document.getElementById('quizResult').classList.add('show');
-
-    // ⭐ 중요: 완주 기록을 서버에 전송 (로그인한 사용자만)
-    const isAuthenticated = document.getElementById('userPoints') !== null;
-    if (isAuthenticated) {
-      console.log('완주 기록 전송 시작...');
-
-      fetch(`/api/mazes/${mazeId}/complete`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
         }
-      })
-              .then(response => {
-                console.log('완주 기록 응답 상태:', response.status);
-                return response.json();
-              })
-              .then(data => {
-                console.log('완주 기록 전송 응답:', data);
-                if (data.success) {
-                  console.log('완주 기록 생성 완료!');
-                  if (data.newCompletion) {
-                    // 새로운 완주 기록이 생성된 경우 알림
-                    setTimeout(() => {
-                      showAlert('축하합니다! 미로를 완주했습니다. 이제 리뷰를 작성할 수 있어요! 🎉', 'success');
-                    }, 1000);
-                  }
-                } else {
-                  console.error('완주 기록 생성 실패:', data.message);
-                }
-              })
-              .catch(error => {
-                console.error('완주 기록 전송 실패:', error);
-                // 완주 기록 전송이 실패해도 사용자에게는 성공 메시지 표시
-                // (이미 퀴즈는 완료했으므로)
-              });
-    } else {
-      console.log('비로그인 사용자 - 완주 기록 저장 안함');
-    }
-  }
 
-  function restartQuiz() {
-    currentQuestionIndex = 0;
-    userAnswers = [];
-    currentAnswerCorrect = false; // 초기화
-    document.getElementById('quizResult').classList.remove('show');
-
-    // 모든 입력 필드 및 힌트 상태 초기화
-    document.querySelectorAll('.quiz-question').forEach(question => {
-      const input = question.querySelector('.answer-input');
-      const feedback = question.querySelector('.feedback-message');
-      const hintButton = question.querySelector('.hint-button');
-      const hintContent = question.querySelector('.hint-content');
-
-      input.disabled = false;
-      input.classList.remove('correct', 'incorrect');
-      feedback.style.display = 'none';
-
-      // 힌트 상태 초기화
-      if (hintButton && hintContent) {
-        hintButton.disabled = false;
-        hintButton.textContent = '💡 힌트 보기 (50포인트)';
-        hintButton.style.background = '';
-        hintContent.classList.remove('show');
-        hintContent.innerHTML = '';
-      }
+        // 페이지 로드 시 모든 미로의 투표 통계 로드
+        loadAllMazeVoteStats();
     });
 
-    // 포인트 새로고침
-    loadUserPoints();
-    showQuestion();
-  }
+    // 모든 미로의 투표 통계 로드
+    function loadAllMazeVoteStats() {
+        const mazeCards = document.querySelectorAll('.maze-card[data-maze-id]');
 
-  function openImageModal(src) {
-    window.open(src, '_blank');
-  }
+        mazeCards.forEach(card => {
+            const mazeId = card.getAttribute('data-maze-id');
+            loadMazeVoteStats(mazeId);
+        });
+    }
 
-  // 알림 메시지 표시 함수 개선
-  function showAlert(message, type) {
-    // 더 나은 알림 표시 (기존 단순 alert 대신)
-    const alertDiv = document.createElement('div');
-    alertDiv.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: ${type === 'success' ? '#28a745' : '#dc3545'};
-      color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      font-weight: bold;
-      z-index: 10000;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      max-width: 400px;
-      word-wrap: break-word;
-    `;
-    alertDiv.textContent = message;
+    // 개별 미로의 투표 통계 로드
+    function loadMazeVoteStats(mazeId) {
+        fetch(`/api/mazes/${mazeId}/vote-stats`)
+            .then(response => response.json())
+            .then(data => {
+                updateMazeCardVoteDisplay(mazeId, data);
+            })
+            .catch(error => {
+                console.error(`미로 ${mazeId} 투표 통계 로드 실패:`, error);
+                // 에러 시 기본값 유지
+            });
+    }
 
-    document.body.appendChild(alertDiv);
+    // 미로 카드의 투표 표시 업데이트
+    function updateMazeCardVoteDisplay(mazeId, stats) {
+        const voteStatsDiv = document.querySelector(`[data-maze-id="${mazeId}"] .maze-vote-stats`);
+        if (!voteStatsDiv) return;
 
-    // 5초 후 자동 제거
-    setTimeout(() => {
-      if (alertDiv.parentNode) {
-        alertDiv.parentNode.removeChild(alertDiv);
-      }
-    }, 5000);
-  }
+        // 좋아요/싫어요 수 업데이트
+        const likeCountSpan = voteStatsDiv.querySelector('.like-count');
+        const dislikeCountSpan = voteStatsDiv.querySelector('.dislike-count');
+
+        if (likeCountSpan) likeCountSpan.textContent = stats.likeCount;
+        if (dislikeCountSpan) dislikeCountSpan.textContent = stats.dislikeCount;
+
+        // 비율 바 업데이트
+        const likeBar = voteStatsDiv.querySelector('.like-fill');
+        const dislikeBar = voteStatsDiv.querySelector('.dislike-fill');
+
+        if (likeBar && dislikeBar) {
+            if (stats.totalVotes > 0) {
+                likeBar.style.width = stats.likePercentage + '%';
+                dislikeBar.style.width = stats.dislikePercentage + '%';
+            } else {
+                // 투표가 없으면 50:50으로 표시
+                likeBar.style.width = '50%';
+                dislikeBar.style.width = '50%';
+            }
+        }
+    }
+
+    // 미로 탭 전환
+    function showMazeTab(tabName) {
+        // 모든 탭 버튼 비활성화
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // 모든 미로 그리드 숨기기
+        document.getElementById('latest-mazes').classList.add('hidden');
+        document.getElementById('popular-mazes').classList.add('hidden');
+
+        // 선택된 탭 활성화
+        event.target.classList.add('active');
+        document.getElementById(tabName + '-mazes').classList.remove('hidden');
+    }
+
+    // 이미지 로딩 오류 처리
+    function handleImageError(img) {
+        console.log('이미지 로딩 실패:', img.src);
+        img.style.display = 'none';
+        img.nextElementSibling.style.display = 'flex';
+    }
 </script>
 </body>
 </html>
