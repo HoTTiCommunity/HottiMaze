@@ -1,9 +1,6 @@
 package com.example.HottiMaze.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import org.springframework.beans.factory.parsing.Problem;
 
 import java.time.LocalDateTime;
@@ -11,16 +8,19 @@ import java.time.LocalDateTime;
 @Entity
 public class Navigation {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    @ManyToOne
     private User user;
 
-    @ManyToOne(optional = false)
-    private Problem problem;
+    @JoinColumn(name = "mazeQuestion_id")
+    @ManyToOne
+    private MazeQuestion mazeQuestion;
 
-    @ManyToOne(optional = false)
+    @JoinColumn(name = "maze_id")
+    @ManyToOne
     private Maze maze;
 
     private boolean correct;

@@ -33,7 +33,7 @@ public class SecurityConfig {
                         // 모든 사용자 접근 가능
                         .requestMatchers(
                                 "/login", "/sign-up", "/",
-                                "/post/**", "/mazes/**",
+                                "/post/**", "/mazes/**", "/maze/**",
                                 "/api/categories/posts/**"
                         ).permitAll()
 

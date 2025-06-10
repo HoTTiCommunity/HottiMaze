@@ -176,3 +176,6 @@ VALUES (4, 6, true, '2024-01-25 11:30:00', '2024-01-25 11:30:00');
 
 INSERT INTO maze_vote (maze_id, user_id, is_like, created_at, updated_at)
 VALUES (4, 7, true, '2024-01-25 15:20:00', '2024-01-25 15:20:00');
+
+INSERT INTO Navigation (user_id, maze_question_id, maze_id, correct, timestamp)
+VALUES (1, 1, 1, true, '2025-06-10 10:00:00');

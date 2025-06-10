@@ -297,9 +297,9 @@ public class MazeService {
     }
 
     public NavigationDto getProblemNavigation(Long mazeId, Long userId) {
-        List<Integer> solved = navigationRepository.findSolvedProblemNumbers(mazeId, userId);
-        Integer current = navigationRepository.findCurrentProblemNumber(mazeId, userId);
-
+        List<Integer> solved = navigationRepository.findSolvedProblemOrders(mazeId, userId);
+        List<Integer> currentList = navigationRepository.findCurrentProblemOrder(mazeId, userId);
+        Integer current = currentList.isEmpty() ? null : currentList.get(0);
         return new NavigationDto(mazeId, solved, current);
     }
 
