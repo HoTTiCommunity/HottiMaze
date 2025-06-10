@@ -362,7 +362,7 @@
 </div>
 
 <script th:inline="javascript">
-  const questions = /*[[${questions}]]*/ [];
+  const questions = [[${questionsJson}]];
   const mazeId = /*[[${maze.id}]]*/ 1;
 
   let currentQuestionIndex = 0;
