@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "maze_vote",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"maze_id", "user_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"maze_id", "user_id"})) // 중복 투표 방지
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class MazeVote {

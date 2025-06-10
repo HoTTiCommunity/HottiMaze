@@ -1,4 +1,3 @@
-// src/main/java/com/example/HottiMaze/controller/MainController.java
 package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.entity.User;

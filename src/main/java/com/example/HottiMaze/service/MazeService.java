@@ -32,6 +32,7 @@ public class MazeService {
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
     private final MazeVoteRepository mazeVoteRepository;
+    private final MazeVoteService mazeVoteService; // MazeVoteService 주입
 
     /**
      * 최근에 등록된 Maze 5개를 가져오는 메소드
@@ -40,34 +41,34 @@ public class MazeService {
     public List<MazeDto> getLatestMazes() {
         return mazeRepository.findLatestMazes(PageRequest.of(0, 5))
                 .stream()
-                .map(this::convertToDto)
+                .map(this::convertToDtoWithVoteStats) // 투표 통계 포함하여 변환
                 .collect(Collectors.toList());
     }
 
     public List<MazeDto> getPopularMazes() {
         return mazeRepository.findPopularMazes(PageRequest.of(0, 5))
                 .stream()
-                .map(this::convertToDto)
+                .map(this::convertToDtoWithVoteStats) // 투표 통계 포함하여 변환
                 .collect(Collectors.toList());
     }
 
     public List<MazeDto> getAllApprovedMazes() {
         return mazeRepository.findByStatusOrderByCreatedAtDesc(MazeStatus.APPROVED)
                 .stream()
-                .map(this::convertToDto)
+                .map(this::convertToDtoWithVoteStats) // 투표 통계 포함하여 변환
                 .collect(Collectors.toList());
     }
 
     public List<MazeDto> getPendingMazes() {
         return mazeRepository.findByStatusOrderByCreatedAtAsc(MazeStatus.PENDING)
                 .stream()
-                .map(this::convertToDto)
+                .map(this::convertToDto) // 승인 대기 중인 미로는 투표 통계 필요 없음
                 .collect(Collectors.toList());
     }
 
     public List<MazeDto> getAllMazesForAdmin() {
         return mazeRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(this::convertToDto) // 관리자 페이지에서는 투표 통계 필요 없음
                 .collect(Collectors.toList());
     }
     /**
@@ -78,7 +79,7 @@ public class MazeService {
     public List<MazeDto> getUserMazes(Long userId) {
         return mazeRepository.findByUserIdOrderByCreatedAtDesc(userId)
                 .stream()
-                .map(this::convertToDto)
+                .map(this::convertToDto) // 사용자 프로필에서는 투표 통계 필요 없음
                 .collect(Collectors.toList());
     }
 
@@ -521,8 +522,22 @@ public class MazeService {
         dto.setApprovedByUsername(maze.getApprovedBy() != null ? maze.getApprovedBy().getUsername() : null);
         dto.setRejectionReason(maze.getRejectionReason());
 
+        // 투표 통계 초기화 또는 설정 (기본 DTO 변환 시)
+        dto.initializeEmptyVoteStats();
+
         return dto;
     }
+
+    private MazeDto convertToDtoWithVoteStats(Maze maze) {
+        MazeDto dto = convertToDto(maze);
+        if (maze.getStatus() == MazeStatus.APPROVED) {
+            long likeCount = mazeVoteRepository.countLikesByMazeId(maze.getId());
+            long dislikeCount = mazeVoteRepository.countDislikesByMazeId(maze.getId());
+            dto.setVoteStats(likeCount, dislikeCount, null); // userVote는 여기서는 필요 없으므로 null
+        }
+        return dto;
+    }
+
     /**
      * 안전한 문제 데이터 처리를 위한 검증 메서드
      * Claude 만세!!!
