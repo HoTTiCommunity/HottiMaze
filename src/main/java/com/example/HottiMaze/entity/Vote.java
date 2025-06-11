@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "vote",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"post_id", "username"}))
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class Vote {
@@ -13,6 +15,7 @@ public class Vote {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @Column(nullable = false)

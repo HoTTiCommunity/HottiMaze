@@ -5,15 +5,18 @@ import com.example.HottiMaze.dto.PostDto;
 import com.example.HottiMaze.dto.PostUpdateDto;
 import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
+import com.example.HottiMaze.entity.Vote;
 import com.example.HottiMaze.repository.CategoryRepository;
 import com.example.HottiMaze.repository.PostRepository;
-import com.example.HottiMaze.repository.CommentRepository; // 추가
+import com.example.HottiMaze.repository.CommentRepository;
+import com.example.HottiMaze.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +25,8 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
-    private final CommentRepository commentRepository; // 추가
+    private final CommentRepository commentRepository;
+    private final VoteRepository voteRepository; // VoteRepository 주입
 
     /** 전체 게시글 조회 */
     @Transactional(readOnly = true)
@@ -64,7 +68,7 @@ public class PostService {
     /** 카테고리별 게시글 개수 조회 */
     @Transactional(readOnly = true)
     public long getPostCountByCategory(Long categoryId) {
-        return postRepository.countByCategory_Id(categoryId); // 효율적인 count 메소드 사용
+        return postRepository.countByCategory_Id(categoryId);
     }
 
     /** 단일 게시글 조회 (DTO) */
@@ -96,8 +100,8 @@ public class PostService {
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
         post.setViewCount(0);
-        post.setGaechu(0); // 개추 초기화
-        post.setBechu(0); // 비추 초기화
+        post.setGaechu(0);
+        post.setBechu(0);
 
         Post savedPost = postRepository.save(post);
         return convertToDto(savedPost);
@@ -130,24 +134,75 @@ public class PostService {
         // 해당 게시글에 달린 모든 댓글 먼저 삭제
         commentRepository.deleteByPostId(postId);
 
+        // 해당 게시글에 달린 모든 투표 먼저 삭제
+        voteRepository.deleteByPost(post); // 추가: 게시글 삭제 시 투표도 삭제
+
         postRepository.delete(post);
     }
 
     /** 개추 (추천) 증가 */
     @Transactional
-    public void gaechuPost(Long postId) {
+    public void gaechuPost(Long postId, String username) { // username 파라미터 추가
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
-        post.setGaechu(post.getGaechu() + 1);
+
+        Optional<Vote> existingVote = voteRepository.findByPostIdAndUsername(postId, username);
+
+        if (existingVote.isPresent()) {
+            Vote vote = existingVote.get();
+            if (vote.isLike()) {
+                // 이미 좋아요를 눌렀으면 취소
+                voteRepository.delete(vote);
+                post.setGaechu(post.getGaechu() - 1);
+            } else {
+                // 싫어요를 눌렀으면 좋아요로 변경
+                vote.setLike(true);
+                voteRepository.save(vote);
+                post.setGaechu(post.getGaechu() + 1);
+                post.setBechu(post.getBechu() - 1);
+            }
+        } else {
+            // 새롭게 좋아요 투표
+            Vote newVote = new Vote();
+            newVote.setPost(post);
+            newVote.setUsername(username);
+            newVote.setLike(true);
+            voteRepository.save(newVote);
+            post.setGaechu(post.getGaechu() + 1);
+        }
         postRepository.save(post);
     }
 
     /** 비추 (비추천) 증가 */
     @Transactional
-    public void bechuPost(Long postId) {
+    public void bechuPost(Long postId, String username) { // username 파라미터 추가
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
-        post.setBechu(post.getBechu() + 1);
+
+        Optional<Vote> existingVote = voteRepository.findByPostIdAndUsername(postId, username);
+
+        if (existingVote.isPresent()) {
+            Vote vote = existingVote.get();
+            if (!vote.isLike()) {
+                // 이미 싫어요를 눌렀으면 취소
+                voteRepository.delete(vote);
+                post.setBechu(post.getBechu() - 1);
+            } else {
+                // 좋아요를 눌렀으면 싫어요로 변경
+                vote.setLike(false);
+                voteRepository.save(vote);
+                post.setBechu(post.getBechu() + 1);
+                post.setGaechu(post.getGaechu() - 1);
+            }
+        } else {
+            // 새롭게 싫어요 투표
+            Vote newVote = new Vote();
+            newVote.setPost(post);
+            newVote.setUsername(username);
+            newVote.setLike(false);
+            voteRepository.save(newVote);
+            post.setBechu(post.getBechu() + 1);
+        }
         postRepository.save(post);
     }
 
@@ -157,7 +212,7 @@ public class PostService {
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setContent(post.getContent());
-        dto.setNickname(post.getAuthor()); // 'author'가 DTO의 'nickname'에 매핑된다고 가정
+        dto.setNickname(post.getAuthor());
         dto.setCreatedAt(post.getCreatedAt());
         dto.setUpdatedAt(post.getUpdatedAt());
         dto.setViewCount(post.getViewCount());
