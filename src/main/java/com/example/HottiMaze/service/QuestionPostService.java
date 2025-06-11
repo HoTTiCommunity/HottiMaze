@@ -18,21 +18,31 @@ public class QuestionPostService {
 
     private final QuestionPostRepository questionPostRepository;
 
-    public Page<QuestionPostDto> getPostsByMgId(Long mgId, Pageable pageable) {
-        return questionPostRepository.findAllByMgId(mgId, pageable)
+    // 특정 미로의 특정 문제에 대한 질문들 조회
+    public Page<QuestionPostDto> getPostsByMazeIdAndQuestionOrder(
+            Long mazeId, Integer questionOrder, Pageable pageable) {
+        return questionPostRepository.findByMazeIdAndQuestionOrderOrderByCreatedAtDesc(
+                        mazeId, questionOrder, pageable)
+                .map(this::convertToDto);
+    }
+
+    // 특정 미로의 모든 질문들 조회 (선택사항)
+    public Page<QuestionPostDto> getPostsByMazeId(Long mazeId, Pageable pageable) {
+        return questionPostRepository.findByMazeIdOrderByQuestionOrderAscCreatedAtDesc(
+                        mazeId, pageable)
                 .map(this::convertToDto);
     }
 
     public QuestionPostDto getPost(Long id) {
         QuestionPost post = questionPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + id));
-        questionPostRepository.save(post);
         return convertToDto(post);
     }
 
     public QuestionPostDto createPost(QuestionPostDto dto) {
         QuestionPost post = QuestionPost.builder()
-                .mgId(dto.getMgId())
+                .mazeId(dto.getMazeId())
+                .questionOrder(dto.getQuestionOrder())
                 .title(dto.getTitle())
                 .author(dto.getAuthor())
                 .content(dto.getContent())
@@ -58,7 +68,8 @@ public class QuestionPostService {
     private QuestionPostDto convertToDto(QuestionPost post) {
         return QuestionPostDto.builder()
                 .id(post.getId())
-                .mgId(post.getMgId())
+                .mazeId(post.getMazeId())
+                .questionOrder(post.getQuestionOrder())
                 .title(post.getTitle())
                 .author(post.getAuthor())
                 .content(post.getContent())

@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.List;
 
@@ -24,22 +23,45 @@ public class QuestionPostController {
 
     private final QuestionPostService questionPostService;
 
+    // 특정 미로의 특정 문제에 대한 질문 게시판
     @GetMapping
     public String list(
-            @RequestParam Long mgId,
+            @RequestParam Long mazeId,
+            @RequestParam Integer questionOrder,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<QuestionPostDto> paged = questionPostService.getPostsByMgId(mgId, pageable);
+        Page<QuestionPostDto> paged = questionPostService.getPostsByMazeIdAndQuestionOrder(
+                mazeId, questionOrder, pageable);
         List<QuestionPostDto> posts = paged.getContent();
 
         model.addAttribute("posts", posts);
-        model.addAttribute("mgId", mgId);
+        model.addAttribute("mazeId", mazeId);
+        model.addAttribute("questionOrder", questionOrder);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paged.getTotalPages());
         return "migung/list";
+    }
+
+    // 전체 미로 질문 게시판 (선택사항)
+    @GetMapping("/maze")
+    public String listByMaze(
+            @RequestParam Long mazeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<QuestionPostDto> paged = questionPostService.getPostsByMazeId(mazeId, pageable);
+        List<QuestionPostDto> posts = paged.getContent();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("mazeId", mazeId);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", paged.getTotalPages());
+        return "migung/maze-list";
     }
 
     @GetMapping("/{id}")
@@ -50,22 +72,29 @@ public class QuestionPostController {
     }
 
     @GetMapping("/new")
-    public String createForm(@RequestParam Long mgId, Model model) {
+    public String createForm(
+            @RequestParam Long mazeId,
+            @RequestParam Integer questionOrder,
+            Model model) {
         model.addAttribute("post", new QuestionPostDto());
-        model.addAttribute("mgId", mgId);
+        model.addAttribute("mazeId", mazeId);
+        model.addAttribute("questionOrder", questionOrder);
         return "migung/form";
     }
 
     @PostMapping
     public String create(
             @ModelAttribute QuestionPostDto dto,
-            @RequestParam Long mgId,
+            @RequestParam Long mazeId,
+            @RequestParam Integer questionOrder,
             Principal principal
     ) {
-        dto.setMgId(mgId);
+        dto.setMazeId(mazeId);
+        dto.setQuestionOrder(questionOrder);
         dto.setAuthor(principal.getName());
         QuestionPostDto saved = questionPostService.createPost(dto);
-        return "redirect:/questions?mgId=" + saved.getMgId();
+        return "redirect:/questions?mazeId=" + saved.getMazeId()
+                + "&questionOrder=" + saved.getQuestionOrder();
     }
 
     @PostMapping("/{id}")
@@ -84,7 +113,8 @@ public class QuestionPostController {
             RedirectAttributes redirectAttributes
     ) {
         QuestionPostDto post = questionPostService.getPost(id);
-        Long mgId = post.getMgId();
+        Long mazeId = post.getMazeId();
+        Integer questionOrder = post.getQuestionOrder();
 
         String username = user.getUsername();
 
@@ -96,11 +126,6 @@ public class QuestionPostController {
         questionPostService.deletePost(id);
         redirectAttributes.addFlashAttribute("success", "게시글이 삭제되었습니다.");
 
-        return "redirect:/questions?mgId=" + mgId;
-    }
-
-    @GetMapping("/maze-questionPost")
-    public String mazeQuestionPost(@RequestParam Long mgId) {
-        return "redirect:/questions?mgId=" + mgId;
+        return "redirect:/questions?mazeId=" + mazeId + "&questionOrder=" + questionOrder;
     }
 }

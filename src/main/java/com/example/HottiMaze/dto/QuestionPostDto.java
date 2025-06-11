@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class QuestionPostDto {
     private Long id;
-    private Long mgId;
+    private Long mazeId;
+    private Integer questionOrder;
     private String title;
     private String author;
     private String content;
