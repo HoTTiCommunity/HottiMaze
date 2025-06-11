@@ -7,6 +7,7 @@ import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.entity.Post;
 import com.example.HottiMaze.repository.CategoryRepository;
 import com.example.HottiMaze.repository.PostRepository;
+import com.example.HottiMaze.repository.CommentRepository; // 추가
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
+    private final CommentRepository commentRepository; // 추가
 
     /** 전체 게시글 조회 */
     @Transactional(readOnly = true)
@@ -124,6 +126,10 @@ public class PostService {
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다: " + postId));
+
+        // 해당 게시글에 달린 모든 댓글 먼저 삭제
+        commentRepository.deleteByPostId(postId);
+
         postRepository.delete(post);
     }
 
