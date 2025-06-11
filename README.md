@@ -22,3 +22,4 @@
 - 이용자 히스토리
 - Post 및 Maze 좋아요, 싫어요 중복 투표 방지 기능
 - img resource 하위 폴더가 아닌 google cloude에 업로드 기능
+- h2 db에서 mysql db로 변경
