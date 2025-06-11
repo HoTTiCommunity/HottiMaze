@@ -1,0 +1,27 @@
+<!-- src/main/resources/templates/layout.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>HottiMaze Quiz App</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script th:src="@{/js/no-screenshot.js}"></script>
+</head>
+<body>
+<header style="padding:1rem; background:#f7f7f7;">
+    <nav>
+        <a th:href="@{/post}">문제 목록</a> |
+        <a th:href="@{/post/bookmarks}">북마크</a>
+    </nav>
+</header>
+
+<!-- this is your injection point -->
+<div th:fragment="content">
+    <!-- page‐specific content goes here -->
+</div>
+
+<footer style="padding:1rem; background:#f0f0f0; text-align:center;">
+    © 2025 HottiMaze
+</footer>
+</body>
+</html>

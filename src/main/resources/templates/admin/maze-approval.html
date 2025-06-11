@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미로 승인 관리 - HottiMaze</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-left: 5px solid;
+        }
+
+        .stat-card.pending { border-left-color: #ffa726; }
+        .stat-card.approved { border-left-color: #66bb6a; }
+        .stat-card.rejected { border-left-color: #ef5350; }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: #4ecdc4;
+            border-bottom-color: #4ecdc4;
+            background: #f8f9fa;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .maze-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .maze-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .maze-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .maze-card.pending {
+            border-left: 5px solid #ffa726;
+        }
+
+        .maze-card.approved {
+            border-left: 5px solid #66bb6a;
+        }
+
+        .maze-card.rejected {
+            border-left: 5px solid #ef5350;
+        }
+
+        .maze-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+
+        .maze-info {
+            padding: 15px;
+        }
+
+        .maze-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .maze-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .maze-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57600;
+        }
+
+        .status-approved {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .maze-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #218838;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c82333;
+        }
+
+        .btn-view {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #138496;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .batch-actions {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 90%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .rejection-reason {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .maze-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .batch-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🛠️ 미로 승인 관리</h1>
+        <p>업로드된 미로를 검토하고 승인/거부 처리하세요</p>
+    </header>
+
+    <div class="admin-content">
+        <!-- 통계 카드 -->
+        <div class="stats-grid">
+            <div class="stat-card pending">
+                <span class="stat-number" th:text="${pendingCount}">0</span>
+                <span class="stat-label">승인 대기</span>
+            </div>
+            <div class="stat-card approved">
+                <span class="stat-number" th:text="${approvedCount}">0</span>
+                <span class="stat-label">승인됨</span>
+            </div>
+            <div class="stat-card rejected">
+                <span class="stat-number" th:text="${rejectedCount}">0</span>
+                <span class="stat-label">거부됨</span>
+            </div>
+        </div>
+
+        <!-- 알림 메시지 -->
+        <div id="alertMessage" class="alert" style="display: none;"></div>
+
+        <!-- 탭 메뉴 -->
+        <div class="section">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('pending')">승인 대기 중</div>
+                <div class="tab" onclick="showTab('all')">전체 미로</div>
+            </div>
+
+            <!-- 승인 대기 중인 미로 -->
+            <div id="pending-tab" class="tab-content active">
+                <div class="batch-actions" th:if="${pendingMazes != null and !pendingMazes.isEmpty()}">
+                    <span>일괄 작업:</span>
+                    <button class="btn btn-approve" onclick="batchApprove()">선택된 미로 승인</button>
+                    <button class="btn btn-reject" onclick="batchReject()">선택된 미로 거부</button>
+                    <button class="btn btn-secondary" onclick="selectAll()">전체 선택</button>
+                    <button class="btn btn-secondary" onclick="deselectAll()">전체 해제</button>
+                </div>
+
+                <div class="maze-grid" th:if="${pendingMazes != null and !pendingMazes.isEmpty()}">
+                    <div th:each="maze : ${pendingMazes}" class="maze-card pending">
+                        <img th:src="${maze.mazeDir}" th:alt="${maze.mazeTitle}" class="maze-image"
+                             onerror="this.src='/static/imgs/default-maze.png'">
+                        <div class="maze-info">
+                            <div class="maze-title" th:text="${maze.mazeTitle}">미로 제목</div>
+                            <div class="maze-meta">
+                                <span>제작자: <span th:text="${maze.creatorName}">사용자</span></span>
+                                <span th:text="${#temporals.format(maze.createdAt, 'MM-dd HH:mm')}">날짜</span>
+                            </div>
+                            <div class="maze-status status-pending">승인 대기</div>
+
+                            <div class="maze-actions">
+                                <input type="checkbox" th:data-maze-id="${maze.id}" class="maze-checkbox">
+                                <button class="btn btn-approve" th:onclick="'approveMaze(' + ${maze.id} + ')'">
+                                    ✅ 승인
+                                </button>
+                                <button class="btn btn-reject" th:onclick="'showRejectModal(' + ${maze.id} + ')'">
+                                    ❌ 거부
+                                </button>
+                                <a th:href="@{'/mazes/' + ${maze.id}}" class="btn btn-view" target="_blank">
+                                    👁️ 보기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${pendingMazes == null or pendingMazes.isEmpty()}" class="no-data">
+                    승인 대기 중인 미로가 없습니다.
+                </div>
+            </div>
+
+            <!-- 전체 미로 -->
+            <div id="all-tab" class="tab-content">
+                <div class="maze-grid" th:if="${allMazes != null and !allMazes.isEmpty()}">
+                    <div th:each="maze : ${allMazes}"
+                         th:class="'maze-card ' + ${maze.status.name().toLowerCase()}">
+                        <img th:src="${maze.mazeDir}" th:alt="${maze.mazeTitle}" class="maze-image"
+                             onerror="this.src='/static/imgs/default-maze.png'">
+                        <div class="maze-info">
+                            <div class="maze-title" th:text="${maze.mazeTitle}">미로 제목</div>
+                            <div class="maze-meta">
+                                <span>제작자: <span th:text="${maze.creatorName}">사용자</span></span>
+                                <span th:text="${#temporals.format(maze.createdAt, 'MM-dd HH:mm')}">날짜</span>
+                            </div>
+
+                            <div th:class="'maze-status status-' + ${maze.status.name().toLowerCase()}"
+                                 th:text="${maze.status.description}">상태</div>
+
+                            <div th:if="${maze.rejectionReason != null}" class="rejection-reason">
+                                <strong>거부 사유:</strong> <span th:text="${maze.rejectionReason}">거부 사유</span>
+                            </div>
+
+                            <div th:if="${maze.approvedAt != null}" style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">
+                                처리일: <span th:text="${#temporals.format(maze.approvedAt, 'yyyy-MM-dd HH:mm')}">처리일</span>
+                                <span th:if="${maze.approvedByUsername != null}">
+                                    by <span th:text="${maze.approvedByUsername}">관리자</span>
+                                </span>
+                            </div>
+
+                            <div class="maze-actions">
+                                <a th:href="@{'/mazes/' + ${maze.id}}" class="btn btn-view" target="_blank">
+                                    👁️ 보기
+                                </a>
+                                <div th:if="${maze.status.name() == 'PENDING'}">
+                                    <button class="btn btn-approve" th:onclick="'approveMaze(' + ${maze.id} + ')'">
+                                        ✅ 승인
+                                    </button>
+                                    <button class="btn btn-reject" th:onclick="'showRejectModal(' + ${maze.id} + ')'">
+                                        ❌ 거부
+                                    </button>
+                                </div>
+                                <div th:if="${maze.status.name() == 'REJECTED'}">
+                                    <button class="btn btn-reject" th:onclick="'deleteRejectedMaze(' + ${maze.id} + ')'">
+                                        🗑️ 삭제
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${allMazes == null or allMazes.isEmpty()}" class="no-data">
+                    등록된 미로가 없습니다.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 거부 사유 입력 모달 -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>미로 거부</h3>
+            <span class="close" onclick="closeRejectModal()">&times;</span>
+        </div>
+        <div class="form-group">
+            <label for="rejectionReason">거부 사유 <span style="color: red;">*</span></label>
+            <textarea id="rejectionReason" placeholder="거부 사유를 입력해주세요..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="autoDelete"> 거부와 동시에 삭제
+            </label>
+            <small style="color: #6c757d; display: block; margin-top: 5px;">
+                체크하면 거부 후 미로가 완전히 삭제됩니다. (복구 불가)
+            </small>
+        </div>
+        <div class="maze-actions">
+            <button class="btn btn-reject" onclick="confirmReject()">거부 확정</button>
+            <button class="btn btn-secondary" onclick="closeRejectModal()">취소</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentRejectMazeId = null;
+
+    // 탭 전환
+    function showTab(tabName) {
+        // 모든 탭 비활성화
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        // 선택된 탭 활성화
+        event.target.classList.add('active');
+        document.getElementById(tabName + '-tab').classList.add('active');
+    }
+
+    // 미로 승인
+    function approveMaze(mazeId) {
+        if (!confirm('이 미로를 승인하시겠습니까?')) return;
+
+        fetch(`/admin/mazes/${mazeId}/approve`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('오류가 발생했습니다: ' + error.message, 'error');
+            });
+    }
+
+    // 거부 모달 표시
+    function showRejectModal(mazeId) {
+        currentRejectMazeId = mazeId;
+        document.getElementById('rejectionReason').value = '';
+        document.getElementById('rejectModal').style.display = 'block';
+    }
+
+    // 거부 모달 닫기
+    function closeRejectModal() {
+        document.getElementById('rejectModal').style.display = 'none';
+        currentRejectMazeId = null;
+    }
+
+    // 거부 확정
+    function confirmReject() {
+        const reason = document.getElementById('rejectionReason').value.trim();
+        const autoDelete = document.getElementById('autoDelete').checked;
+
+        if (!reason) {
+            alert('거부 사유를 입력해주세요.');
+            return;
+        }
+
+        const confirmMessage = autoDelete
+            ? '이 미로를 거부하고 완전히 삭제하시겠습니까? (복구 불가)'
+            : '이 미로를 거부하시겠습니까?';
+
+        if (!confirm(confirmMessage)) return;
+
+        const formData = new FormData();
+        formData.append('rejectionReason', reason);
+        formData.append('autoDelete', autoDelete);
+
+        fetch(`/admin/mazes/${currentRejectMazeId}/reject`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    closeRejectModal();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('오류가 발생했습니다: ' + error.message, 'error');
+            });
+    }
+
+    // 거부된 미로 삭제
+    function deleteRejectedMaze(mazeId) {
+        if (!confirm('이 거부된 미로를 완전히 삭제하시겠습니까? (복구 불가)')) return;
+
+        fetch(`/admin/mazes/${mazeId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('오류가 발생했습니다: ' + error.message, 'error');
+            });
+    }
+
+    // 전체 선택
+    function selectAll() {
+        document.querySelectorAll('.maze-checkbox').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    }
+
+    // 전체 해제
+    function deselectAll() {
+        document.querySelectorAll('.maze-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
+
+    // 일괄 승인
+    function batchApprove() {
+        const selectedMazes = getSelectedMazes();
+
+        if (selectedMazes.length === 0) {
+            alert('승인할 미로를 선택해주세요.');
+            return;
+        }
+
+        if (!confirm(`선택된 ${selectedMazes.length}개의 미로를 승인하시겠습니까?`)) return;
+
+        const approvals = selectedMazes.map(mazeId => ({
+            mazeId: mazeId,
+            status: 'APPROVED'
+        }));
+
+        processBatch(approvals);
+    }
+
+    // 일괄 거부
+    function batchReject() {
+        const selectedMazes = getSelectedMazes();
+
+        if (selectedMazes.length === 0) {
+            alert('거부할 미로를 선택해주세요.');
+            return;
+        }
+
+        const reason = prompt('거부 사유를 입력해주세요:');
+        if (!reason || !reason.trim()) {
+            alert('거부 사유를 입력해주세요.');
+            return;
+        }
+
+        const approvals = selectedMazes.map(mazeId => ({
+            mazeId: mazeId,
+            status: 'REJECTED',
+            rejectionReason: reason.trim()
+        }));
+
+        processBatch(approvals);
+    }
+
+    // 선택된 미로 ID 목록 가져오기
+    function getSelectedMazes() {
+        const checkboxes = document.querySelectorAll('.maze-checkbox:checked');
+        return Array.from(checkboxes).map(checkbox =>
+            parseInt(checkbox.getAttribute('data-maze-id'))
+        );
+    }
+
+    // 일괄 처리 실행
+    function processBatch(approvals) {
+        fetch('/admin/mazes/batch-process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(approvals)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('오류가 발생했습니다: ' + error.message, 'error');
+            });
+    }
+
+    // 알림 메시지 표시
+    function showAlert(message, type) {
+        const alertDiv = document.getElementById('alertMessage');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        alertDiv.style.display = 'block';
+
+        // 3초 후 자동 숨김
+        setTimeout(() => {
+            alertDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    // 모달 외부 클릭 시 닫기
+    window.onclick = function(event) {
+        const modal = document.getElementById('rejectModal');
+        if (event.target === modal) {
+            closeRejectModal();
+        }
+    }
+
+</script>
+</body>
+</html>

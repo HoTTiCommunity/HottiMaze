@@ -1,13 +1,35 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: content">
 <head>
     <meta charset="UTF-8" />
     <title>게시글 상세</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>게시글 상세</h1>
+<div id="detail-container"
+     style="position:relative; padding:1rem; border:1px solid #ccc; margin:1rem;">
+    <!-- ① 제목 옆에 북마크 아이콘 -->
+    <h1>게시글 상세</h1>
+    <h2 th:text="${post.title}"
+        style="display:inline-block; margin:0;">
+    </h2>
+    <span class="bookmark-icon"
+          th:data-id="${post.id}"
+          onclick="toggleBookmark(this)"
+          title="북마크"
+          style="font-size:1.5rem; margin-left:.5rem; vertical-align:middle;">
+    </span>
 
+    <!-- ② 게시글 내용 -->
+    <p th:text="${post.content}" style="margin-top:1rem;"></p>
+
+    <!-- ③ 자유 그리기 캔버스 -->
+    <canvas id="drawing-canvas"
+            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:all;">
+        Canvas 지원 불가
+    </canvas>
+</div>
 <div>
     <strong>ID:</strong> <span th:text="${post.id}">1</span>
 </div>
@@ -47,5 +69,17 @@
         삭제하기
     </a>
 </p>
+<!-- 지우기 버튼 -->
+<div style="text-align:center; margin:1rem;">
+    <button onclick="clearCanvas()"
+            style="padding:.5rem; background:#c0392b; color:#fff; border:none; border-radius:4px;">
+        지우기
+    </button>
+</div>
+
+<!-- 스크립트 로드 순서 중요 -->
+<script th:src="@{/js/drawing.js}"></script>
+<script th:src="@{/js/bookmark-local.js}"></script>
+<script th:src="@{/js/no-screenshot.js}"></script>
 </body>
 </html>

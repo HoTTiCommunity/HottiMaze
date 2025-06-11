@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>미궁 업로드 - HottiMaze</title>
+    <title>미로 업로드 - HottiMaze</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -40,270 +40,8 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .upload-content {
-            padding: 30px;
-        }
-
-        .form-section {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 1rem;
-        }
-
-        .required {
-            color: #e74c3c;
-        }
-
-        input[type="text"], input[type="number"], select, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
-        }
-
-        select {
-            cursor: pointer;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
-        }
-
-        .file-upload {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .file-label {
-            display: block;
-            padding: 20px;
-            border: 2px dashed #4ecdc4;
-            border-radius: 10px;
-            text-align: center;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .file-label:hover {
-            background: #e9ecef;
-            border-color: #44a08d;
-        }
-
-        .file-label.dragover {
-            background: #e8f5e8;
-            border-color: #28a745;
-        }
-
-        .file-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .image-preview {
-            margin-top: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .preview-item {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .preview-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .remove-image {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .questions-container {
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            background: #f8f9fa;
-        }
-
-        .question-item {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #e9ecef;
-        }
-
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .question-number {
-            background: #4ecdc4;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        .remove-question {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #4ecdc4, #44a08d);
-            color: white;
-            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
-            color: white;
-            box-shadow: 0 5px 20px rgba(149, 165, 166, 0.3);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-
-        .btn-add {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            margin-bottom: 15px;
-        }
-
-        .btn-add:hover {
-            transform: translateY(-2px);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .alert-error {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
-        }
-
-        .alert-success {
-            background: #e8f5e8;
-            color: #2e7d32;
-            border: 1px solid #c8e6c8;
-        }
-
         .back-button {
-            position: fixed;
+            position: absolute;
             top: 30px;
             left: 30px;
             background: rgba(255, 255, 255, 0.9);
@@ -323,14 +61,267 @@
         .back-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            color: #2c3e50;
             text-decoration: none;
+            color: #2c3e50;
+        }
+
+        .upload-content {
+            padding: 40px;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
         }
 
         .helper-text {
             font-size: 0.9rem;
             color: #6c757d;
             margin-top: 5px;
+            font-style: italic;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            border: 2px dashed #4ecdc4;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(102, 126, 234, 0.1));
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .file-label:hover {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(102, 126, 234, 0.2));
+            border-color: #667eea;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .questions-section {
+            margin-top: 30px;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        .question-item:hover {
+            border-color: #4ecdc4;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        .remove-question {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-question:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        .question-image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .add-question-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .add-question-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .submit-section {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hint-field {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 143, 0, 0.1));
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .hint-field textarea {
+            background: transparent;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .hint-field .helper-text {
+            color: #856404;
+            font-weight: 500;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
@@ -342,86 +333,77 @@
                 grid-template-columns: 1fr;
             }
 
-            .button-group {
-                flex-direction: column;
-            }
-
             .back-button {
                 position: static;
                 margin-bottom: 20px;
-                width: fit-content;
+                display: inline-block;
             }
         }
     </style>
 </head>
 <body>
-<a href="/" class="back-button">
-    ← 메인으로
-</a>
+<a href="/" class="back-button">← 메인으로</a>
 
 <div class="container">
     <header>
-        <h1>🚀 미궁 업로드</h1>
-        <p>새로운 미로를 만들어 다른 사람들과 공유해보세요!</p>
+        <h1>🧩 새로운 미로 업로드</h1>
+        <p>창의적인 미로를 만들어 다른 사용자들과 공유해보세요!</p>
     </header>
 
     <div class="upload-content">
-        <!-- 알림 메시지 -->
-        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-
-        <form th:action="@{/mazes/upload}" method="post" enctype="multipart/form-data" th:object="${mazeCreateDto}">
-
-            <!-- 기본 정보 섹션 -->
+        <form action="/mazes/upload" method="post" enctype="multipart/form-data" id="mazeUploadForm">
+            <!-- 미로 기본 정보 -->
             <div class="form-section">
-                <h2 class="section-title">📝 기본 정보</h2>
+                <h2 class="section-title">
+                    🏠 미로 기본 정보
+                </h2>
 
                 <div class="form-group">
                     <label for="mazeTitle">미로 제목 <span class="required">*</span></label>
-                    <input type="text" id="mazeTitle" th:field="*{mazeTitle}" placeholder="예: 신비한 숲의 미로" required>
-                    <div class="helper-text">사용자들이 쉽게 알아볼 수 있는 제목을 입력하세요</div>
+                    <input type="text" id="mazeTitle" name="mazeTitle" placeholder="예: 신나는 보물찾기 미로" required>
+                    <div class="helper-text">사용자들이 쉽게 찾을 수 있도록 흥미로운 제목을 지어주세요</div>
                 </div>
 
                 <div class="form-group">
                     <label for="creatorName">제작자 이름 <span class="required">*</span></label>
-                    <input type="text" id="creatorName" th:field="*{creatorName}" placeholder="예: HottiMaze" required>
+                    <input type="text"
+                           id="creatorName"
+                           name="creatorName"
+                           sec:authentication="name"
+                           readonly>
+                    <div class="helper-text">현재 로그인한 사용자 이름이 자동으로 입력됩니다</div>
                 </div>
-
-
-            </div>
-
-            <!-- 메인 이미지 섹션 -->
-            <div class="form-section">
-                <h2 class="section-title">🖼️ 메인 이미지</h2>
 
                 <div class="form-group">
                     <label for="mainImage">미로 대표 이미지 <span class="required">*</span></label>
                     <div class="file-upload">
-                        <input type="file" id="mainImage" name="mainImage" class="file-input"
-                               accept="image/*" required onchange="previewMainImage(this)">
+                        <input type="file" id="mainImage" name="mainImage" class="file-input" accept="image/*" required onchange="previewMainImage(this)">
                         <label for="mainImage" class="file-label">
-                            <span class="file-icon">📷</span>
-                            <div>클릭하거나 이미지를 드래그하여 업로드</div>
-                            <div class="helper-text">JPG, PNG, GIF 파일만 가능 (최대 10MB)</div>
+                            <span class="file-icon">🖼️</span>
+                            <div>
+                                <strong>미로 대표 이미지 업로드</strong>
+                                <div style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
+                                    JPG, PNG 파일만 업로드 가능합니다
+                                </div>
+                            </div>
                         </label>
                     </div>
                     <div id="mainImagePreview" class="image-preview"></div>
+                    <div class="helper-text">미로의 전체적인 모습을 보여주는 이미지를 업로드해주세요</div>
                 </div>
             </div>
 
-            <!-- 문제 설정 섹션 -->
+            <!-- 문제 섹션 -->
             <div class="form-section">
-                <h2 class="section-title">❓ 문제 설정</h2>
-                <p class="helper-text" style="margin-bottom: 20px;">
-                    각 문제에 대한 이미지와 정답을 설정하세요. 최소 1개 이상의 문제가 필요합니다.
-                </p>
+                <h2 class="section-title">
+                    🧩 미로 문제
+                </h2>
+                <div class="helper-text" style="margin-bottom: 25px;">
+                    미로를 풀기 위한 문제들을 등록해주세요. 최소 1개 이상의 문제가 필요합니다.
+                </div>
 
-                <button type="button" class="btn btn-add" onclick="addQuestion()">
-                    ➕ 문제 추가
-                </button>
-
-                <div id="questionsContainer" class="questions-container">
-                    <!-- 기본 문제 1개 -->
+                <div id="questionsContainer">
+                    <!-- 첫 번째 문제 (기본) -->
                     <div class="question-item" data-question-index="0">
                         <div class="question-header">
                             <span class="question-number">문제 1</span>
@@ -439,8 +421,7 @@
                         <div class="form-group">
                             <label>문제 이미지 <span class="required">*</span></label>
                             <div class="file-upload">
-                                <input type="file" name="questionImages" class="file-input"
-                                       accept="image/*" required onchange="previewQuestionImage(this, 0)">
+                                <input type="file" name="questionImages" class="file-input" accept="image/*" required onchange="previewQuestionImage(this, 0)">
                                 <label class="file-label">
                                     <span class="file-icon">🖼️</span>
                                     <div>문제 이미지 업로드</div>
@@ -461,18 +442,33 @@
                                 <div class="helper-text">문제를 맞췄을 때 받을 점수 (기본: 10점)</div>
                             </div>
                         </div>
+
+                        <div class="form-group hint-field">
+                            <label>💡 힌트 (선택사항)</label>
+                            <textarea name="hints[0]" placeholder="문제 해결에 도움이 되는 힌트를 입력하세요. 사용자는 50포인트를 소모하여 이 힌트를 볼 수 있습니다." rows="3"></textarea>
+                            <div class="helper-text">
+                                <strong>💰 힌트는 사용자가 50포인트를 소모하여 볼 수 있습니다</strong><br>
+                                너무 쉬운 힌트보다는 문제 해결에 적절한 도움이 되는 힌트를 작성해주세요
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <button type="button" class="add-question-btn" onclick="addQuestion()">
+                    ➕ 문제 추가하기
+                </button>
             </div>
 
-            <!-- 버튼 그룹 -->
-            <div class="button-group">
-                <button type="submit" class="btn btn-primary">
-                    🚀 미궁 업로드
+            <!-- 제출 섹션 -->
+            <div class="submit-section">
+                <h3 style="margin-bottom: 15px; color: #2c3e50;">🚀 미로 업로드 준비 완료!</h3>
+                <p style="color: #6c757d; margin-bottom: 25px;">
+                    업로드한 미로는 관리자 검토 후 승인됩니다.<br>
+                    승인되면 다른 사용자들이 도전할 수 있게 됩니다.
+                </p>
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    🎯 미로 업로드하기
                 </button>
-                <a href="/" class="btn btn-secondary">
-                    ↩️ 취소
-                </a>
             </div>
         </form>
     </div>
@@ -484,59 +480,28 @@
     // 메인 이미지 미리보기
     function previewMainImage(input) {
         const preview = document.getElementById('mainImagePreview');
-        preview.innerHTML = '';
 
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const previewItem = document.createElement('div');
-                previewItem.className = 'preview-item';
-                previewItem.innerHTML = `
-                    <img src="${e.target.result}" alt="메인 이미지" class="preview-image">
-                    <button type="button" class="remove-image" onclick="removeMainImage()">×</button>
-                `;
-                preview.appendChild(previewItem);
+                preview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="미로 대표 이미지 미리보기">`;
             };
             reader.readAsDataURL(input.files[0]);
         }
-    }
-
-    // 메인 이미지 제거
-    function removeMainImage() {
-        document.getElementById('mainImage').value = '';
-        document.getElementById('mainImagePreview').innerHTML = '';
     }
 
     // 문제 이미지 미리보기
     function previewQuestionImage(input, questionIndex) {
         const questionItem = input.closest('.question-item');
         const preview = questionItem.querySelector('.question-image-preview');
-        preview.innerHTML = '';
 
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const previewItem = document.createElement('div');
-                previewItem.className = 'preview-item';
-                previewItem.style.marginTop = '10px';
-                previewItem.innerHTML = `
-                    <img src="${e.target.result}" alt="문제 이미지" class="preview-image">
-                    <button type="button" class="remove-image" onclick="removeQuestionImage(${questionIndex})">×</button>
-                `;
-                preview.appendChild(previewItem);
+                preview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="문제 ${questionIndex + 1} 이미지 미리보기">`;
             };
             reader.readAsDataURL(input.files[0]);
         }
-    }
-
-    // 문제 이미지 제거
-    function removeQuestionImage(questionIndex) {
-        const questionItem = document.querySelector(`[data-question-index="${questionIndex}"]`);
-        const fileInput = questionItem.querySelector('input[type="file"]');
-        const preview = questionItem.querySelector('.question-image-preview');
-
-        fileInput.value = '';
-        preview.innerHTML = '';
     }
 
     // 문제 추가
@@ -547,56 +512,63 @@
         questionItem.setAttribute('data-question-index', questionCount);
 
         questionItem.innerHTML = `
-            <div class="question-header">
-                <span class="question-number">문제 ${questionCount + 1}</span>
-                <button type="button" class="remove-question" onclick="removeQuestion(${questionCount})">
-                    🗑️ 삭제
-                </button>
-            </div>
-
-            <div class="form-group">
-                <label>문제 제목</label>
-                <input type="text" name="questionTitles[${questionCount}]" placeholder="예: ${questionCount + 1}번째 단서를 찾아보세요">
-                <div class="helper-text">문제의 제목이나 설명을 입력하세요 (선택사항)</div>
-            </div>
-
-            <div class="form-group">
-                <label>문제 이미지 <span class="required">*</span></label>
-                <div class="file-upload">
-                    <input type="file" name="questionImages" class="file-input"
-                           accept="image/*" required onchange="previewQuestionImage(this, ${questionCount})">
-                    <label class="file-label">
-                        <span class="file-icon">🖼️</span>
-                        <div>문제 이미지 업로드</div>
-                    </label>
+                <div class="question-header">
+                    <span class="question-number">문제 ${questionCount + 1}</span>
+                    <button type="button" class="remove-question" onclick="removeQuestion(${questionCount})">
+                        🗑️ 삭제
+                    </button>
                 </div>
-                <div class="question-image-preview"></div>
-            </div>
 
-            <div class="form-row">
                 <div class="form-group">
-                    <label>정답 <span class="required">*</span></label>
-                    <input type="text" name="correctAnswers[${questionCount}]" placeholder="예: test" required>
-                    <div class="helper-text">복수 정답은 |로 구분 (예: test|테스트|정답)</div>
+                    <label>문제 제목</label>
+                    <input type="text" name="questionTitles[${questionCount}]" placeholder="예: ${questionCount + 1}번째 단서를 찾아보세요">
+                    <div class="helper-text">문제의 제목이나 설명을 입력하세요 (선택사항)</div>
                 </div>
+
                 <div class="form-group">
-                    <label>획득 점수</label>
-                    <input type="number" name="pointsList[${questionCount}]" value="10" min="1" max="100">
-                    <div class="helper-text">문제를 맞췄을 때 받을 점수 (기본: 10점)</div>
+                    <label>문제 이미지 <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <input type="file" name="questionImages" class="file-input"
+                               accept="image/*" required onchange="previewQuestionImage(this, ${questionCount})">
+                        <label class="file-label">
+                            <span class="file-icon">🖼️</span>
+                            <div>문제 이미지 업로드</div>
+                        </label>
+                    </div>
+                    <div class="question-image-preview"></div>
                 </div>
-            </div>
-        `;
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>정답 <span class="required">*</span></label>
+                        <input type="text" name="correctAnswers[${questionCount}]" placeholder="예: test" required>
+                        <div class="helper-text">복수 정답은 |로 구분 (예: test|테스트|정답)</div>
+                    </div>
+                    <div class="form-group">
+                        <label>획득 점수</label>
+                        <input type="number" name="pointsList[${questionCount}]" value="10" min="1" max="100">
+                        <div class="helper-text">문제를 맞췄을 때 받을 점수 (기본: 10점)</div>
+                    </div>
+                </div>
+
+                <div class="form-group hint-field">
+                    <label>💡 힌트 (선택사항)</label>
+                    <textarea name="hints[${questionCount}]" placeholder="문제 해결에 도움이 되는 힌트를 입력하세요. 사용자는 50포인트를 소모하여 이 힌트를 볼 수 있습니다." rows="3"></textarea>
+                    <div class="helper-text">
+                        <strong>💰 힌트는 사용자가 50포인트를 소모하여 볼 수 있습니다</strong><br>
+                        너무 쉬운 힌트보다는 문제 해결에 적절한 도움이 되는 힌트를 작성해주세요
+                    </div>
+                </div>
+            `;
 
         container.appendChild(questionItem);
         questionCount++;
-
-        // 첫 번째 문제가 아니면 삭제 버튼 표시
         updateRemoveButtons();
     }
 
-    // 문제 제거
-    function removeQuestion(questionIndex) {
-        const questionItem = document.querySelector(`[data-question-index="${questionIndex}"]`);
+    // 문제 삭제
+    function removeQuestion(index) {
+        const questionItem = document.querySelector(`[data-question-index="${index}"]`);
         if (questionItem) {
             questionItem.remove();
             updateQuestionNumbers();
@@ -610,82 +582,68 @@
         questions.forEach((question, index) => {
             const numberSpan = question.querySelector('.question-number');
             numberSpan.textContent = `문제 ${index + 1}`;
+
+            question.setAttribute('data-question-index', index);
+
+            const inputs = question.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    const newName = name.replace(/\[\d+\]/, `[${index}]`);
+                    input.setAttribute('name', newName);
+                }
+            });
+
+            const removeBtn = question.querySelector('.remove-question');
+            if (removeBtn) {
+                removeBtn.setAttribute('onclick', `removeQuestion(${index})`);
+            }
         });
     }
 
     // 삭제 버튼 표시/숨김 업데이트
     function updateRemoveButtons() {
         const questions = document.querySelectorAll('.question-item');
-        const removeButtons = document.querySelectorAll('.remove-question');
-
-        removeButtons.forEach((button, index) => {
+        questions.forEach((question, index) => {
+            const removeBtn = question.querySelector('.remove-question');
             if (questions.length > 1) {
-                button.style.display = 'block';
+                removeBtn.style.display = 'inline-block';
             } else {
-                button.style.display = 'none';
+                removeBtn.style.display = 'none';
             }
         });
     }
 
-    // 드래그 앤 드롭 기능
-    document.addEventListener('DOMContentLoaded', function() {
-        const fileLabels = document.querySelectorAll('.file-label');
-
-        fileLabels.forEach(label => {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                label.addEventListener(eventName, preventDefaults, false);
-            });
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                label.addEventListener(eventName, highlight, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                label.addEventListener(eventName, unhighlight, false);
-            });
-
-            label.addEventListener('drop', handleDrop, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        function highlight(e) {
-            e.target.closest('.file-label').classList.add('dragover');
-        }
-
-        function unhighlight(e) {
-            e.target.closest('.file-label').classList.remove('dragover');
-        }
-
-        function handleDrop(e) {
-            const fileInput = e.target.closest('.file-upload').querySelector('.file-input');
-            const dt = e.dataTransfer;
-            const files = dt.files;
-
-            fileInput.files = files;
-            fileInput.dispatchEvent(new Event('change'));
-        }
-    });
-
     // 폼 제출 전 검증
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const questionImages = document.querySelectorAll('input[name="questionImages"]');
-        let hasValidImage = false;
+    document.getElementById('mazeUploadForm').addEventListener('submit', function(e) {
+        const questions = document.querySelectorAll('.question-item');
 
-        questionImages.forEach(input => {
-            if (input.files && input.files.length > 0) {
-                hasValidImage = true;
-            }
-        });
-
-        if (!hasValidImage) {
+        if (questions.length === 0) {
             e.preventDefault();
-            alert('최소 1개 이상의 문제 이미지를 업로드해주세요.');
+            alert('최소 1개 이상의 문제를 등록해야 합니다.');
             return false;
         }
+
+        const requiredFields = this.querySelectorAll('[required]');
+        for (let field of requiredFields) {
+            if (!field.value.trim()) {
+                e.preventDefault();
+                field.focus();
+                alert('모든 필수 항목을 입력해주세요.');
+                return false;
+            }
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '업로드 중...';
+
+        return true;
+    });
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        updateRemoveButtons();
     });
 </script>
 </body>
