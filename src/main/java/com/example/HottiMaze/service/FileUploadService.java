@@ -11,14 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.ClassPathResource;
-
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.UUID;
-
+import java.util.Objects;
 
 @Service
 public class FileUploadService {
@@ -39,8 +36,6 @@ public class FileUploadService {
 
     @PostConstruct
     public void init() throws IOException {
-        System.out.println("Attempting to load GCP credentials from: " + credentialPath);
-
         InputStream credentialsStream;
         if (credentialPath.startsWith("classpath:")) {
             String resourcePath = credentialPath.substring("classpath:".length());
@@ -49,32 +44,26 @@ public class FileUploadService {
                 throw new IOException("Classpath resource not found: " + resourcePath + " in project " + projectId + ".");
             }
             credentialsStream = resource.getInputStream();
-            System.out.println("Loading from classpath: " + resourcePath);
         } else {
             credentialsStream = new FileInputStream(credentialPath);
-            System.out.println("Loading from file system: " + credentialPath);
         }
-
         storage = StorageOptions.newBuilder()
                 .setProjectId(projectId)
                 .setCredentials(GoogleCredentials.fromStream(credentialsStream))
                 .build()
                 .getService();
-        System.out.println("Google Cloud Storage initialized for project: " + projectId + ", bucket: " + bucketName);
     }
-
     public String saveFile(MultipartFile file, Long mazeId, String filePrefix) throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("파일이 비어있습니다.");
         }
 
-        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         if (!isValidImageFile(originalFilename)) {
             throw new IllegalArgumentException("지원하지 않는 파일 형식입니다. (jpg, jpeg, png, gif만 가능)");
         }
 
         String fileExtension = getFileExtension(originalFilename);
-        // GCS 객체 이름 생성: mazes/maze<mazeId>/<filePrefix>.<확장자>
         String gcsFileName = "mazes/" + "maze" + mazeId + "/" + filePrefix + fileExtension; // 변경된 부분
 
         BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, gcsFileName).build();
@@ -93,7 +82,6 @@ public class FileUploadService {
         String oldGcsFileName = oldFileUrl.substring(gcsImageBaseUrl.length());
 
         String filenameOnly = oldGcsFileName.substring(oldGcsFileName.lastIndexOf("/") + 1);
-        // 새 GCS 경로 생성: mazes/maze<newMazeId>/<filenameOnly>
         String newGcsFileName = "mazes/" + "maze" + newMazeId + "/" + filenameOnly; // 변경된 부분
 
         try {
@@ -131,7 +119,6 @@ public class FileUploadService {
     }
 
     public void deleteMazeFolder(Long mazeId) {
-        // GCS 폴더 접두사: mazes/maze<mazeId>/
         String folderPrefix = "mazes/" + "maze" + mazeId + "/"; // 변경된 부분
         System.out.println("=== 미로 폴더 삭제 시작 (GCS) ===");
         System.out.println("삭제 대상 폴더 접두사: " + folderPrefix);

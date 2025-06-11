@@ -1,9 +1,3 @@
--- 카테고리 더미 데이터 (한 줄씩)
-INSERT INTO category (name) VALUES ('공지사항');
-INSERT INTO category (name) VALUES ('자유게시판');
-INSERT INTO category (name) VALUES ('질문과답변');
-INSERT INTO category (name) VALUES ('감옥게시판');
-
 -- 사용자 더미 데이터 (role 컬럼 추가)
 INSERT INTO users (username, password, point, chulcheck, IS_AVAILABLE_CHULCHECK, role)
 VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iIdIncKdKkmOpIt6zuq1.ZMaluY6', 1000, 0, 1, 'ADMIN');
