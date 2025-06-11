@@ -6,7 +6,11 @@ import com.example.HottiMaze.entity.Category;
 import com.example.HottiMaze.dto.PostUpdateDto;
 import com.example.HottiMaze.entity.Post;
 import com.example.HottiMaze.service.PostService;
+import com.example.HottiMaze.service.CommentService; // 추가
+import com.example.HottiMaze.dto.CommentDto; // 추가
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal; // 추가
+import org.springframework.security.core.userdetails.UserDetails; // 추가
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -19,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostViewController {
     private final PostService postService;
+    private final CommentService commentService; // 추가
 
     // 게시글 목록 (전체)
     @GetMapping
@@ -31,9 +36,21 @@ public class PostViewController {
 
     // 게시글 상세보기
     @GetMapping("/{postId}")
-    public String postDetail(@PathVariable Long postId, Model model) {
+    public String postDetail(@PathVariable Long postId,
+                             Model model,
+                             @AuthenticationPrincipal UserDetails principal) { // UserDetails 추가
         PostDto post = postService.getPostById(postId);
         model.addAttribute("post", post);
+
+        // 댓글 목록 조회
+        String username = principal != null ? principal.getUsername() : null;
+        List<CommentDto> comments = commentService.getCommentsByPostId(postId, username);
+        model.addAttribute("comments", comments);
+
+        // 댓글 개수 조회
+        long commentCount = commentService.getCommentCountByPostId(postId);
+        model.addAttribute("commentCount", commentCount);
+
         return "geul";
     }
 
@@ -121,7 +138,7 @@ public class PostViewController {
             return "redirect:/post";
         }
     }
-  
+
     // 북마크 페이지
     @GetMapping("/bookmarks")
     public String bookmarks(Model m) {
