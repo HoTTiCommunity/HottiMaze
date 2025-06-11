@@ -14,8 +14,11 @@ public class QuestionPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "mg_id", nullable = false)
-    private Long mgId;
+    @Column(name = "maze_id", nullable = false)
+    private Long mazeId;
+
+    @Column(name = "question_order", nullable = false)
+    private Integer questionOrder;
 
     @Column(nullable = false, length = 200)
     private String title;
@@ -30,5 +33,4 @@ public class QuestionPost {
     @Column(nullable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
-
 }

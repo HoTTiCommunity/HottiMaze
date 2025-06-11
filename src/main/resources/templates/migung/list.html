@@ -2,15 +2,74 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>질문 게시판 (미궁 #<span th:text="${mgId}">0</span>)</title>
+  <title>문제 <span th:text="${questionOrder}">1</span>번 질문 게시판</title>
+  <style>
+    .question-info {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .btn {
+      background: #4ecdc4;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      margin: 5px;
+    }
+
+    .btn:hover {
+      background: #44a08d;
+      color: white;
+      text-decoration: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background: #f8f9fa;
+      font-weight: bold;
+    }
+
+    tr:hover {
+      background: #f5f5f5;
+    }
+  </style>
 </head>
 <body>
-<h1>질문 게시판 (미궁 #<span th:text="${mgId}">0</span>)</h1>
-<a th:href="@{/questions/new(mgId=${mgId})}" class="btn">글 쓰기</a>
+<div class="question-info">
+  <h1>🧩 문제 <span th:text="${questionOrder}">1</span>번 질문 게시판</h1>
+  <p>미로 ID: <span th:text="${mazeId}">1</span> | 이 문제에 관련된 질문들을 확인하고 새로운 질문을 작성할 수 있습니다.</p>
+</div>
+
+<div style="margin-bottom: 20px;">
+  <a th:href="@{/questions/new(mazeId=${mazeId}, questionOrder=${questionOrder})}" class="btn">
+    ✏️ 질문 작성하기
+  </a>
+</div>
+
 <table>
   <thead>
   <tr>
-    <th>번호</th><th>제목</th><th>작성자</th><th>작성일</th>
+    <th>번호</th>
+    <th>제목</th>
+    <th>작성자</th>
+    <th>작성일</th>
   </tr>
   </thead>
   <tbody>
@@ -28,7 +87,22 @@
           )
         }">2025-06-10 01:23</td>
   </tr>
+  <tr th:if="${#lists.isEmpty(posts)}">
+    <td colspan="4" style="text-align: center; padding: 40px; color: #666;">
+      아직 작성된 질문이 없습니다. 첫 번째 질문을 작성해보세요! 🤔
+    </td>
+  </tr>
   </tbody>
 </table>
+
+<!-- 페이징 (선택사항) -->
+<div th:if="${totalPages > 1}" style="text-align: center; margin-top: 20px;">
+  <div th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+    <a th:href="@{/questions(mazeId=${mazeId}, questionOrder=${questionOrder}, page=${i})}"
+       th:text="${i + 1}"
+       th:class="${i == currentPage} ? 'btn' : 'btn-outline'"
+       class="btn">1</a>
+  </div>
+</div>
 </body>
 </html>

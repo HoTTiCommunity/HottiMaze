@@ -705,17 +705,18 @@
       <button class="btn btn-history" onclick="openHistoryModal()">
         📋 문제 목록
       </button>
-    <div class="quiz-controls">
-      <div class="quiz-timer" id="quizTimer">⏰ 60초</div>
-      <div class="quiz-nav">
-        <a th:href="@{/questions/maze-questionPost(mgId=${maze.id})}"
-           target="_blank"
-           class="btn btn-primary">
-          질문 게시판 보기
-        </a>
-        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
+      <div class="quiz-controls">
+        <button class="btn btn-history" onclick="openHistoryModal()">
+          📋 문제 목록
+        </button>
+        <div class="quiz-nav">
+          <!-- 현재 문제에 대한 질문 게시판 링크 -->
+          <button class="btn btn-primary" onclick="openCurrentQuestionBoard()">
+            💬 현재 문제 질문 게시판
+          </button>
+          <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
+        </div>
       </div>
-    </div>
     </div>
 
     <!-- 결과 화면 -->
@@ -761,6 +762,7 @@
     try {
       initializeQuestionStates();
       showQuestion();
+      addQuestionBoardButtons();
       loadUserPoints();
       updateHistoryList();
       updateCompletionInfo();
@@ -1381,4 +1383,39 @@
   document.addEventListener('selectstart', function(e) {
     e.preventDefault();
   });
+  function openCurrentQuestionBoard() {
+    const currentOrder = currentQuestionIndex + 1; // questionOrder는 1부터 시작
+    const questionBoardUrl = `/questions?mazeId=${mazeId}&questionOrder=${currentOrder}`;
+    window.open(questionBoardUrl, '_blank');
+  }
+  function addQuestionBoardButtons() {
+    const questionElement = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
+    if (!questionElement) return;
+
+    // 이미 버튼이 있으면 제거
+    const existingButton = questionElement.querySelector('.question-board-btn');
+    if (existingButton) {
+      existingButton.remove();
+    }
+
+    const currentOrder = currentQuestionIndex + 1;
+    const buttonHtml = `
+    <div class="question-board-section" style="margin: 20px 0; text-align: center;">
+      <button class="btn btn-primary question-board-btn"
+              onclick="window.open('/questions?mazeId=${mazeId}&questionOrder=${currentOrder}', '_blank')">
+        💬 이 문제에 대한 질문하기
+      </button>
+    </div>
+  `;
+
+    const hintSection = questionElement.querySelector('.hint-section');
+    if (hintSection) {
+      hintSection.insertAdjacentHTML('afterend', buttonHtml);
+    } else {
+      const answerSection = questionElement.querySelector('.answer-input-container');
+      if (answerSection) {
+        answerSection.insertAdjacentHTML('afterend', buttonHtml);
+      }
+    }
+  }
 </script>

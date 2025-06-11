@@ -5,23 +5,33 @@
   <title th:text="${post.id} != null ? '글 수정' : '새 글 쓰기'">글 쓰기</title>
 </head>
 <body>
-<h1 th:text="${post.id} != null ? '글 수정' : '새 글 쓰기'">폼</h1>
+<h1 th:text="${post.id} != null ? '글 수정' : ('문제 ' + ${questionOrder} + '번에 대한 질문 작성')">폼</h1>
+
+<div th:if="${questionOrder}" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+  <strong>📝 작성 중인 질문 정보:</strong><br>
+  미로 ID: <span th:text="${mazeId}">1</span> |
+  문제 번호: <span th:text="${questionOrder}">1</span>번
+</div>
+
 <form th:action="@{${post.id} != null ? '/questions/' + ${post.id} : '/questions'}"
       method="post">
-  <input type="hidden" name="mgId" th:value="${mgId}" />
+  <input type="hidden" name="mazeId" th:value="${mazeId}" />
+  <input type="hidden" name="questionOrder" th:value="${questionOrder}" />
 
   <div>
     <label>제목</label><br/>
-    <input type="text" name="title" th:value="${post.title}" required/>
+    <input type="text" name="title" th:value="${post.title}"
+           th:placeholder="'문제 ' + ${questionOrder} + '번 관련 질문'" required/>
   </div>
   <div>
     <label>내용</label><br/>
     <textarea name="content" rows="8" required
-              th:text="${post.content}"></textarea>
+              th:text="${post.content}"
+              placeholder="문제에 대한 질문을 자세히 작성해주세요."></textarea>
   </div>
   <div>
     <button type="submit" class="btn">저장</button>
-    <a th:href="@{/questions(mgId=${mgId})}" class="btn">취소</a>
+    <a th:href="@{/questions(mazeId=${mazeId}, questionOrder=${questionOrder})}" class="btn">취소</a>
   </div>
 </form>
 </body>
