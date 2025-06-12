@@ -9,9 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    // @Value("${file.upload-dir:src/main/resources/static/imgs/mazes}")
-    // private String uploadDir; // GCS 호스팅 이미지의 경우 더 이상 필요 없음
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // CSS, JS 및 모든 로컬 이미지(예: default-maze.png)에 대한 정적 리소스

@@ -1,30 +1,266 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>로그인</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - HottiMaze</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            border: 2px solid #ffffff;
+        }
+
+        .login-header {
+            background: #000000;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .login-content {
+            padding: 40px 30px;
+        }
+
+        .alert-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .alert-success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #000000;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #000000;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #333333;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-button:hover {
+            background: #333333;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .signup-link {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #000000;
+            margin-top: 20px;
+        }
+
+        .signup-link a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #333333;
+            text-decoration: underline;
+        }
+
+        .signup-link p {
+            color: #000000;
+        }
+
+        .back-to-home {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .back-to-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            background: #000000;
+            text-decoration: none;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 10px;
+                max-width: none;
+            }
+
+            .login-header {
+                padding: 30px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .login-content {
+                padding: 30px 20px;
+            }
+
+            .back-to-home {
+                top: 20px;
+                left: 20px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .form-group input::placeholder {
+            color: #666666;
+        }
+        .form-group {
+            position: relative;
+        }
+
+        .form-group input:focus + .focus-border {
+            transform: scaleX(1);
+        }
+
+        .focus-border {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #000000;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+    </style>
 </head>
 <body>
-<h1>로그인</h1>
+<a href="/" class="back-to-home">🏠 홈으로</a>
 
-<div th:if="${param.error}">
-    <p style="color:red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
-</div>
-<div th:if="${param.registered}">
-    <p style="color:green;">회원가입이 완료되었습니다. 로그인해 주세요.</p>
-</div>
+<div class="login-container">
+    <div class="login-header">
+        <h1>🎯 HottiMaze</h1>
+        <p>로그인하여 미로 모험을 시작하세요!</p>
+    </div>
 
-<form th:action="@{/login}" method="post">
-    <div>
-        <label>아이디:</label>
-        <input type="text" name="username" />
+    <div class="login-content">
+        <div th:if="${param.error}" class="alert-message alert-error">
+            아이디 또는 비밀번호가 잘못되었습니다.
+        </div>
+        <div th:if="${param.registered}" class="alert-message alert-success">
+            회원가입이 완료되었습니다. 로그인해 주세요.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">아이디</label>
+                <input type="text" id="username" name="username" placeholder="아이디를 입력하세요" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required />
+            </div>
+
+            <button type="submit" class="login-button">로그인</button>
+        </form>
+
+        <div class="signup-link">
+            <p>아직 회원이 아니신가요? <a th:href="@{/sign-up}">회원가입 하러 가기</a></p>
+        </div>
     </div>
-    <div>
-        <label>비밀번호:</label>
-        <input type="password" name="password" />
-    </div>
-    <button type="submit">로그인</button>
-</form>
-<p><a th:href="@{/sign-up}">회원가입 하러 가기</a></p>
+</div>
 </body>
 </html>

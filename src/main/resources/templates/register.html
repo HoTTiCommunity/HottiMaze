@@ -1,29 +1,436 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>회원가입</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - HottiMaze</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            max-width: 500px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            border: 2px solid #ffffff;
+        }
+
+        .register-header {
+            background: #000000;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .register-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .register-content {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #000000;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #000000;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #333333;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input::placeholder {
+            color: #666666;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            padding: 5px 0;
+            min-height: 20px;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 15px;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .register-button:hover {
+            background: #333333;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-button:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #000000;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #333333;
+            text-decoration: underline;
+        }
+
+        .login-link p {
+            color: #000000;
+        }
+
+        .back-to-home {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .back-to-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            background: #000000;
+            text-decoration: none;
+        }
+
+        /* 비밀번호 강도 표시 */
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .strength-weak { background: #d32f2f; }
+        .strength-medium { background: #f57c00; }
+        .strength-strong { background: #388e3c; }
+
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #666666;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .requirement {
+            display: block;
+        }
+
+        .requirement.valid {
+            color: #388e3c;
+        }
+
+        .requirement.invalid {
+            color: #d32f2f;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .register-container {
+                margin: 10px;
+                max-width: none;
+            }
+
+            .register-header {
+                padding: 30px 20px;
+            }
+
+            .register-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .register-content {
+                padding: 30px 20px;
+            }
+
+            .back-to-home {
+                top: 20px;
+                left: 20px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 폼 애니메이션 */
+        .form-group {
+            position: relative;
+        }
+
+        .focus-border {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #000000;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .form-group input:focus + .focus-border {
+            transform: scaleX(1);
+        }
+
+        /* 성공/오류 메시지 스타일링 */
+        .alert-success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-<h1>회원가입</h1>
-<form th:action="@{/sign-up}" th:object="${userRegisterDto}" method="post">
-    <div>
-        <label>아이디: </label>
-        <input type="text" th:field="*{username}" placeholder="username" />
-        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+<a href="/" class="back-to-home">🏠 홈으로</a>
+
+<div class="register-container">
+    <div class="register-header">
+        <h1>🎯 HottiMaze</h1>
+        <p>새로운 모험을 시작하세요!</p>
     </div>
-    <div>
-        <label>비밀번호: </label>
-        <input type="password" th:field="*{password}" />
-        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+    <div class="register-content">
+        <form th:action="@{/sign-up}" th:object="${userRegisterDto}" method="post">
+            <div class="form-group">
+                <label for="username">아이디</label>
+                <input type="text"
+                       id="username"
+                       th:field="*{username}"
+                       placeholder="아이디를 입력하세요 (4-20자)"
+                       required
+                       minlength="4"
+                       maxlength="20" />
+                <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password"
+                       id="password"
+                       th:field="*{password}"
+                       placeholder="비밀번호를 입력하세요 (8자 이상)"
+                       required
+                       minlength="8"
+                       onkeyup="checkPasswordStrength()" />
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="strengthBar"></div>
+                </div>
+                <div class="password-requirements">
+                    <span class="requirement" id="lengthReq">• 최소 8자 이상</span>
+                    <span class="requirement" id="numberReq">• 숫자 포함</span>
+                    <span class="requirement" id="letterReq">• 영문자 포함</span>
+                </div>
+                <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">비밀번호 확인</label>
+                <input type="password"
+                       id="confirmPassword"
+                       th:field="*{confirmPassword}"
+                       placeholder="비밀번호를 다시 입력하세요"
+                       required
+                       onkeyup="checkPasswordMatch()" />
+                <div class="error-message" id="passwordMatchError"></div>
+                <div class="error-message" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+            </div>
+
+            <button type="submit" class="register-button" id="submitBtn">회원가입</button>
+        </form>
+
+        <div class="login-link">
+            <p>이미 회원이신가요? <a th:href="@{/login}">로그인하러 가기</a></p>
+        </div>
     </div>
-    <div>
-        <label>비밀번호 확인: </label>
-        <input type="password" th:field="*{confirmPassword}" />
-        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
-    </div>
-    <button type="submit">회원가입</button>
-</form>
-<p><a th:href="@{/login}">로그인으로 돌아가기</a></p>
+</div>
+
+<script>
+    // 비밀번호 강도 체크
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const strengthBar = document.getElementById('strengthBar');
+        const lengthReq = document.getElementById('lengthReq');
+        const numberReq = document.getElementById('numberReq');
+        const letterReq = document.getElementById('letterReq');
+
+        let strength = 0;
+
+        // 길이 체크
+        if (password.length >= 8) {
+            lengthReq.classList.add('valid');
+            lengthReq.classList.remove('invalid');
+            strength += 1;
+        } else {
+            lengthReq.classList.add('invalid');
+            lengthReq.classList.remove('valid');
+        }
+
+        // 숫자 포함 체크
+        if (/\d/.test(password)) {
+            numberReq.classList.add('valid');
+            numberReq.classList.remove('invalid');
+            strength += 1;
+        } else {
+            numberReq.classList.add('invalid');
+            numberReq.classList.remove('valid');
+        }
+
+        // 영문자 포함 체크
+        if (/[a-zA-Z]/.test(password)) {
+            letterReq.classList.add('valid');
+            letterReq.classList.remove('invalid');
+            strength += 1;
+        } else {
+            letterReq.classList.add('invalid');
+            letterReq.classList.remove('valid');
+        }
+
+        // 강도 바 업데이트
+        const percentage = (strength / 3) * 100;
+        strengthBar.style.width = percentage + '%';
+
+        if (strength === 1) {
+            strengthBar.className = 'password-strength-bar strength-weak';
+        } else if (strength === 2) {
+            strengthBar.className = 'password-strength-bar strength-medium';
+        } else if (strength === 3) {
+            strengthBar.className = 'password-strength-bar strength-strong';
+        }
+
+        checkPasswordMatch();
+    }
+
+    // 비밀번호 일치 체크
+    function checkPasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorDiv = document.getElementById('passwordMatchError');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (confirmPassword === '') {
+            errorDiv.textContent = '';
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            errorDiv.textContent = '비밀번호가 일치하지 않습니다.';
+            submitBtn.disabled = true;
+        } else {
+            errorDiv.textContent = '';
+            submitBtn.disabled = false;
+        }
+    }
+
+    // 폼 제출 시 최종 검증
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('비밀번호가 일치하지 않습니다.');
+            return false;
+        }
+
+        if (password.length < 8) {
+            e.preventDefault();
+            alert('비밀번호는 최소 8자 이상이어야 합니다.');
+            return false;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '가입 중...';
+
+        return true;
+    });
+</script>
 </body>
 </html>
