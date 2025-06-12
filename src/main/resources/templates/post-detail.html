@@ -86,7 +86,7 @@
     <hr>
     <div th:text="${post.content}">내용</div>
 
-    <p>개추 수: <span id="gaechuCount" th:text="${post.gaechu}">0</span></p> <p>비추 수: <span id="bechuCount" th:text="${post.bechu}">0</span></p> <button onclick="vote('like')">좋아요</button>
+    <p>좋아요 수: <span id="gaechuCount" th:text="${post.gaechu}">0</span></p> <p>싫어요 수: <span id="bechuCount" th:text="${post.bechu}">0</span></p> <button onclick="vote('like')">좋아요</button>
     <button onclick="vote('dislike')">싫어요</button>
 
     <hr>
@@ -278,10 +278,6 @@
                                 </div>
                                 <div class="comment-content">${escapeHtml(comment.content)}</div>
                                 ${comment.isMyComment ? `
-                                    <div class="comment-controls">
-                                        <button class="edit-btn" data-comment-id="${comment.id}" data-comment-content="${escapeHtml(comment.content)}" onclick="editCommentFromData(this)">수정</button>
-                                        <button class="delete-btn" onclick="deleteComment(${comment.id})">삭제</button>
-                                    </div>
                                 ` : ''}
                             `;
                             commentList.appendChild(commentItem);
