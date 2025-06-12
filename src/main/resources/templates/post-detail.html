@@ -1,85 +1,430 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: content">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8" />
-    <title>게시글 상세</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">게시글 상세</title>
+    <style>
+        body {
+            background-color: #f0f0f0 !important;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        p { color: #555; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        .bookmark-icon { color: #ccc; cursor: pointer; font-size: 1.5rem; vertical-align: middle; margin-left: 0.5rem; display: inline-block;}
+        .bookmark-icon.bookmarked { color: #f39c12; } /* 노란색 별 */
+        button { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; background-color: #007bff; color: white; margin-right: 5px; }
+        button:hover { background-color: #0056b3; }
+
+        /* 댓글 섹션 스타일 */
+        .comment-section { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .comment-header h2 { margin: 0; font-size: 1.5rem; }
+        .comment-count { background: #f0f0f0; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; color: #666; }
+
+        .comment-write-section { margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; }
+        .comment-textarea { width: 100%; min-height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; margin-bottom: 10px; }
+        .comment-actions { display: flex; justify-content: space-between; align-items: center; }
+        .comment-char-count { font-size: 0.85em; color: #888; }
+        .comment-submit-btn { background-color: #28a745; }
+        .comment-submit-btn:hover { background-color: #218838; }
+
+        .comment-list { list-style: none; padding: 0; }
+        .comment-item { border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 8px; background: #fff; }
+        .comment-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.9em; color: #777; }
+        .comment-author { font-weight: bold; color: #333; }
+        .comment-date { font-size: 0.85em; }
+        .comment-content { margin-bottom: 10px; line-height: 1.5; color: #444; }
+        .comment-controls button { padding: 5px 10px; font-size: 0.8em; margin-right: 5px; }
+        .comment-controls .edit-btn { background-color: #ffc107; color: #333; }
+        .comment-controls .edit-btn:hover { background-color: #e0a800; }
+        .comment-controls .delete-btn { background-color: #dc3545; }
+        .comment-controls .delete-btn:hover { background-color: #c82333; }
+
+        .no-comments { text-align: center; padding: 20px; color: #888; font-style: italic; }
+
+        .alert-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .login-required {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-<div id="detail-container"
-     style="position:relative; padding:1rem; border:1px solid #ccc; margin:1rem;">
-    <!-- ① 제목 옆에 북마크 아이콘 -->
-    <h1>게시글 상세</h1>
-    <h2 th:text="${post.title}"
-        style="display:inline-block; margin:0;">
-    </h2>
+<div class="container">
+    <h1 th:text="${post.title}"
+        style="display:inline-block; margin-right:0.5rem;">제목</h1>
     <span class="bookmark-icon"
           th:data-id="${post.id}"
           onclick="toggleBookmark(this)"
-          title="북마크"
-          style="font-size:1.5rem; margin-left:.5rem; vertical-align:middle;">
+          title="북마크">
     </span>
 
-    <!-- ② 게시글 내용 -->
-    <p th:text="${post.content}" style="margin-top:1rem;"></p>
+    <p><strong>작성자:</strong>
+        <span th:text="${post.nickname}">닉네임</span>
+    </p>
+    <p><strong>작성일:</strong>
+        <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+    </p>
+    <p><strong>조회수:</strong>
+        <span th:text="${post.viewCount}">0</span>
+    </p>
+    <hr>
+    <div th:text="${post.content}">내용</div>
 
-    <!-- ③ 자유 그리기 캔버스 -->
-    <canvas id="drawing-canvas"
-            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:all;">
-        Canvas 지원 불가
-    </canvas>
-</div>
-<div>
-    <strong>ID:</strong> <span th:text="${post.id}">1</span>
-</div>
-<div>
-    <strong>제목:</strong> <span th:text="${post.title}">게시글 제목</span>
-</div>
-<div>
-    <strong>작성자:</strong> <span th:text="${post.nickname}">홍길동</span>
-</div>
-<div>
-    <strong>작성일:</strong>
-    <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">
-            2025-06-01 14:00
-        </span>
-</div>
-<div>
-    <strong>수정일:</strong>
-    <span th:text="${post.updatedAt != null ? #temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm') : '없음'}">
-            없음
-        </span>
-</div>
-<div>
-    <strong>본문:</strong>
-    <div th:utext="${post.content}">게시글 본문 내용</div>
-</div>
-<div>
-    <strong>조회수:</strong> <span th:text="${post.viewCount}">0</span>
-</div>
+    <p>개추 수: <span id="gaechuCount" th:text="${post.gaechu}">0</span></p> <p>비추 수: <span id="bechuCount" th:text="${post.bechu}">0</span></p> <button onclick="vote('like')">개추</button>
+    <button onclick="vote('dislike')">비추</button>
 
-<p>
-    <a th:href="@{/post}">목록으로 돌아가기</a>
-    &nbsp;|&nbsp;
-    <a th:href="@{/post/edit/{id}(id=${post.id})}">수정하기</a>
-    &nbsp;|&nbsp;
-    <a th:href="@{/post/delete/{id}(id=${post.id})}"
-       onclick="return confirm('정말 이 게시글을 삭제하시겠습니까?');">
-        삭제하기
-    </a>
-</p>
-<!-- 지우기 버튼 -->
-<div style="text-align:center; margin:1rem;">
-    <button onclick="clearCanvas()"
-            style="padding:.5rem; background:#c0392b; color:#fff; border:none; border-radius:4px;">
-        지우기
-    </button>
-</div>
+    <hr>
 
-<!-- 스크립트 로드 순서 중요 -->
-<script th:src="@{/js/drawing.js}"></script>
-<script th:src="@{/js/bookmark-local.js}"></script>
-<script th:src="@{/js/no-screenshot.js}"></script>
+    <div class="comment-section">
+        <div class="comment-header">
+            <h2>댓글</h2>
+            <span class="comment-count" id="commentCountBadge" th:text="${'댓글 ' + commentCount + '개'}">댓글 0개</span>
+        </div>
+
+        <div id="commentAlert" class="alert-message" style="display: none;"></div>
+
+        <div sec:authorize="isAuthenticated()">
+            <div class="comment-write-section">
+                <textarea id="commentContent" class="comment-textarea"
+                          placeholder="댓글을 입력하세요 (최대 500자)"
+                          maxlength="500"
+                          oninput="updateCommentCharCount()"></textarea>
+                <div class="comment-actions">
+                    <span class="comment-char-count" id="commentCharCount">0 / 500</span>
+                    <button id="submitCommentBtn" class="comment-submit-btn" onclick="submitComment()" disabled>댓글 작성</button>
+                </div>
+            </div>
+        </div>
+        <div sec:authorize="!isAuthenticated()" class="login-required">
+            댓글을 작성하려면 <a href="/login">로그인</a>이 필요합니다.
+        </div>
+
+
+        <ul id="commentList" class="comment-list">
+            <li th:if="${comments.isEmpty()}" class="no-comments">
+                아직 작성된 댓글이 없습니다.
+            </li>
+            <li th:each="comment : ${comments}" class="comment-item" th:data-comment-id="${comment.id}">
+                <div class="comment-meta">
+                    <span class="comment-author" th:text="${comment.userDisplayName}">작성자</span>
+                    <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+                </div>
+                <div class="comment-content" th:text="${comment.content}">댓글 내용입니다.</div>
+                <div class="comment-controls" th:if="${comment.isMyComment}">
+                    <button class="edit-btn" th:data-comment-id="${comment.id}" th:data-comment-content="${comment.content}" onclick="editCommentFromData(this)">수정</button>
+                    <button class="delete-btn" th:data-comment-id="${comment.id}">삭제</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <script th:inline="javascript">
+        const postId = /*[[${post.id}]]*/ null;
+        const isLoggedIn = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+        // HTML 특수 문자를 이스케이프하는 헬퍼 함수
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;' // 작은따옴표 이스케이프
+            };
+            // 정규식으로 모든 특수 문자를 찾아 대체
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // 게시글 좋아요/싫어요 기능
+        function vote(type) {
+            if (!isLoggedIn) { // 로그인 여부 확인
+                showAlert('로그인이 필요합니다.', 'error');
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch(`/api/categories/posts/${postId}/${type}`, {
+                method: 'POST'
+            }).then(response => {
+                if (response.ok) {
+                    // 성공 시 좋아요/싫어요 수 다시 로드
+                    loadPostVoteStats();
+                    showAlert('투표가 처리되었습니다.', 'success');
+                } else if (response.status === 401) {
+                    showAlert('로그인이 필요합니다.', 'error');
+                    window.location.href = '/login';
+                } else if (response.status === 409) { // 409 Conflict 상태 코드 처리
+                    response.json().then(data => {
+                        showAlert(data.message, 'error');
+                    }).catch(() => {
+                        showAlert("투표 중 오류가 발생했습니다. (자세한 메시지 없음)", 'error');
+                    });
+                } else {
+                    showAlert("오류가 발생했습니다.", 'error');
+                }
+            }).catch(error => {
+                console.error('투표 실패:', error);
+                showAlert('투표 중 네트워크 오류가 발생했습니다.', 'error');
+            });
+        }
+
+        // 게시글 좋아요/싫어요 수 로드 및 표시
+        function loadPostVoteStats() {
+            // API 엔드포인트가 따로 없으므로, 페이지 새로고침을 통해 데이터를 다시 가져오는 간단한 방법
+            // 또는, PostApiController에 특정 postId에 대한 좋아요/싫어요 수를 반환하는 API를 추가하고 호출하는 방법
+            // 여기서는 간단하게 location.reload()를 사용합니다.
+            location.reload();
+        }
+
+        // 댓글 문자 수 업데이트
+        function updateCommentCharCount() {
+            const textarea = document.getElementById('commentContent');
+            const charCountSpan = document.getElementById('commentCharCount');
+            const submitBtn = document.getElementById('submitCommentBtn');
+
+            const length = textarea.value.length;
+            charCountSpan.textContent = `${length} / 500`;
+
+            submitBtn.disabled = length === 0 || length > 500;
+        }
+
+        // 댓글 작성
+        function submitComment() {
+            const commentContent = document.getElementById('commentContent').value.trim();
+
+            if (!commentContent) {
+                showAlert('댓글 내용을 입력해주세요.', 'error');
+                return;
+            }
+
+            fetch(`/api/posts/${postId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    postId: postId,
+                    content: commentContent
+                })
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        showAlert('로그인이 필요합니다.', 'error');
+                        window.location.href = '/login';
+                        return Promise.reject('Unauthorized');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showAlert(data.message, 'success');
+                        document.getElementById('commentContent').value = '';
+                        updateCommentCharCount(); // 입력 필드 초기화 및 카운트 업데이트
+                        loadComments(); // 댓글 목록 새로고침
+                        loadCommentCount(); // 댓글 개수 새로고침
+                    } else {
+                        showAlert(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    if (error !== 'Unauthorized') {
+                        console.error('댓글 작성 실패:', error);
+                        showAlert('댓글 작성 중 오류가 발생했습니다.', 'error');
+                    }
+                });
+        }
+
+        // 댓글 목록 로드 및 표시
+        function loadComments() {
+            fetch(`/api/posts/${postId}/comments`)
+                .then(response => response.json())
+                .then(comments => {
+                    const commentList = document.getElementById('commentList');
+                    commentList.innerHTML = ''; // 기존 댓글 삭제
+                    if (comments.length === 0) {
+                        commentList.innerHTML = '<li class="no-comments">아직 작성된 댓글이 없습니다.</li>';
+                    } else {
+                        comments.forEach(comment => {
+                            const commentItem = document.createElement('li');
+                            commentItem.className = 'comment-item';
+                            commentItem.setAttribute('data-comment-id', comment.id);
+
+                            const formattedDate = new Date(comment.createdAt).toLocaleString('ko-KR', {
+                                year: 'numeric', month: '2-digit', day: '2-digit',
+                                hour: '2-digit', minute: '2-digit', hour12: false
+                            }).replace(/\. /g, '-').replace(/\./, ''); // 2024-01-01 12:00 형식으로 조정
+
+                            // HTML 문자열 생성 시 escapeHtml 적용
+                            commentItem.innerHTML = `
+                                <div class="comment-meta">
+                                    <span class="comment-author">${comment.userDisplayName}</span>
+                                    <span class="comment-date">${formattedDate}</span>
+                                </div>
+                                <div class="comment-content">${escapeHtml(comment.content)}</div>
+                                ${comment.isMyComment ? `
+                                    <div class="comment-controls">
+                                        <button class="edit-btn" data-comment-id="${comment.id}" data-comment-content="${escapeHtml(comment.content)}" onclick="editCommentFromData(this)">수정</button>
+                                        <button class="delete-btn" onclick="deleteComment(${comment.id})">삭제</button>
+                                    </div>
+                                ` : ''}
+                            `;
+                            commentList.appendChild(commentItem);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('댓글 로드 실패:', error);
+                    showAlert('댓글을 불러오는 중 오류가 발생했습니다.', 'error');
+                });
+        }
+
+        // 댓글 개수 로드 및 표시
+        function loadCommentCount() {
+            fetch(`/api/posts/${postId}/comments/count`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('commentCountBadge').textContent = `댓글 ${data.count}개`;
+                    }
+                })
+                .catch(error => {
+                    console.error('댓글 개수 로드 실패:', error);
+                });
+        }
+
+        // 댓글 수정 (데이터 속성에서 값 읽어옴)
+        function editCommentFromData(buttonElement) {
+            if (!isLoggedIn) {
+                showAlert('로그인이 필요합니다.', 'error');
+                window.location.href = '/login';
+                return;
+            }
+            const commentId = buttonElement.getAttribute('data-comment-id');
+            const currentContent = buttonElement.getAttribute('data-comment-content'); // data-속성에서 내용 읽기
+
+            const newContent = prompt('댓글을 수정하세요:', currentContent);
+
+            if (newContent === null) { // 취소 버튼 클릭 시
+                return;
+            }
+
+            if (!newContent.trim()) {
+                showAlert('댓글 내용을 입력해주세요.', 'error');
+                return;
+            }
+
+            fetch(`/api/posts/${postId}/comments/${commentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: newContent.trim() })
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        showAlert('로그인이 필요합니다.', 'error');
+                        window.location.href = '/login';
+                        return Promise.reject('Unauthorized');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showAlert(data.message, 'success');
+                        loadComments(); // 댓글 목록 새로고침
+                    } else {
+                        showAlert(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    if (error !== 'Unauthorized') {
+                        console.error('댓글 수정 실패:', error);
+                        showAlert('댓글 수정 중 오류가 발생했습니다.', 'error');
+                    }
+                });
+        }
+
+        // 댓글 삭제
+        function deleteComment(commentId) {
+            if (!isLoggedIn) {
+                showAlert('로그인이 필요합니다.', 'error');
+                window.location.href = '/login';
+                return;
+            }
+            if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+                return;
+            }
+
+            fetch(`/api/posts/${postId}/comments/${commentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        showAlert('로그인이 필요합니다.', 'error');
+                        window.location.href = '/login';
+                        return Promise.reject('Unauthorized');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showAlert(data.message, 'success');
+                        loadComments(); // 댓글 목록 새로고침
+                        loadCommentCount(); // 댓글 개수 새로고침
+                    } else {
+                        showAlert(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    if (error !== 'Unauthorized') {
+                        console.error('댓글 삭제 실패:', error);
+                        showAlert('댓글 삭제 중 오류가 발생했습니다.', 'error');
+                    }
+                });
+        }
+
+        // 알림 메시지 표시 함수
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('commentAlert');
+            alertDiv.className = `alert-message alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+
+            // 3초 후 자동 숨김
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 페이지 로드 시 댓글 목록 로드 및 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComments();
+            updateCommentCharCount(); // 초기 문자 수 표시
+        });
+    </script>
+    <script th:src="@{/js/bookmark-local.js}"></script>
+    <br>
+    <a href="/">메인으로</a>
+    <script th:src="@{/js/no-screenshot.js}"></script>
+</div>
 </body>
 </html>

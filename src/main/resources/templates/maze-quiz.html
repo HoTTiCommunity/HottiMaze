@@ -13,13 +13,13 @@
 
     body {
       font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #333333;
       min-height: 100vh;
       padding: 20px;
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
@@ -28,7 +28,7 @@
     }
 
     header {
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      background: black;
       color: white;
       padding: 25px;
       text-align: center;
@@ -50,29 +50,6 @@
       padding: 10px 15px;
       border-radius: 20px;
       font-weight: bold;
-    }
-
-    /* 히스토리 버튼 */
-    .history-button {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #2c3e50;
-      border: none;
-      border-radius: 50px;
-      padding: 12px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-      z-index: 1001;
-    }
-
-    .history-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     /* 히스토리 모달 */
@@ -113,7 +90,7 @@
     }
 
     .history-modal-header {
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      background: black;
       color: white;
       padding: 20px 30px;
       display: flex;
@@ -164,7 +141,7 @@
       align-items: center;
       gap: 15px;
       padding: 15px 20px;
-      background: #f8f9fa;
+      background: #666666;
       border-radius: 15px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -172,26 +149,26 @@
     }
 
     .history-question-item:hover {
-      background: #e9ecef;
+      background: #999999;
       transform: translateX(5px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
     .history-question-item.current {
-      background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(102, 126, 234, 0.1));
-      border-color: #4ecdc4;
+      background: linear-gradient(135deg, #666666, #333333);
+      border-color: black;
     }
 
     .history-question-item.completed {
-      background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
-      border-color: #28a745;
+      background: black;
+      border-color: green;
     }
 
     .question-number-badge {
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      background: #999999;
       color: white;
       display: flex;
       align-items: center;
@@ -282,11 +259,19 @@
     .question-image-container {
       margin: 25px 0 30px;
       position: relative;
+      /* 컨테이너 크기를 늘림 */
+      max-width: 100%;
+      display: flex;
+      justify-content: center;
     }
 
     .question-image {
+      /* 이미지 크기를 대폭 늘림 */
       max-width: 100%;
-      max-height: 400px;
+      max-height: 600px; /* 400px에서 600px로 증가 */
+      min-height: 400px; /* 최소 높이 추가 */
+      width: auto;
+      height: auto;
       object-fit: contain;
       border-radius: 15px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
@@ -359,7 +344,7 @@
     }
 
     .hint-button {
-      background: linear-gradient(45deg, #ffc107, #ff8f00);
+      background: #333333;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -461,14 +446,14 @@
     }
 
     .btn-history {
-      background: linear-gradient(45deg, #6f42c1, #e83e8c);
+      background: #333333;
       color: white;
-      box-shadow: 0 5px 20px rgba(111, 66, 193, 0.3);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     }
 
     .btn-history:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
     .btn:disabled {
@@ -576,7 +561,9 @@
       }
 
       .question-image {
-        max-height: 250px;
+        /* 모바일에서는 조금 더 작게 */
+        max-height: 350px;
+        min-height: 250px;
       }
 
       .quiz-controls {
@@ -615,6 +602,14 @@
         font-size: 1rem;
       }
     }
+
+    @media (max-width: 480px) {
+      .question-image {
+        /* 더 작은 화면에서는 추가로 조정 */
+        max-height: 300px;
+        min-height: 200px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -624,9 +619,6 @@
 
 <div class="container">
   <header>
-    <button class="history-button" onclick="openHistoryModal()">
-      📋 히스토리
-    </button>
 
     <h1>🧩 미궁 퀴즈</h1>
     <p th:text="${maze.mazeTitle} + ' 문제를 풀어보세요!'">미로 문제를 풀어보세요!</p>
@@ -705,20 +697,11 @@
       <button class="btn btn-history" onclick="openHistoryModal()">
         📋 문제 목록
       </button>
-      <div class="quiz-controls">
-        <button class="btn btn-history" onclick="openHistoryModal()">
-          📋 문제 목록
-        </button>
-        <div class="quiz-nav">
-          <!-- 현재 문제에 대한 질문 게시판 링크 -->
-          <button class="btn btn-primary" onclick="openCurrentQuestionBoard()">
-            💬 현재 문제 질문 게시판
-          </button>
-          <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
-        </div>
+      <div class="quiz-nav">
+        <!-- 현재 문제에 대한 질문 게시판 링크 -->
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>다음 →</button>
       </div>
     </div>
-
     <!-- 결과 화면 -->
     <div id="quizResult" class="quiz-result">
       <div class="result-icon" id="resultIcon">🎉</div>
@@ -1279,6 +1262,43 @@
       }
     }, 5000);
   }
+
+  function openCurrentQuestionBoard() {
+    const currentOrder = currentQuestionIndex + 1; // questionOrder는 1부터 시작
+    const questionBoardUrl = `/questions?mazeId=${mazeId}&questionOrder=${currentOrder}`;
+    window.open(questionBoardUrl, '_blank');
+  }
+
+  function addQuestionBoardButtons() {
+    const questionElement = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
+    if (!questionElement) return;
+
+    // 이미 버튼이 있으면 제거
+    const existingButton = questionElement.querySelector('.question-board-btn');
+    if (existingButton) {
+      existingButton.remove();
+    }
+
+    const currentOrder = currentQuestionIndex + 1;
+    const buttonHtml = `
+    <div class="question-board-section" style="margin: 20px 0; text-align: center;">
+      <button class="btn btn-primary question-board-btn"
+              onclick="window.open('/questions?mazeId=${mazeId}&questionOrder=${currentOrder}', '_blank')">
+        💬 이 문제에 대한 질문하기
+      </button>
+    </div>
+  `;
+
+    const hintSection = questionElement.querySelector('.hint-section');
+    if (hintSection) {
+      hintSection.insertAdjacentHTML('afterend', buttonHtml);
+    } else {
+      const answerSection = questionElement.querySelector('.answer-input-container');
+      if (answerSection) {
+        answerSection.insertAdjacentHTML('afterend', buttonHtml);
+      }
+    }
+  }
   /*]]>*/
 </script>
 
@@ -1383,39 +1403,6 @@
   document.addEventListener('selectstart', function(e) {
     e.preventDefault();
   });
-  function openCurrentQuestionBoard() {
-    const currentOrder = currentQuestionIndex + 1; // questionOrder는 1부터 시작
-    const questionBoardUrl = `/questions?mazeId=${mazeId}&questionOrder=${currentOrder}`;
-    window.open(questionBoardUrl, '_blank');
-  }
-  function addQuestionBoardButtons() {
-    const questionElement = document.querySelectorAll('.quiz-question')[currentQuestionIndex];
-    if (!questionElement) return;
-
-    // 이미 버튼이 있으면 제거
-    const existingButton = questionElement.querySelector('.question-board-btn');
-    if (existingButton) {
-      existingButton.remove();
-    }
-
-    const currentOrder = currentQuestionIndex + 1;
-    const buttonHtml = `
-    <div class="question-board-section" style="margin: 20px 0; text-align: center;">
-      <button class="btn btn-primary question-board-btn"
-              onclick="window.open('/questions?mazeId=${mazeId}&questionOrder=${currentOrder}', '_blank')">
-        💬 이 문제에 대한 질문하기
-      </button>
-    </div>
-  `;
-
-    const hintSection = questionElement.querySelector('.hint-section');
-    if (hintSection) {
-      hintSection.insertAdjacentHTML('afterend', buttonHtml);
-    } else {
-      const answerSection = questionElement.querySelector('.answer-input-container');
-      if (answerSection) {
-        answerSection.insertAdjacentHTML('afterend', buttonHtml);
-      }
-    }
-  }
 </script>
+</body>
+</html>

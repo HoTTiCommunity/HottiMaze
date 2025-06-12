@@ -756,6 +756,7 @@
         loadReviewCount(); // 페이지 로드 시 리뷰 개수 로드
         checkReviewStatus(); // 페이지 로드 시 리뷰 작성 상태 확인
         updateVoteButtons(currentUserVote); // 페이지 로드 시 투표 버튼 상태 업데이트
+        loadCompletionCount(); // // 페이지 로드 시 완주자 개수 로드
     });
 
     // 투표 버튼 상태 업데이트
@@ -911,6 +912,21 @@
                 console.error('리뷰 개수 로드 실패:', error);
             });
     }
+
+    // New function to load completion count
+    function loadCompletionCount() { //
+        fetch(`/api/mazes/${mazeId}/completion-count`) //
+            .then(response => response.json()) //
+            .then(data => { //
+                if (data.success) { //
+                    document.getElementById('completionCount').textContent = data.count; //
+                } //
+            }) //
+            .catch(error => { //
+                console.error('완주자 개수 로드 실패:', error); //
+            }); //
+    } //
+
 
     // 리뷰 표시
     function displayReviews(reviews) {

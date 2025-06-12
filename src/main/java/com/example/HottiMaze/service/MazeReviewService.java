@@ -1,3 +1,4 @@
+// src/main/java/com/example/HottiMaze/service/MazeReviewService.java
 package com.example.HottiMaze.service;
 
 import com.example.HottiMaze.dto.MazeReviewCreateDto;
@@ -201,6 +202,12 @@ public class MazeReviewService {
     @Transactional
     public void deleteReviewsByMazeId(Long mazeId) {
         mazeReviewRepository.deleteByMazeId(mazeId);
+    }
+
+    // New method to get the completion count
+    @Transactional(readOnly = true)
+    public long getMazeCompletionCount(Long mazeId) { //
+        return mazeReviewRepository.countByMazeIdAndIsCompleted(mazeId, true); //
     }
 
     private MazeReviewDto convertToDto(MazeReview review, String currentUsername) {
