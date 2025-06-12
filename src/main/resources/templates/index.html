@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #333333;
             min-height: 100vh;
             padding: 20px;
         }
@@ -21,7 +21,7 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: #f0f0f0;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -40,7 +40,7 @@
         .guest-info-bar a, .user-info-bar button, .user-info-bar a.logout-link {
             margin-left: 15px;
             padding: 6px 12px;
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            background: black;
             color: white;
             border: none;
             border-radius: 4px;
@@ -50,7 +50,7 @@
         }
 
         .guest-info-bar a:hover, .user-info-bar button:hover, .user-info-bar a.logout-link:hover {
-            background: #5a67d8;
+            background: #666666;
         }
 
         .user-info-bar .welcome {
@@ -66,7 +66,7 @@
         }
 
         header {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: black;
             color: white;
             padding: 30px;
             text-align: center;
@@ -122,11 +122,11 @@
         }
 
         .notice-board .board-header {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            background: linear-gradient(45deg, #3c3c3c, #1f1f1f);
         }
 
         .free-board .board-header {
-            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            background: linear-gradient(45deg, #3c3c3c, #1f1f1f);
         }
 
         .post-list {
@@ -169,7 +169,7 @@
         /* 구분선 */
         .section-divider {
             height: 2px;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            background: linear-gradient(45deg, #999999, #333333);
             margin: 40px 0;
             border-radius: 2px;
         }
@@ -191,7 +191,7 @@
             content: '';
             width: 80px;
             height: 4px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: linear-gradient(45deg, #999999, #333333);
             display: block;
             margin: 10px auto;
             border-radius: 2px;
@@ -216,7 +216,7 @@
         }
 
         .tab-button.active {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: #333333;
             color: white;
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
         }
@@ -229,13 +229,15 @@
         }
 
         .maze-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+    width: 80%;
+    margin: 0 auto; /* 중앙 정렬 */
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
 
         .maze-card:hover {
             transform: translateY(-8px);
@@ -244,7 +246,7 @@
 
         .maze-thumbnail {
             height: 200px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #333333;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -287,7 +289,7 @@
         .maze-fallback {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(45deg, #999999, #333333);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -436,7 +438,7 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: #cccccc;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -460,7 +462,7 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            background: #333333;
             color: white;
             border: none;
             border-radius: 50px;
@@ -801,7 +803,7 @@
     ✏️ 글쓰기
 </a>
 
-<a href="/mazes/upload" class="create-button" style="bottom: 90px; background: linear-gradient(45deg, #4ecdc4, #44a08d);">
+<a href="/mazes/upload" class="create-button" style="bottom: 90px;">
     🧩 미로 업로드
 </a>
 

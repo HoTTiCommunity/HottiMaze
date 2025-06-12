@@ -6,6 +6,12 @@
     <title th:text="${categoryName != null} ? ${categoryName} + ' 게시글 목록' : '전체 게시글 목록'">
         게시글 목록
     </title>
+    <style>
+        body {
+          background-color: #f0f0f0 !important;
+          font-family: sans-serif;
+        }
+    </style>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>

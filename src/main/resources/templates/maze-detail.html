@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #333333;
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,7 +28,7 @@
         }
 
         header {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: black;
             color: white;
             padding: 25px;
             text-align: center;
@@ -74,7 +74,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: #f8f9fa;
+            background: white;
             padding: 8px 15px;
             border-radius: 20px;
             font-size: 0.9rem;
@@ -92,13 +92,13 @@
         }
 
         .stat-card {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            background: #333333;
             color: white;
             padding: 15px 20px;
             border-radius: 15px;
             text-align: center;
             min-width: 100px;
-            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .stat-number {
@@ -133,36 +133,23 @@
             gap: 8px;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #4ecdc4, #44a08d);
-            color: white;
-            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-
         .btn-quiz {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            background: black;
             color: white;
-            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             font-size: 1.2rem;
             padding: 15px 30px;
         }
 
         .btn-quiz:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             color: white;
             text-decoration: none;
         }
 
         .maze-preview {
-            flex: 0 0 400px;
+            flex: 0 0 600px;
             background: white;
             border-radius: 15px;
             overflow: hidden;
@@ -171,7 +158,7 @@
 
         .maze-image {
             width: 100%;
-            height: 300px;
+            height: 240px;
             object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -247,7 +234,7 @@
         }
 
         .review-submit-btn {
-            background: linear-gradient(45deg, #28a745, #20c997);
+            background: #cccccc;
             color: white;
             border: none;
             padding: 12px 25px;
@@ -309,7 +296,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: #cccccc;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -689,9 +676,6 @@
                 <div class="maze-actions">
                     <a th:href="@{'/mazes/' + ${maze.id} + '/quiz'}" class="btn btn-quiz">
                         🧩 미궁 시작
-                    </a>
-                    <a href="/" class="btn btn-primary">
-                        🏠 메인으로 돌아가기
                     </a>
                 </div>
             </div>
