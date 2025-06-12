@@ -1,3 +1,4 @@
+// src/main/java/com/example/HottiMaze/repository/MazeReviewRepository.java
 package com.example.HottiMaze.repository;
 
 import com.example.HottiMaze.entity.MazeReview;
@@ -17,4 +18,7 @@ public interface MazeReviewRepository extends JpaRepository<MazeReview, Long> {
     List<MazeReview> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     void deleteByMazeId(Long mazeId);
+
+    // New method to count completion records
+    long countByMazeIdAndIsCompleted(Long mazeId, Boolean isCompleted); //
 }

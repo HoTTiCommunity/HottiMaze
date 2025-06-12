@@ -1,3 +1,4 @@
+// src/main/java/com/example/HottiMaze/controller/MazeReviewController.java
 package com.example.HottiMaze.controller;
 
 import com.example.HottiMaze.dto.MazeReviewCreateDto;
@@ -198,4 +199,19 @@ public class MazeReviewController {
                     .body(Map.of("success", false, "message", e.getMessage()));
         }
     }
+
+    // New API endpoint to get completion count
+    @GetMapping("/{mazeId}/completion-count") //
+    public ResponseEntity<Map<String, Object>> getMazeCompletionCount(@PathVariable Long mazeId) { //
+        Map<String, Object> response = new HashMap<>(); //
+        try { //
+            long count = mazeReviewService.getMazeCompletionCount(mazeId); //
+            response.put("success", true); //
+            response.put("count", count); //
+            return ResponseEntity.ok(response); //
+        } catch (Exception e) { //
+            return ResponseEntity.badRequest() //
+                    .body(Map.of("success", false, "message", e.getMessage())); //
+        } //
+    } //
 }
